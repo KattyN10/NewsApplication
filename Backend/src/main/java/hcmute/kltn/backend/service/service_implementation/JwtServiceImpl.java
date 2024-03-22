@@ -18,6 +18,9 @@ import java.util.function.Function;
 public class JwtServiceImpl implements JwtService {
     @Value("${SECRET_KEY}")
     private String SECRET_KEY;
+
+    @Value("${TOKEN_EXPIRATION}")
+    private int TOKEN_EXPIRATION;
     @Override
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -45,7 +48,7 @@ public class JwtServiceImpl implements JwtService {
                 .builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
                 signInRequest.getPassword()));
 
         var user = userRepo.findByEmail(signInRequest.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
+                .orElseThrow(() -> new RuntimeException("Invalid email or password."));
 
         var jwtToken = jwtService.generateToken(user);
 
