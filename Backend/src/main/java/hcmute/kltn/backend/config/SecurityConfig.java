@@ -1,6 +1,6 @@
 package hcmute.kltn.backend.config;
 
-import hcmute.kltn.backend.entity.Role;
+import hcmute.kltn.backend.entity.enum_entity.Role;
 import hcmute.kltn.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

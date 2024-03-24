@@ -1,5 +1,6 @@
 package hcmute.kltn.backend.entity;
 
+import hcmute.kltn.backend.entity.enum_entity.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -22,20 +25,29 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String firstname;
+
     @Column(nullable = false)
     private String lastname;
+
     @Column(nullable = false, unique = true)
     private String email;
+
     @Column(nullable = false)
     private String password;
+
     private Date dob;
+
     @Column(nullable = false)
-    private int premium;
-    private Date premium_expiration;
+    private boolean premium;
+
+    private Timestamp premium_expiration;
+
     @Column(nullable = false)
     private String avatar;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
