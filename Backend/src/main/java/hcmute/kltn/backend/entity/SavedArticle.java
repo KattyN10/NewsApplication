@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "saved_article")
 public class SavedArticle {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     @JoinColumn(

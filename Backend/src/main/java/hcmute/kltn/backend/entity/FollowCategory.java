@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "follow_category")
 public class FollowCategory {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     @JoinColumn(

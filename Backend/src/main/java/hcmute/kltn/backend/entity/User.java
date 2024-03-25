@@ -23,8 +23,8 @@ import java.util.List;
 @Table(name = "user")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(nullable = false)
     private String firstname;
@@ -38,6 +38,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Temporal(TemporalType.DATE)
     private Date dob;
 
     @Column(nullable = false)

@@ -19,8 +19,8 @@ import java.util.Date;
 @Table(name = "article")
 public class Article {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String title;

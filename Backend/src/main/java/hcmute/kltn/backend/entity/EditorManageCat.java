@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "editor_manage_cat")
 public class EditorManageCat {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     @JoinColumn(

@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "react_emotion")
 public class ReactEmotion {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     @JoinColumn(

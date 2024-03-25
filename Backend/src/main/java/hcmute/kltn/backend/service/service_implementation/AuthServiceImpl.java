@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,19 +38,24 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
+
     @Override
     public User signUp(SignUpRequest signUpRequest) {
         User user = new User();
 
-        user.setFirstname(signUpRequest.getFirstname());
-        user.setLastname(signUpRequest.getLastname());
-        user.setEmail(signUpRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        user.setDob(signUpRequest.getDob());
-        user.setPremium(false);
-        user.setAvatar(signUpRequest.getAvatar());
-        user.setRole(Role.USER);
-        user.setAvatar("???");
+        if(userRepo.existsByEmail(signUpRequest.getEmail())){
+            throw new RuntimeException("Email existed.");
+        } else {
+            user.setFirstname(signUpRequest.getFirstname());
+            user.setLastname(signUpRequest.getLastname());
+            user.setEmail(signUpRequest.getEmail());
+            user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+            user.setDob(signUpRequest.getDob());
+            user.setPremium(false);
+            user.setAvatar(signUpRequest.getAvatar());
+            user.setRole(Role.USER);
+            user.setAvatar("???");
+        }
 
         return userRepo.save(user);
     }
@@ -64,11 +68,16 @@ public class AuthServiceImpl implements AuthService {
         var user = userRepo.findByEmail(signInRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password."));
 
-        var jwtToken = jwtService.generateToken(user);
+//        String passHash = passwordEncoder.encode(signInRequest.getPassword());
+//        if (user.getPassword() != passHash){
+//            throw new RuntimeException("Invalid email or password.");
+//        } else {
+            var jwtToken = jwtService.generateToken(user);
 
-        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
-        jwtAuthResponse.setToken(jwtToken);
-        return jwtAuthResponse;
+            JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+            jwtAuthResponse.setToken(jwtToken);
+            return jwtAuthResponse;
+//        }
     }
 
     public String saveImage(MultipartFile file, String typeImage) throws IOException {

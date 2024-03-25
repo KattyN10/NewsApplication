@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "tag_article")
 public class TagArticle {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     @JoinColumn(
