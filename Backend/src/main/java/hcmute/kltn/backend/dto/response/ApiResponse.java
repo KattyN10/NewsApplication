@@ -1,4 +1,4 @@
-package hcmute.kltn.backend.dto;
+package hcmute.kltn.backend.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

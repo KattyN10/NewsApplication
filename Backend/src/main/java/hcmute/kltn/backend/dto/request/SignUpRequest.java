@@ -1,4 +1,4 @@
-package hcmute.kltn.backend.dto;
+package hcmute.kltn.backend.dto.request;
 
 import lombok.Data;
 

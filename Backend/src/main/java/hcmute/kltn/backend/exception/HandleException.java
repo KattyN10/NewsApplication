@@ -1,6 +1,6 @@
 package hcmute.kltn.backend.exception;
 
-import hcmute.kltn.backend.dto.ApiResponse;
+import hcmute.kltn.backend.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
