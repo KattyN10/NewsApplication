@@ -4,7 +4,6 @@ import hcmute.kltn.backend.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.client.HttpClientErrorException;
 
 @RestControllerAdvice
 public class HandleException {
@@ -18,16 +17,5 @@ public class HandleException {
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse> handleException(RuntimeException ex) {
-        ex.printStackTrace();
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setCode(9999);
-        apiResponse.setMessage(ex.getMessage());
-
-        return ResponseEntity.badRequest().body(apiResponse);
-    }
-
 
 }

@@ -32,7 +32,7 @@ public class TagController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse<String>> deleteCategory (@RequestParam("tagId") String tagId){
+    public ResponseEntity<ApiResponse<String>> deleteTag (@RequestParam("tagId") String tagId){
         ApiResponse<String> apiResponse = new ApiResponse<>();
         apiResponse.setMessage(tagService.deleteTag(tagId));
         return ResponseEntity.ok(apiResponse);
