@@ -26,7 +26,7 @@ public class Article {
     private String title;
 
     @Column(nullable = false)
-    private Timestamp create_date;
+    private Date create_date;
 
     @Lob
     @Column(nullable = false, columnDefinition = "TEXT")

@@ -36,9 +36,9 @@ public class SecurityConfig {
 //                        .requestMatchers("/api/v1/admin").hasAnyAuthority(Role.ADMIN.name())
 //                        .requestMatchers("/api/v1/user").hasAnyAuthority(Role.USER.name())
                         .anyRequest().authenticated())
-                .exceptionHandling(authentication -> authentication.authenticationEntryPoint(((request, response, authException) -> {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                })))
+//                .exceptionHandling(authentication -> authentication.authenticationEntryPoint(((request, response, authException) -> {
+//                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+//                })))
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthFilter, UsernamePasswordAuthenticationFilter.class
