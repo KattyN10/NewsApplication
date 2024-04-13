@@ -4,10 +4,14 @@ import hcmute.kltn.backend.entity.Category;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class CategoryDTO {
-    String id;
-    String name;
+    private String id;
+    private String name;
+    private String second_name;
+    private LocalDateTime date_create;
     @ManyToOne
-    Category parent;
+    private Category parent;
 }

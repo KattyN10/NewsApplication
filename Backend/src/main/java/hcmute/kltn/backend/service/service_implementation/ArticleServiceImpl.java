@@ -19,7 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +45,7 @@ public class ArticleServiceImpl implements ArticleService {
             article.setTitle(articleRequest.getTitle());
             article.setAbstracts(articleRequest.getAbstracts());
             article.setContent(articleRequest.getContent());
-            article.setCreate_date(new Date());
+            article.setCreate_date(LocalDateTime.now());
             article.setReading_time(readingTime(articleRequest.getContent()));
             article.setStatus(Status.DRAFT);
             article.setAvatar(imgUrl);
@@ -106,6 +107,31 @@ public class ArticleServiceImpl implements ArticleService {
         }
         articleRepo.save(article);
         return modelMapper.map(article, ArticleDTO.class);
+    }
+
+    @Override
+    public ArticleDTO findById(String id) {
+        Article article = articleRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Article not found."));
+        return modelMapper.map(article, ArticleDTO.class);
+    }
+
+    @Override
+    public List<ArticleDTO> findByCatId(String id, int page, int size) {
+        Category category = categoryRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found."));
+
+        return null;
+    }
+
+    @Override
+    public List<ArticleDTO> getArtsOfWriter(String id) {
+        return null;
+    }
+
+    @Override
+    public List<ArticleDTO> searchArticle(String key, int page, int size) {
+        return null;
     }
 
     private float readingTime(String content) {

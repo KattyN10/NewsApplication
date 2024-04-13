@@ -41,4 +41,5 @@ public class ArticleController {
         apiResponse.setData(articleService.deleteArticle(articleId));
         return ResponseEntity.ok(apiResponse);
     }
+
 }

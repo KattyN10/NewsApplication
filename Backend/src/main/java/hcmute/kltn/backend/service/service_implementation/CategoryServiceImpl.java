@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,17 +23,21 @@ public class CategoryServiceImpl implements CategoryService {
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        boolean existedCategory = categoryRepo.existsByName(categoryDTO.getName());
+        boolean existedCategory = categoryRepo.existsByNameAndParent(categoryDTO.getName(), categoryDTO.getParent());
         if (existedCategory) {
             throw new RuntimeException("Category with name: " + "'" + categoryDTO.getName() + "'" + " existed.");
         } else {
             Category category = new Category();
             category.setName(categoryDTO.getName());
             if (categoryDTO.getName() != null) {
-                Category parentCat = categoryRepo.findById(categoryDTO.getParent().getId())
-                        .orElseThrow(() -> new RuntimeException("Parent category not found."));
-                category.setParent(parentCat);
+                if (categoryDTO.getParent() != null) {
+                    Category parentCat = categoryRepo.findById(categoryDTO.getParent().getId())
+                            .orElseThrow(() -> new RuntimeException("Parent category not found."));
+                    category.setParent(parentCat);
+                }
             }
+            category.setSecond_name(categoryDTO.getSecond_name());
+            category.setCreate_date(LocalDateTime.now());
             categoryRepo.save(category);
             return modelMapper.map(category, CategoryDTO.class);
         }
@@ -67,7 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO updateCategory(CategoryDTO categoryDTO, String id) {
         Category category = categoryRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found."));
-        boolean existedCategory = categoryRepo.existsByName(categoryDTO.getName());
+        boolean existedCategory = categoryRepo.existsByNameAndParent(categoryDTO.getName(), categoryDTO.getParent());
         if (existedCategory) {
             throw new RuntimeException("The updated category name already exists");
         } else {

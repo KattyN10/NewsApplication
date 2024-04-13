@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,8 +19,14 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
+
+    @Column(unique = true)
+    private String second_name;
+
+    @Column(nullable = false)
+    private LocalDateTime create_date;
 
     @ManyToOne(/*cascade = CascadeType.REMOVE*/)
     @JoinColumn(

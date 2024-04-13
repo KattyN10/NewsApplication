@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -26,7 +27,7 @@ public class Article {
     private String title;
 
     @Column(nullable = false)
-    private Date create_date;
+    private LocalDateTime create_date;
 
     @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -36,6 +37,7 @@ public class Article {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+
     @Column(nullable = false)
     private float reading_time;
 
@@ -43,7 +45,6 @@ public class Article {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(nullable = false)
     private String avatar;
 
     @Column(nullable = false)
