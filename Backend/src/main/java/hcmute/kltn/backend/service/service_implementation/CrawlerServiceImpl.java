@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -89,6 +90,64 @@ public class CrawlerServiceImpl implements CrawlerService {
             }
         } catch (Exception e) {
             new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void crawlDanTri() {
+        String url = "https://dantri.com.vn/tin-moi-nhat.htm";
+        try {
+            Document document = Jsoup.connect(url).get();
+            Elements articles = document.select(".article-list.article-item");
+
+            Elements newestArts = new Elements();
+            for (Element art : articles) {
+                boolean check = checkValidDanTri(art);
+                if (check) {
+                    newestArts.add(art);
+                }
+                if (newestArts.size() == 10) break;
+            }
+
+            for (int i = 1; i < newestArts.size(); i++) {
+                Article article = new Article();
+
+                String title = newestArts.get(i).select("h3.article-title > a").text();
+                String abstracts = newestArts.get(i).select("div.article-excerpt a").text();
+                String linkArticle = "https://dantri.com.vn/" + newestArts.get(i).select("div.article-excerpt a").attr("href");
+
+                article.setTitle(title);
+                article.setAbstracts(abstracts);
+
+                boolean existedArt = articleRepo.existsByTitle(article.getTitle());
+                if (!existedArt) {
+                    Article articleDT = mainContentDanTri(linkArticle);
+                    articleDT.setTitle(article.getTitle());
+                    articleDT.setAbstracts(article.getAbstracts());
+                    if (articleDT.getCategory() != null) {
+                        articleRepo.save(articleDT);
+                        List<String> listTags = getTagsDanTri(linkArticle);
+                        if (!listTags.isEmpty()) {
+                            for (int j = 0; j < listTags.size(); j++) {
+                                TagArticle tagArticle = new TagArticle();
+                                tagArticle.setArticle(articleDT);
+                                Tag tag = tagRepo.findByValue(listTags.get(j));
+                                if (tag == null) {
+                                    Tag newTag = new Tag();
+                                    newTag.setValue(listTags.get(j));
+                                    tagRepo.save(newTag);
+                                    tagArticle.setTag(newTag);
+                                } else {
+                                    tagArticle.setTag(tag);
+                                }
+                                tagArticleRepo.save(tagArticle);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -162,7 +221,6 @@ public class CrawlerServiceImpl implements CrawlerService {
             }
 
             article.setReading_time(readingTime(article.getContent()));
-            article.setPremium(false);
             article.setStatus(Status.PUBLIC);
             article.setArtSource(ArtSource.VN_EXPRESS);
 
@@ -189,4 +247,94 @@ public class CrawlerServiceImpl implements CrawlerService {
             throw new RuntimeException(e);
         }
     }
+
+    private boolean checkValidDanTri(Element elementArt) {
+        // Check bài photo
+        Element photoElement = elementArt.selectFirst("div.photostory.article-category");
+        // Check DNews
+        Element dNewsElement = elementArt.selectFirst("div.dnews.article-category");
+        return dNewsElement == null && photoElement == null;
+    }
+
+    private Article mainContentDanTri(String url) {
+        Article article = new Article();
+
+        try {
+            Document document = Jsoup.connect(url).get();
+
+            // get create_date
+            String date = document.select("time.author-time").text();
+            int commaIndex = date.indexOf(",");
+            String trimmedString = date.substring(commaIndex + 1).trim();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm");
+            LocalDateTime localDateTime = LocalDateTime.parse(trimmedString, formatter);
+            article.setCreate_date(localDateTime);
+
+            // get category
+            Elements elementsCat = document.select("ul.dt-text-c808080.dt-text-base.dt-leading-5.dt-p-0.dt-list-none > li");
+            String cat = null;
+            Category category;
+            if (elementsCat.size() == 1) {
+                category = categoryRepo.findParentCatByName(elementsCat.get(0).text());
+                if (category != null) {
+                    Random random = new Random();
+                    List<Category> childCat = categoryRepo.findChildCategories(category.getId());
+                    article.setCategory(childCat.get(random.nextInt(childCat.size())));
+                }
+            } else {
+                category = categoryRepo.findBySecondOrName(elementsCat.get(1).text());
+                if (category != null) {
+                    article.setCategory(category);
+                }
+            }
+
+            // get image avatar
+            Element imgElement = document.selectFirst("img[data-content-name=article-content-image]");
+            if (imgElement != null) {
+                String src = imgElement.attr("data-original");
+                article.setAvatar(src);
+            }
+
+            // get content
+            Element authorElement = document.selectFirst("div.author-name");
+            Element contentElement = document.selectFirst("div.singular-content");
+            if (contentElement != null) {
+                String content = contentElement.outerHtml();
+                content = content.replace("amp;", "");
+                content = content.replace("src=\"data:image/svg+xml", "s=\"data:image/svg+xml");
+                content = content.replace("data-src=", "src=");
+                if (authorElement != null) {
+                    content = content + authorElement.outerHtml();
+                }
+                article.setContent(content);
+            }
+
+            article.setReading_time(readingTime(article.getContent()));
+            article.setStatus(Status.PUBLIC);
+            article.setArtSource(ArtSource.DAN_TRI);
+
+            return article;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private List<String> getTagsDanTri(String url) {
+        try {
+            List<String> stringList = new ArrayList<>();
+            Document document = Jsoup.connect(url).get();
+
+            Elements listTags = document.select("ul.tags-wrap.mt-30 > li");
+            if (listTags.size() > 1) {
+                for (int i = 1; i < listTags.size(); i++) {
+                    stringList.add(listTags.get(i).text());
+                }
+
+            }
+            return stringList;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

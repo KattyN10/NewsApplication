@@ -19,7 +19,6 @@ public class ArticleDTO {
     private float reading_time;
     private Status status;
     private String avatar;
-    private boolean premium;
     private ArtSource artSource;
     @ManyToOne
     private Category category;

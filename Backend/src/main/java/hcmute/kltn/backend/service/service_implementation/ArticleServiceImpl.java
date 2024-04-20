@@ -49,7 +49,6 @@ public class ArticleServiceImpl implements ArticleService {
             article.setReading_time(readingTime(articleRequest.getContent()));
             article.setStatus(Status.DRAFT);
             article.setAvatar(imgUrl);
-            article.setPremium(false);
             article.setArtSource(ArtSource.DEFAULT);
             article.setCategory(category);
             article.setUser(user);

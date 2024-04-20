@@ -42,11 +42,6 @@ public class User implements UserDetails {
     private Date dob;
 
     @Column(nullable = false)
-    private boolean premium;
-
-    private Timestamp premium_expiration;
-
-    @Column(nullable = false)
     private String avatar;
 
     @Column(nullable = false)

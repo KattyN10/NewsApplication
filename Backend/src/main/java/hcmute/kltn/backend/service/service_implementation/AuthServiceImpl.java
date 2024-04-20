@@ -40,7 +40,6 @@ public class AuthServiceImpl implements AuthService {
             user.setEmail(signUpRequest.getEmail());
             user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
             user.setDob(signUpRequest.getDob());
-            user.setPremium(false);
             user.setAvatar(signUpRequest.getAvatar());
             user.setRole(Role.USER);
             user.setAvatar(defaultAvatar);

@@ -37,7 +37,6 @@ public class Article {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-
     @Column(nullable = false)
     private float reading_time;
 
@@ -46,9 +45,6 @@ public class Article {
     private Status status;
 
     private String avatar;
-
-    @Column(nullable = false)
-    private boolean premium;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

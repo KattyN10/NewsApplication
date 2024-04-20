@@ -10,6 +10,6 @@ import java.util.List;
 public interface ArticleRepo extends JpaRepository<Article, String> {
     @Query(value = "SELECT * FROM article a WHERE a.category_id = :catId", nativeQuery = true)
     List<Article> findByCatId(String catId);
-
+    
     boolean existsByTitle(String title);
 }
