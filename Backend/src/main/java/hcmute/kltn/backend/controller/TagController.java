@@ -1,7 +1,6 @@
 package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.TagDTO;
-import hcmute.kltn.backend.dto.response.ApiResponse;
 import hcmute.kltn.backend.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,39 +15,29 @@ public class TagController {
     private final TagService tagService;
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<TagDTO>> createTag (@RequestBody TagDTO tagDTO){
-        ApiResponse<TagDTO> apiResponse = new ApiResponse<>();
-        apiResponse.setData(tagService.createTag(tagDTO));
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<TagDTO> createTag (@RequestBody TagDTO tagDTO){
+        return ResponseEntity.ok(tagService.createTag(tagDTO));
     }
 
     @PostMapping("/update")
-    public ResponseEntity<ApiResponse<TagDTO>> updateTag(
+    public ResponseEntity<TagDTO> updateTag(
             @RequestParam("tagId") String tagId,
             @RequestBody TagDTO tagDTO){
-        ApiResponse<TagDTO> apiResponse = new ApiResponse<>();
-        apiResponse.setData(tagService.updateTag(tagDTO, tagId));
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.ok(tagService.updateTag(tagDTO, tagId));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse<String>> deleteTag (@RequestParam("tagId") String tagId){
-        ApiResponse<String> apiResponse = new ApiResponse<>();
-        apiResponse.setMessage(tagService.deleteTag(tagId));
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<String> deleteTag (@RequestParam("tagId") String tagId){
+        return ResponseEntity.ok(tagService.deleteTag(tagId));
     }
 
     @GetMapping("/get-all-tags")
-    public ResponseEntity<ApiResponse<List<TagDTO>>> getAllTags(){
-        ApiResponse<List<TagDTO>> apiResponse = new ApiResponse<>();
-        apiResponse.setData(tagService.findAll());
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<List<TagDTO>> getAllTags(){
+        return ResponseEntity.ok(tagService.findAll());
     }
 
     @GetMapping("/get-tag")
-    public ResponseEntity<ApiResponse<TagDTO>> getTag(@RequestParam("tagId") String tagId){
-        ApiResponse<TagDTO> apiResponse = new ApiResponse<>();
-        apiResponse.setData(tagService.findTagById(tagId));
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<TagDTO> getTag(@RequestParam("tagId") String tagId){
+        return ResponseEntity.ok(tagService.findTagById(tagId));
     }
 }

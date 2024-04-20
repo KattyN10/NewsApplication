@@ -1,7 +1,6 @@
 package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.CategoryDTO;
-import hcmute.kltn.backend.dto.response.ApiResponse;
 import hcmute.kltn.backend.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,56 +15,42 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<CategoryDTO>> createCategory(@RequestBody CategoryDTO categoryDTO) {
-        ApiResponse<CategoryDTO> apiResponse = new ApiResponse<>();
-        apiResponse.setData(categoryService.createCategory(categoryDTO));
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
+        return ResponseEntity.ok(categoryService.createCategory(categoryDTO));
     }
 
     @PostMapping("/update")
-    public ResponseEntity<ApiResponse<CategoryDTO>> updateCategory(
+    public ResponseEntity<CategoryDTO> updateCategory(
             @RequestParam("categoryId") String categoryId,
             @RequestBody CategoryDTO categoryDTO) {
-        ApiResponse<CategoryDTO> apiResponse = new ApiResponse<>();
-        apiResponse.setData(categoryService.updateCategory(categoryDTO, categoryId));
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.ok(categoryService.updateCategory(categoryDTO, categoryId));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse<String>> deleteCategory(
+    public ResponseEntity<String> deleteCategory(
             @RequestParam("categoryId") String categoryId) {
-        ApiResponse<String> apiResponse = new ApiResponse<>();
-        apiResponse.setMessage(categoryService.deleteCategory(categoryId));
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.ok(categoryService.deleteCategory(categoryId));
     }
 
     @GetMapping("/get-all-categories")
-    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getAllCategories() {
-        ApiResponse<List<CategoryDTO>> apiResponse = new ApiResponse<>();
-        apiResponse.setData(categoryService.findAll());
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
+        return ResponseEntity.ok(categoryService.findAll());
     }
 
     @GetMapping("/get-category")
-    public ResponseEntity<ApiResponse<CategoryDTO>> getCategory(
+    public ResponseEntity<CategoryDTO> getCategory(
             @RequestParam("categoryId") String categoryId) {
-        ApiResponse<CategoryDTO> apiResponse = new ApiResponse<>();
-        apiResponse.setData(categoryService.findCategoryById(categoryId));
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.ok(categoryService.findCategoryById(categoryId));
     }
 
     @GetMapping("/get-child")
-    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getChildCats(
+    public ResponseEntity<List<CategoryDTO>> getChildCats(
             @RequestParam("categoryId") String categoryId) {
-        ApiResponse<List<CategoryDTO>> apiResponse = new ApiResponse<>();
-        apiResponse.setData(categoryService.findChildCategories(categoryId));
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.ok(categoryService.findChildCategories(categoryId));
     }
 
     @GetMapping("/get-parent")
-    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getParentCats() {
-        ApiResponse<List<CategoryDTO>> apiResponse = new ApiResponse<>();
-        apiResponse.setData(categoryService.findParentCategories());
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<List<CategoryDTO>> getParentCats() {
+        return ResponseEntity.ok(categoryService.findParentCategories());
     }
 }

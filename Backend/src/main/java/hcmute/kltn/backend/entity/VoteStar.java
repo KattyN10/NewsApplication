@@ -36,5 +36,5 @@ public class VoteStar {
     private User user;
 
     @Column(nullable = false)
-    private int star;
+    private float star;
 }
