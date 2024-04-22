@@ -10,6 +10,7 @@ import hcmute.kltn.backend.repository.VoteStarRepo;
 import hcmute.kltn.backend.service.VoteStarService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,9 +27,9 @@ public class VoteStarServiceImpl implements VoteStarService {
     public VoteStarDTO CUDVote(VoteStarDTO voteStarDTO) {
         Article article = articleRepo.findById(voteStarDTO.getArticle().getId())
                 .orElseThrow(() -> new NullPointerException("No article with id: " + voteStarDTO.getArticle().getId()));
-
-        User user = userRepo.findById(voteStarDTO.getUser().getId())
-                .orElseThrow(() -> new NullPointerException("No user with id: " + voteStarDTO.getUser().getId()));
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
 
         if (voteStarDTO.getStar() > 5 || voteStarDTO.getStar() < 1)
             throw new RuntimeException("Stars must be between 1 and 5");

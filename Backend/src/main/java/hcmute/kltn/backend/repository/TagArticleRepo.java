@@ -4,7 +4,9 @@ import hcmute.kltn.backend.entity.TagArticle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TagArticleRepo extends JpaRepository<TagArticle, String> {
-
+    List<TagArticle> findByArticle_Id(String articleId);
 }

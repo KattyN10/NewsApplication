@@ -29,9 +29,8 @@ public class SavedArticleController {
 
     // danh sách các bài viết đã lưu
     @GetMapping("/get-list")
-    public ResponseEntity<List<SavedArticleDTO>> getList(
-            @RequestParam("userId") String userId){
-        return ResponseEntity.ok(savedArticleService.findList(userId));
+    public ResponseEntity<List<SavedArticleDTO>> getList(){
+        return ResponseEntity.ok(savedArticleService.findList());
     }
 
     // lấy thông tin một bài viết trong danh sách đã lưu

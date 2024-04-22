@@ -10,6 +10,7 @@ import hcmute.kltn.backend.repository.UserRepo;
 import hcmute.kltn.backend.service.SavedArticleService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,8 +28,9 @@ public class SavedArticleServiceImpl implements SavedArticleService {
     public SavedArticleDTO addToList(SavedArticleDTO savedArticleDTO) {
         Article article = articleRepo.findById(savedArticleDTO.getArticle().getId())
                 .orElseThrow(() -> new NullPointerException("No article with id: " + savedArticleDTO.getArticle().getId()));
-        User user = userRepo.findById(savedArticleDTO.getUser().getId())
-                .orElseThrow(() -> new NullPointerException("No user with id: " + savedArticleDTO.getUser().getId()));
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
 
         SavedArticle savedArticle = new SavedArticle();
         savedArticle.setArticle(article);
@@ -50,8 +52,11 @@ public class SavedArticleServiceImpl implements SavedArticleService {
     }
 
     @Override
-    public List<SavedArticleDTO> findList(String userId) {
-        List<SavedArticle> listSavedArticle = savedArticleRepo.findByUserId(userId);
+    public List<SavedArticleDTO> findList() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
+        List<SavedArticle> listSavedArticle = savedArticleRepo.findByUserId(user.getId());
         return listSavedArticle.stream()
                 .map(article -> modelMapper.map(article, SavedArticleDTO.class))
                 .collect(Collectors.toList());
