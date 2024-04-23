@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -41,9 +42,8 @@ public class Comment {
     @Column(nullable = false)
     private String comment;
 
-//    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private Timestamp create_date;
+    private LocalDateTime create_date;
 
     @ManyToOne
     @JoinColumn(

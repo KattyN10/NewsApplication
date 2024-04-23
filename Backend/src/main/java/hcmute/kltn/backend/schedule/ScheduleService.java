@@ -15,11 +15,11 @@ public class ScheduleService {
         System.out.println("----------Crawl in VnExpress----------");
         crawlerService.crawlVnExpress();
         System.out.println("-----End function crawl VnExpress-----");
-        System.out.println("--------------------------------------");
+        System.out.println("--------------------------------------\r");
         System.out.println("------------Crawl in Dan Tri----------");
         crawlerService.crawlDanTri();
         System.out.println("------End function crawl Dan Tri------");
-        System.out.println("--------------------------------------");
+        System.out.println("-------------------------------------- \r");
     }
 
 }
