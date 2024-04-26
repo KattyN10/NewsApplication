@@ -33,13 +33,13 @@ public class CommentController {
         return ResponseEntity.ok(commentService.deleteComment(commentId));
     }
 
-    @GetMapping("/get-parent-comments")
+    @GetMapping("/anonymous/get-parent-comments")
     public ResponseEntity<List<CommentDTO>> getParentComments(
             @RequestParam("articleId") String articleId) {
         return ResponseEntity.ok(commentService.getParentComments(articleId));
     }
 
-    @GetMapping("/get-child-comments")
+    @GetMapping("/anonymous/get-child-comments")
     public ResponseEntity<List<CommentDTO>> getChildComments(
             @RequestParam("commentId") String commentId) {
         return ResponseEntity.ok(commentService.getChildComments(commentId));

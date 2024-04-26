@@ -255,7 +255,9 @@ public class CrawlerServiceImpl implements CrawlerService {
         Element dNewsElement = elementArt.selectFirst("div.dnews.article-category");
         //  Check Tâm điểm
         Element tamDiemElement = elementArt.selectFirst("div.blog article-category");
-        return dNewsElement == null && photoElement == null &&tamDiemElement == null;
+        // Check dMagazine
+        Element dMagazineElement = elementArt.selectFirst("div.dmagazine.article-category");
+        return dNewsElement == null && photoElement == null && tamDiemElement == null && dMagazineElement == null;
     }
 
     private Article mainContentDanTri(String url) {
@@ -283,7 +285,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                     List<Category> childCat = categoryRepo.findChildCategories(category.getId());
                     article.setCategory(childCat.get(random.nextInt(childCat.size())));
                 }
-            } else if (elementsCat.size() != 0){
+            } else if (elementsCat.size() != 0) {
                 category = categoryRepo.findBySecondOrName(elementsCat.get(1).text());
                 if (category != null) {
                     article.setCategory(category);

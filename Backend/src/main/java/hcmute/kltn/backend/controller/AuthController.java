@@ -26,10 +26,5 @@ public class AuthController {
         return ResponseEntity.ok(authService.signIn(signInRequest));
     }
 
-    @PostMapping("/update-password")
-    public ResponseEntity<String> updatePassword(
-            @RequestBody UpdatePassRequest updatePassRequest){
-        return ResponseEntity.ok(authService.updatePassword(updatePassRequest));
-    }
 
 }

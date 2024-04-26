@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class HandleException {
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException ex) {
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
         ex.printStackTrace();
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setCode(1001);
-        apiResponse.setMessage(ex.getMessage());
+//        ApiResponse apiResponse = new ApiResponse();
+//        apiResponse.setCode(1001);
+//        apiResponse.setMessage(ex.getMessage());
 
-        return ResponseEntity.badRequest().body(apiResponse);
+        return ResponseEntity.badRequest().body("Error: " + ex.getMessage());
     }
 
 }

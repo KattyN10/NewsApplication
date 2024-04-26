@@ -9,5 +9,5 @@ import hcmute.kltn.backend.entity.User;
 public interface AuthService {
     User signUp(SignUpRequest signUpRequest);
     JwtAuthResponse signIn(SignInRequest signInRequest);
-    String updatePassword(UpdatePassRequest updatePassRequest);
+
 }

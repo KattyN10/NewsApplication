@@ -2,8 +2,10 @@ package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.CategoryDTO;
 import hcmute.kltn.backend.service.CategoryService;
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,24 +34,26 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.deleteCategory(categoryId));
     }
 
-    @GetMapping("/get-all-categories")
+    @GetMapping("/anonymous/get-all-categories")
     public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         return ResponseEntity.ok(categoryService.findAll());
     }
 
-    @GetMapping("/get-category")
+
+    @GetMapping("/anonymous/get-category")
     public ResponseEntity<CategoryDTO> getCategory(
             @RequestParam("categoryId") String categoryId) {
         return ResponseEntity.ok(categoryService.findCategoryById(categoryId));
     }
 
-    @GetMapping("/get-child")
+
+    @GetMapping("/anonymous/get-child")
     public ResponseEntity<List<CategoryDTO>> getChildCats(
             @RequestParam("categoryId") String categoryId) {
         return ResponseEntity.ok(categoryService.findChildCategories(categoryId));
     }
 
-    @GetMapping("/get-parent")
+    @GetMapping("/anonymous/get-parent")
     public ResponseEntity<List<CategoryDTO>> getParentCats() {
         return ResponseEntity.ok(categoryService.findParentCategories());
     }

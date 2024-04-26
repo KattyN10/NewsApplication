@@ -28,10 +28,10 @@ public class FollowCategory {
 
     @ManyToOne
     @JoinColumn(
-            name = "article_id",
+            name = "category_id",
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "follow_category_fk_2")
     )
-    private Article article;
+    private Category category;
 }

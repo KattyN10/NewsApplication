@@ -1,5 +1,6 @@
 package hcmute.kltn.backend.controller;
 
+import hcmute.kltn.backend.dto.request.UpdatePassRequest;
 import hcmute.kltn.backend.dto.response.ApiResponse;
 import hcmute.kltn.backend.dto.UserDTO;
 import hcmute.kltn.backend.service.UserService;
@@ -50,6 +51,11 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUserAvatar(userId, file));
     }
 
+    @PostMapping("/update-password")
+    public ResponseEntity<String> updatePassword(
+            @RequestBody UpdatePassRequest updatePassRequest){
+        return ResponseEntity.ok(userService.updatePassword(updatePassRequest));
+    }
 
 
 }

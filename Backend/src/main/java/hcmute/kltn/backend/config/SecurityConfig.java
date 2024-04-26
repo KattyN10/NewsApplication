@@ -27,18 +27,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request.requestMatchers("/api/v1/auth/**")
+                .authorizeHttpRequests(request -> request.requestMatchers(
+                        "/api/v1/auth/**", "/api/v1/category/anonymous/**",
+                                "api/v1/comment/anonymous/**", "/api/v1/react-emotion/anonymous/**", "api/v1/tags-article/get-tags")
                         .permitAll()
-//                        .requestMatchers("/api/v1/admin").hasAnyAuthority(Role.ADMIN.name())
-//                        .requestMatchers("/api/v1/user").hasAnyAuthority(Role.USER.name())
                         .anyRequest().authenticated())
-//                .exceptionHandling(authentication -> authentication.authenticationEntryPoint(((request, response, authException) -> {
-//                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-//                })))
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthFilter, UsernamePasswordAuthenticationFilter.class
@@ -50,13 +48,8 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userService.userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
         return authenticationProvider;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean

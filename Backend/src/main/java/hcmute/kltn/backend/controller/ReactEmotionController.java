@@ -20,7 +20,7 @@ public class ReactEmotionController {
         return ResponseEntity.ok(reactEmotionService.reactEmotion(reactEmotionDTO));
     }
 
-    @GetMapping("/get-users-react")
+    @GetMapping("/anonymous/get-users-react")
     public ResponseEntity<List<ReactEmotionDTO>> getUsers(
             @RequestBody ReactEmotionDTO reactEmotionDTO){
         return ResponseEntity.ok(reactEmotionService.getUsersReact(reactEmotionDTO));

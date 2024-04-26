@@ -1,6 +1,7 @@
 package hcmute.kltn.backend.service.service_implementation;
 
 import hcmute.kltn.backend.dto.UserDTO;
+import hcmute.kltn.backend.dto.request.UpdatePassRequest;
 import hcmute.kltn.backend.entity.User;
 import hcmute.kltn.backend.entity.enum_entity.UploadPurpose;
 import hcmute.kltn.backend.repository.UserRepo;
@@ -11,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final ImageUploadService imageUploadService;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetailsService userDetailsService() {
@@ -103,6 +106,31 @@ public class UserServiceImpl implements UserService {
         User user = userRepo.findByEmail(name)
                 .orElseThrow(() -> new RuntimeException("User not found."));
         return modelMapper.map(user, UserDTO.class);
+    }
+
+    @Override
+    public String updatePassword(UpdatePassRequest updatePassRequest) {
+
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepo.findByEmail(name)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+        boolean oldPassMatchOldPass = passwordEncoder.matches(updatePassRequest.getOldPassword(), user.getPassword());
+        boolean newPassMatchOldPass = passwordEncoder.matches(updatePassRequest.getNewPassword(), user.getPassword());
+        String newPassHash = passwordEncoder.encode(updatePassRequest.getNewPassword());
+
+        if (!oldPassMatchOldPass){
+            throw new RuntimeException("Old password entered incorrectly.");
+        } else if (!updatePassRequest.getNewPassword().equals(updatePassRequest.getReEnterPassword())){
+            throw new RuntimeException("The re-entered password does not match.");
+        } else if (newPassMatchOldPass){
+            throw new RuntimeException("The new password must not be the same as the old password");
+        } else {
+            user.setPassword(newPassHash);
+            userRepo.save(user);
+            return "Update password successfully.";
+        }
     }
 
 }

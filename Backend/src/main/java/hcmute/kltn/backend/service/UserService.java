@@ -15,6 +15,7 @@ public interface UserService {
     UserDTO updateUserInfor(String id, UserDTO userDTO);
     UserDTO updateUserAvatar(String id, MultipartFile file);
     UserDTO getMyInfor();
+    String updatePassword(UpdatePassRequest updatePassRequest);
 
 
 

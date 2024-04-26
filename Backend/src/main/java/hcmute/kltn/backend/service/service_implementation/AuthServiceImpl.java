@@ -68,29 +68,6 @@ public class AuthServiceImpl implements AuthService {
 //        }
     }
 
-    @Override
-    public String updatePassword(UpdatePassRequest updatePassRequest) {
 
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
-
-        User user = userRepo.findByEmail(name)
-                .orElseThrow(() -> new RuntimeException("User not found."));
-        boolean oldPassMatchOldPass = passwordEncoder.matches(updatePassRequest.getOldPassword(), user.getPassword());
-        boolean newPassMatchOldPass = passwordEncoder.matches(updatePassRequest.getNewPassword(), user.getPassword());
-        String newPassHash = passwordEncoder.encode(updatePassRequest.getNewPassword());
-
-        if (!oldPassMatchOldPass){
-            throw new RuntimeException("Old password entered incorrectly.");
-        } else if (!updatePassRequest.getNewPassword().equals(updatePassRequest.getReEnterPassword())){
-            throw new RuntimeException("The re-entered password does not match.");
-        } else if (newPassMatchOldPass){
-            throw new RuntimeException("The new password must not be the same as the old password");
-        } else {
-            user.setPassword(newPassHash);
-            userRepo.save(user);
-            return "Update password successfully.";
-        }
-    }
 
 }
