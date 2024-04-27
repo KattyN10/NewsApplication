@@ -31,16 +31,20 @@ public class FollowCategoryServiceImpl implements FollowCategoryService {
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name).orElseThrow();
 
-//        List<Category> childCategory = categoryRepo.findChildCategories(category.getId());
-//        if (childCategory.isEmpty()) {
-//
-//        }
-
         FollowCategory followCategory = new FollowCategory();
         followCategory.setCategory(category);
         followCategory.setUser(user);
         followCategoryRepo.save(followCategory);
 
+        List<Category> childCategory = categoryRepo.findChildCategories(category.getId());
+        if (!childCategory.isEmpty()) {
+            for (Category childCat : childCategory) {
+                FollowCategory tempFollow = new FollowCategory();
+                tempFollow.setUser(user);
+                tempFollow.setCategory(childCat);
+                followCategoryRepo.save(tempFollow);
+            }
+        }
         return modelMapper.map(followCategory, FollowCategoryDTO.class);
     }
 
@@ -52,9 +56,24 @@ public class FollowCategoryServiceImpl implements FollowCategoryService {
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name).orElseThrow();
 
-        FollowCategory followCategory = followCategoryRepo.findByUserAndCategory(user, category)
-                .orElseThrow(() -> new NullPointerException("Invalid user or category."));
+        FollowCategory followCategory = followCategoryRepo.findByUserAndCategory(user, category);
+        if (followCategory == null) {
+            throw new RuntimeException("Invalid user or category");
+        }
         followCategoryRepo.delete(followCategory);
-        return "Successfully unfollowed category: " + category.getName();
+
+        List<Category> childCategory = categoryRepo.findChildCategories(category.getId());
+        if (!childCategory.isEmpty()) {
+            for (Category childCat : childCategory) {
+                FollowCategory followChildCategory = followCategoryRepo.findByUserAndCategory(user, childCat);
+                if (followChildCategory != null) {
+                    followCategoryRepo.delete(followChildCategory);
+                }
+            }
+            return "Successfully unfollowed parent category: " + category.getName() + " and children categories.";
+        } else {
+            return "Successfully unfollowed category: " + category.getName() + ".";
+        }
+
     }
 }
