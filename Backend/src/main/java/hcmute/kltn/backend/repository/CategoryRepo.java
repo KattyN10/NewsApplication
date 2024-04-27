@@ -12,7 +12,8 @@ import java.util.List;
 public interface CategoryRepo extends JpaRepository<Category, String> {
     boolean existsByNameAndParent(String name, Category parent);
 
-    @Query("SELECT new hcmute.kltn.backend.entity.Category(c.id, c.name,c.second_name, c.create_date, c.parent) FROM Category c WHERE c.parent.id = :parentId")
+    @Query("SELECT new hcmute.kltn.backend.entity.Category(c.id, c.name,c.second_name, c.create_date, " +
+            "c.parent) FROM Category c WHERE c.parent.id = :parentId")
     List<Category> findChildCategories(String parentId);
 
     @Query(value = "SELECT * FROM category c WHERE c.parent_id IS NULL", nativeQuery = true)
@@ -26,5 +27,6 @@ public interface CategoryRepo extends JpaRepository<Category, String> {
     @Query(value = "SELECT * FROM (SELECT * FROM category WHERE category.parent_id IS NOT NULL) c \n" +
             "WHERE c.second_name = :second_name OR c.`name`= :second_name LIMIT 1", nativeQuery = true)
     Category findBySecondOrName(String second_name);
+
 
 }

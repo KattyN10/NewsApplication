@@ -11,11 +11,6 @@ public class HandleException {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
         ex.printStackTrace();
-//        ApiResponse apiResponse = new ApiResponse();
-//        apiResponse.setCode(1001);
-//        apiResponse.setMessage(ex.getMessage());
-
-        return ResponseEntity.badRequest().body("Error: " + ex.getMessage());
+        return ResponseEntity.badRequest().body("ERROR: \n" + ex.getMessage());
     }
-
 }

@@ -15,6 +15,7 @@ import hcmute.kltn.backend.service.ArticleService;
 import hcmute.kltn.backend.service.ImageUploadService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +32,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final UserRepo userRepo;
     private final CategoryRepo categoryRepo;
 
+    @PreAuthorize("hasAuthority('WRITER')")
     @Override
     public ArticleDTO createArticle(MultipartFile file, ArticleRequest articleRequest) {
         Article article = new Article();
@@ -62,6 +64,7 @@ public class ArticleServiceImpl implements ArticleService {
         return modelMapper.map(article, ArticleDTO.class);
     }
 
+    @PreAuthorize("hasAuthority('WRITER')")
     @Override
     public String deleteArticle(String id) {
         Article article = articleRepo.findById(id)
@@ -70,6 +73,7 @@ public class ArticleServiceImpl implements ArticleService {
         return "Deleted Successfully";
     }
 
+    @PreAuthorize("hasAuthority('WRITER')")
     @Override
     public ArticleDTO updateArticle(String id, MultipartFile file, ArticleRequest articleRequest) {
         Article article = articleRepo.findById(id)
@@ -123,6 +127,7 @@ public class ArticleServiceImpl implements ArticleService {
         return null;
     }
 
+    @PreAuthorize("hasAuthority('WRITER')")
     @Override
     public List<ArticleDTO> getArtsOfWriter(String id) {
         return null;
