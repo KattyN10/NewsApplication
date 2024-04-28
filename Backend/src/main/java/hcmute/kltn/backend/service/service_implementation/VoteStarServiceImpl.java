@@ -55,7 +55,7 @@ public class VoteStarServiceImpl implements VoteStarService {
     }
 
     @Override
-    public Float getAverageStar(Long articleId) {
+    public Float getAverageStar(String articleId) {
         List<VoteStar> listVote = voteStarRepo.findListVote(articleId);
         float averageStar = 0 ;
         if (!listVote.isEmpty()){

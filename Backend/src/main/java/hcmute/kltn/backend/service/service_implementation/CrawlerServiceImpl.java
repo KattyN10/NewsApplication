@@ -50,17 +50,17 @@ public class CrawlerServiceImpl implements CrawlerService {
                 if (newestArts.size() == 10) break;
             }
 
-            for (int i = 0; i < newestArts.size(); i++) {
+            for (Element newestArt : newestArts) {
                 Article article = new Article();
 
-                String title = newestArts.get(i).select("h3.title-news > a").text();
-                String abstracts = newestArts.get(i).select("p.description a").text();
-                String linkArticle = newestArts.get(i).select("h3.title-news a").attr("href");
+                String title = newestArt.select("h3.title-news > a").text();
+                String abstracts = newestArt.select("p.description a").text();
+                String linkArticle = newestArt.select("h3.title-news a").attr("href");
 
                 article.setTitle(title);
                 article.setAbstracts(abstracts);
 
-                boolean existedArt = articleRepo.existsByTitle(article.getTitle());
+                boolean existedArt = articleRepo.existsByTitleOrAbstracts(article.getTitle(), article.getAbstracts());
                 if (!existedArt) {
                     Article mainArticle = mainContentVnExpress(linkArticle);
                     mainArticle.setTitle(article.getTitle());
@@ -119,7 +119,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                 article.setTitle(title);
                 article.setAbstracts(abstracts);
 
-                boolean existedArt = articleRepo.existsByTitle(article.getTitle());
+                boolean existedArt = articleRepo.existsByTitleOrAbstracts(article.getTitle(), article.getAbstracts());
                 if (!existedArt) {
                     Article articleDT = mainContentDanTri(linkArticle);
                     articleDT.setTitle(article.getTitle());

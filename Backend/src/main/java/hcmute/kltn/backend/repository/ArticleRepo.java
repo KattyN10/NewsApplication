@@ -14,10 +14,14 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             "ORDER BY a.create_date DESC", nativeQuery = true)
     List<Article> findByCatId(String catId);
 
-    boolean existsByTitle(String title);
+    boolean existsByTitleOrAbstracts(String title, String abstracts);
 
     @Query("select a from Article a where a.category = ?1 and a.status = ?2")
     List<Article> findByCategoryAndStatus(Category category, Status status);
+
+    List<Article> findByStatus(Status status);
+    @Query("select a from Article a where a.status = ?1 order by a.create_date DESC")
+    List<Article> findByStatusOrderByCreate_dateDesc(Status status);
 
 
 

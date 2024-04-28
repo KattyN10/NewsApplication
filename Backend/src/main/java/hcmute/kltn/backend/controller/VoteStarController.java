@@ -20,7 +20,7 @@ public class VoteStarController {
 
     @GetMapping("/get-average-star")
     public ResponseEntity<Float> getAverageStar(
-            @RequestParam("articleId") Long articleId){
+            @RequestParam("articleId") String articleId){
         return ResponseEntity.ok(voteStarService.getAverageStar(articleId));
     }
 }

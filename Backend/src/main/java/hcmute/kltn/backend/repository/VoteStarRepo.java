@@ -16,5 +16,5 @@ public interface VoteStarRepo extends JpaRepository<VoteStar, String> {
     // lấy những vote của bài viết chỉ định
     @Query("SELECT new VoteStar(v.id, v.article, v.user, v.star) " +
             "FROM VoteStar v WHERE v.article.id = :articleId ")
-    List<VoteStar> findListVote(Long articleId);
+    List<VoteStar> findListVote(String articleId);
 }

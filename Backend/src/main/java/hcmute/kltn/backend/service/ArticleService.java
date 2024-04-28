@@ -15,9 +15,10 @@ public interface ArticleService {
 
     ArticleDTO findById(String id);
 
-    List<ArticleDTO> findByCatId(String id, int page, int size);
+    List<ArticleDTO> getTopStarArticle();
+    List<ArticleDTO> getTop4NewestArticle();
 
-    List<ArticleDTO> getArtsOfWriter(String id);
+//    List<ArticleDTO> findByCatId(String id, int page, int size);
 
-    List<ArticleDTO> searchArticle(String key, int page, int size);
+//    List<ArticleDTO> searchArticle(String key, int page, int size);
 }
