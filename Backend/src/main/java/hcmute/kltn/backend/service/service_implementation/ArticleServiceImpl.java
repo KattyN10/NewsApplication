@@ -152,6 +152,14 @@ public class ArticleServiceImpl implements ArticleService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ArticleDTO> getLatestArtPerCat() {
+        List<Article> articleList = articleRepo.findLatestArtPerParentCat();
+        return articleList.stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
+    }
+
     private float readingTime(String content) {
         int count = content.split("\\s+").length;
         int avgReadingSpeed = 200;

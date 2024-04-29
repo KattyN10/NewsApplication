@@ -15,8 +15,13 @@ public interface ArticleService {
 
     ArticleDTO findById(String id);
 
+    // (Page Home - Top Stories)
     List<ArticleDTO> getTopStarArticle();
+
     List<ArticleDTO> getTop4NewestArticle();
+
+    // (Page Home - Latest News)
+    List<ArticleDTO> getLatestArtPerCat();
 
 //    List<ArticleDTO> findByCatId(String id, int page, int size);
 

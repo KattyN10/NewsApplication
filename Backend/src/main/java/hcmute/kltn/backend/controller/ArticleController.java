@@ -48,4 +48,9 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.getTop4NewestArticle());
     }
 
+    @GetMapping("/anonymous/get-latest-per-parent-cat")
+    public ResponseEntity<List<ArticleDTO>> getLatestPerParentCat(){
+        return ResponseEntity.ok(articleService.getLatestArtPerCat());
+    }
+
 }
