@@ -54,5 +54,8 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     @Query("select a from Article a where a.artSource = ?1 order by a.create_date DESC")
     List<Article> findByArtSourceOrderByCreate_dateDesc(ArtSource artSource);
 
+    @Query(value = "SELECT * FROM article WHERE MATCH(title, abstracts, content) AGAINST(?1)", nativeQuery = true)
+    List<Article> searchArticle(String keyword);
+
 
 }

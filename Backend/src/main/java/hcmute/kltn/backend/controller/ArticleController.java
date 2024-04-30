@@ -2,8 +2,6 @@ package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
-import hcmute.kltn.backend.entity.Article;
-import hcmute.kltn.backend.entity.enum_entity.ArtSource;
 import hcmute.kltn.backend.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -73,6 +71,12 @@ public class ArticleController {
     public ResponseEntity<List<ArticleDTO>> getRandomArtSameCat(
             @RequestParam("categoryId") String categoryId) {
         return ResponseEntity.ok(articleService.getRandomArtSameCat(categoryId));
+    }
+
+    @GetMapping("/anonymous/search")
+    public ResponseEntity<List<ArticleDTO>> searchArticle(
+            @RequestParam("keyword") String keyword) {
+        return ResponseEntity.ok(articleService.searchArticle(keyword));
     }
 
 }

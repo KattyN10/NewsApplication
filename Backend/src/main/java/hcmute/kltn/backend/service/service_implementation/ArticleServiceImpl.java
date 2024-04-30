@@ -1,5 +1,6 @@
 package hcmute.kltn.backend.service.service_implementation;
 
+import com.darkprograms.speech.translator.GoogleTranslate;
 import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.AverageStar;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
@@ -188,7 +189,7 @@ public class ArticleServiceImpl implements ArticleService {
     public List<ArticleDTO> getRandomArtSameCat(String catId) {
         List<Article> articleList = articleRepo.findByCatId(catId);
         Collections.shuffle(articleList);
-        if (articleList.size() < 5){
+        if (articleList.size() < 5) {
             return articleList.stream()
                     .map(article -> modelMapper.map(article, ArticleDTO.class))
                     .collect(Collectors.toList());
@@ -198,6 +199,22 @@ public class ArticleServiceImpl implements ArticleService {
                     .collect(Collectors.toList());
         }
 
+    }
+
+    @Override
+    public List<ArticleDTO> searchArticle(String keyword) {
+        try {
+            String language = GoogleTranslate.detectLanguage(keyword);
+            if (language == "en") {
+                keyword = GoogleTranslate.translate("vi", keyword);
+            }
+            List<Article> articleList = articleRepo.searchArticle(keyword);
+            return articleList.stream()
+                    .map(article -> modelMapper.map(article, ArticleDTO.class))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     private float readingTime(String content) {
@@ -223,11 +240,6 @@ public class ArticleServiceImpl implements ArticleService {
 //        return articleSubList.stream()
 //                .map(article -> modelMapper.map(article, ArticleDTO.class))
 //                .collect(Collectors.toUnmodifiableList());
-//    }
-
-//    @Override
-//    public List<ArticleDTO> searchArticle(String key, int page, int size) {
-//        return null;
 //    }
 
 }

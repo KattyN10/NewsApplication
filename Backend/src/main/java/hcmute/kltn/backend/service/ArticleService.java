@@ -35,5 +35,5 @@ public interface ArticleService {
 
 //    List<ArticleDTO> findByCatId(String id, int page, int size);
 
-//    List<ArticleDTO> searchArticle(String key, int page, int size);
+    List<ArticleDTO> searchArticle(String keyword);
 }
