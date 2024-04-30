@@ -4,30 +4,24 @@ import com.darkprograms.speech.translator.GoogleTranslate;
 import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.AverageStar;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
-import hcmute.kltn.backend.entity.Article;
-import hcmute.kltn.backend.entity.Category;
-import hcmute.kltn.backend.entity.User;
+import hcmute.kltn.backend.entity.*;
 import hcmute.kltn.backend.entity.enum_entity.ArtSource;
 import hcmute.kltn.backend.entity.enum_entity.Status;
 import hcmute.kltn.backend.entity.enum_entity.UploadPurpose;
-import hcmute.kltn.backend.repository.ArticleRepo;
-import hcmute.kltn.backend.repository.CategoryRepo;
-import hcmute.kltn.backend.repository.UserRepo;
+import hcmute.kltn.backend.repository.*;
 import hcmute.kltn.backend.service.ArticleService;
 import hcmute.kltn.backend.service.ImageUploadService;
 import hcmute.kltn.backend.service.VoteStarService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,19 +33,21 @@ public class ArticleServiceImpl implements ArticleService {
     private final UserRepo userRepo;
     private final CategoryRepo categoryRepo;
     private final VoteStarService voteStarService;
+    private final TagArticleRepo tagArticleRepo;
+    private final TagRepo tagRepo;
 
     @PreAuthorize("hasAuthority('WRITER')")
     @Override
     public ArticleDTO createArticle(MultipartFile file, ArticleRequest articleRequest) {
         Article article = new Article();
-
-        User user = userRepo.findById(articleRequest.getUser().getId())
-                .orElseThrow(() -> new RuntimeException("User not found."));
         Category category = categoryRepo.findById(articleRequest.getCategory().getId())
                 .orElseThrow(() -> new RuntimeException("Category not found."));
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
+
         try {
             String imgUrl = imageUploadService.saveImage(file, UploadPurpose.ARTICLE_AVATAR);
-
             article.setTitle(articleRequest.getTitle());
             article.setAbstracts(articleRequest.getAbstracts());
             article.setContent(articleRequest.getContent());
@@ -59,7 +55,7 @@ public class ArticleServiceImpl implements ArticleService {
             article.setReading_time(readingTime(articleRequest.getContent()));
             article.setStatus(Status.DRAFT);
             article.setAvatar(imgUrl);
-            article.setArtSource(ArtSource.DEFAULT);
+            article.setArtSource(ArtSource.PQ_EXPRESS);
             article.setCategory(category);
             article.setUser(user);
 
@@ -75,10 +71,31 @@ public class ArticleServiceImpl implements ArticleService {
     @PreAuthorize("hasAuthority('WRITER')")
     @Override
     public String deleteArticle(String id) {
+        // Writer chỉ xóa được bài DRAFT của mình
         Article article = articleRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Article not found."));
-        articleRepo.delete(article);
-        return "Deleted Successfully";
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
+        if (user != article.getUser()) {
+            throw new RuntimeException("Other users' posts cannot be deleted.");
+        } else {
+            if (article.getStatus() == Status.PUBLIC) {
+                throw new RuntimeException("You cannot delete public posts.");
+            } else {
+                List<TagArticle> tagArticleList = tagArticleRepo.findByArticle(article);
+                if (!tagArticleList.isEmpty()) {
+                    for (TagArticle tagArticle: tagArticleList) {
+                        Tag tag = tagRepo.findByValue(tagArticle.getTag().getValue());
+                        tagArticleRepo.delete(tagArticle);
+                        tagRepo.delete(tag);
+                    }
+                }
+            }
+            articleRepo.delete(article);
+        }
+
+        return "Deleted Successfully.";
     }
 
     @PreAuthorize("hasAuthority('WRITER')")

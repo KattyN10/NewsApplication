@@ -20,13 +20,13 @@ public class TagServiceImpl implements TagService {
     private final TagRepo tagRepo;
     private final ModelMapper modelMapper;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'WRITER')")
     @Override
     public TagDTO createTag(TagDTO tagDTO) {
         Tag tag = new Tag();
         boolean existedTag = tagRepo.existsByValue(tagDTO.getValue());
         if (existedTag) {
-            throw new RuntimeException("Tag existed");
+            throw new RuntimeException("Tag: " + tagDTO.getValue() + "existed.");
         } else {
             tag.setValue(tagDTO.getValue());
             tagRepo.save(tag);

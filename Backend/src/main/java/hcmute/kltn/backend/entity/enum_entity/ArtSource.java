@@ -1,7 +1,7 @@
 package hcmute.kltn.backend.entity.enum_entity;
 
 public enum ArtSource {
-    DEFAULT,
+    PQ_EXPRESS,
     VN_EXPRESS,
     DAN_TRI
 }

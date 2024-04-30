@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
@@ -12,14 +14,11 @@ public class ScheduleService {
 
     @Scheduled(fixedRate = 60000) // schedule per 1 minute
     public void crawlerArticleVnExpress() {
-        System.out.println("----------Crawl in VnExpress----------");
+        System.out.println("\n" + LocalDateTime.now() + ": " + "Crawl in VnExpress");
         crawlerService.crawlVnExpress();
-        System.out.println("-----End function crawl VnExpress-----");
-        System.out.println("--------------------------------------\r");
-        System.out.println("------------Crawl in Dan Tri----------");
+        System.out.println("\n" + LocalDateTime.now() + ": " + "Crawl in DanTri");
         crawlerService.crawlDanTri();
-        System.out.println("------End function crawl Dan Tri------");
-        System.out.println("-------------------------------------- \r");
+
     }
 
 }
