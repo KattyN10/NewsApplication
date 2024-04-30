@@ -254,7 +254,7 @@ public class CrawlerServiceImpl implements CrawlerService {
         // Check DNews
         Element dNewsElement = elementArt.selectFirst("div.dnews.article-category");
         //  Check Tâm điểm
-        Element tamDiemElement = elementArt.selectFirst("div.blog article-category");
+        Element tamDiemElement = elementArt.selectFirst("div.blog.article-category");
         // Check dMagazine
         Element dMagazineElement = elementArt.selectFirst("div.dmagazine.article-category");
         return dNewsElement == null && photoElement == null && tamDiemElement == null && dMagazineElement == null;

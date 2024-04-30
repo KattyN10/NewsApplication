@@ -2,12 +2,14 @@ package hcmute.kltn.backend.repository;
 
 import hcmute.kltn.backend.entity.Article;
 import hcmute.kltn.backend.entity.Category;
+import hcmute.kltn.backend.entity.enum_entity.ArtSource;
 import hcmute.kltn.backend.entity.enum_entity.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
 @Repository
 public interface ArticleRepo extends JpaRepository<Article, String> {
     // tìm cat theo catId
@@ -30,8 +32,7 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     List<Article> findByStatusOrderByCreate_dateDesc(Status status);
 
     // tìm latest article mỗi parent category
-    @Query(value = "SELECT result1.* FROM (SELECT a.*, c.parent_id\n" +
-            "FROM article AS a\n" +
+    @Query(value = "SELECT result1.* FROM (SELECT a.*, c.parent_id FROM article AS a " +
             "JOIN category AS c ON a.category_id = c.id\n" +
             "WHERE a.create_date = (\n" +
             "  SELECT MAX(create_date)\n" +
@@ -41,6 +42,17 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             "GROUP BY c.parent_id) result1 JOIN category c ON result1.parent_id = c.id", nativeQuery = true)
     List<Article> findLatestArtPerParentCat();
 
+    // lấy 4 bài viết có SL react max
+    @Query(value = "SELECT * FROM article a JOIN (SELECT article_id\n" +
+            "FROM react_emotion\n" +
+            "GROUP BY article_id\n" +
+            "ORDER BY COUNT(*) DESC\n" +
+            "LIMIT 4) react ON a.id = react.article_id",
+            nativeQuery = true)
+    List<Article> findMostReactArticle();
+
+    @Query("select a from Article a where a.artSource = ?1 order by a.create_date DESC")
+    List<Article> findByArtSourceOrderByCreate_dateDesc(ArtSource artSource);
 
 
 }

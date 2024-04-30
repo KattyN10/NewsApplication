@@ -160,6 +160,46 @@ public class ArticleServiceImpl implements ArticleService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ArticleDTO> getMostReactArt() {
+        List<Article> articleList = articleRepo.findMostReactArticle();
+        return articleList.stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ArticleDTO> getLatestByVnExpress() {
+        List<Article> articleList = articleRepo.findByArtSourceOrderByCreate_dateDesc(ArtSource.VN_EXPRESS);
+        return articleList.subList(0, 6).stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ArticleDTO> getLatestByDanTri() {
+        List<Article> articleList = articleRepo.findByArtSourceOrderByCreate_dateDesc(ArtSource.DAN_TRI);
+        return articleList.subList(0, 5).stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ArticleDTO> getRandomArtSameCat(String catId) {
+        List<Article> articleList = articleRepo.findByCatId(catId);
+        Collections.shuffle(articleList);
+        if (articleList.size() < 5){
+            return articleList.stream()
+                    .map(article -> modelMapper.map(article, ArticleDTO.class))
+                    .collect(Collectors.toList());
+        } else {
+            return articleList.subList(0, 5).stream()
+                    .map(article -> modelMapper.map(article, ArticleDTO.class))
+                    .collect(Collectors.toList());
+        }
+
+    }
+
     private float readingTime(String content) {
         int count = content.split("\\s+").length;
         int avgReadingSpeed = 200;

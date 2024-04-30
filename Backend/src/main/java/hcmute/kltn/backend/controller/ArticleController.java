@@ -3,6 +3,7 @@ package hcmute.kltn.backend.controller;
 import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
 import hcmute.kltn.backend.entity.Article;
+import hcmute.kltn.backend.entity.enum_entity.ArtSource;
 import hcmute.kltn.backend.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,18 +40,39 @@ public class ArticleController {
     }
 
     @GetMapping("/anonymous/get-top-star")
-    public ResponseEntity<List<ArticleDTO>> getTopStar(){
+    public ResponseEntity<List<ArticleDTO>> getTopStar() {
         return ResponseEntity.ok(articleService.getTopStarArticle());
     }
 
     @GetMapping("/anonymous/get-top4-newest")
-    public ResponseEntity<List<ArticleDTO>> getTop4Newest(){
+    public ResponseEntity<List<ArticleDTO>> getTop4Newest() {
         return ResponseEntity.ok(articleService.getTop4NewestArticle());
     }
 
     @GetMapping("/anonymous/get-latest-per-parent-cat")
-    public ResponseEntity<List<ArticleDTO>> getLatestPerParentCat(){
+    public ResponseEntity<List<ArticleDTO>> getLatestPerParentCat() {
         return ResponseEntity.ok(articleService.getLatestArtPerCat());
+    }
+
+    @GetMapping("/anonymous/get-top4-react-article")
+    public ResponseEntity<List<ArticleDTO>> getMostReactArticle() {
+        return ResponseEntity.ok(articleService.getMostReactArt());
+    }
+
+    @GetMapping("/anonymous/get-latest-vnexpress")
+    public ResponseEntity<List<ArticleDTO>> getLatestVnExpress() {
+        return ResponseEntity.ok(articleService.getLatestByVnExpress());
+    }
+
+    @GetMapping("/anonymous/get-latest-dantri")
+    public ResponseEntity<List<ArticleDTO>> getLatestDanTri() {
+        return ResponseEntity.ok(articleService.getLatestByDanTri());
+    }
+
+    @GetMapping("/anonymous/get-random-same-category")
+    public ResponseEntity<List<ArticleDTO>> getRandomArtSameCat(
+            @RequestParam("categoryId") String categoryId) {
+        return ResponseEntity.ok(articleService.getRandomArtSameCat(categoryId));
     }
 
 }
