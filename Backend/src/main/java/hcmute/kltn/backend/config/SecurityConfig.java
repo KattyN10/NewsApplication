@@ -34,9 +34,9 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request.requestMatchers(
                         "/api/v1/auth/**", "/api/v1/category/anonymous/**",
-                                "api/v1/comment/anonymous/**", "/api/v1/react-emotion/anonymous/**",
-                                "api/v1/tags-article/get-tags", "/api/v1/vote-star/get-average-star",
-                                "/api/v1/article/anonymous/**")
+                                "/api/v1/comment/anonymous/**", "/api/v1/react-emotion/anonymous/**",
+                                "/api/v1/tags-article/get-tags", "/api/v1/vote-star/get-average-star",
+                                "/api/v1/article/anonymous/**", "/api/v1/tag/anonymous/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

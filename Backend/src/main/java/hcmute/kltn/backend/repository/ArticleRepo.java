@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -19,6 +20,9 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
 
     // check exists article by title and abstracts
     boolean existsByTitleOrAbstracts(String title, String abstracts);
+
+    @Query("select (count(a) > 0) from Article a where a.artSource = ?1 and a.avatar = ?2 and a.create_date = ?3")
+    boolean existsByArtSourceAndAvatarAndCreate_date(ArtSource artSource, String avatar, LocalDateTime createDate);
 
     // tìm article by category and status
     @Query("select a from Article a where a.category = ?1 and a.status = ?2")
@@ -32,22 +36,23 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     List<Article> findByStatusOrderByCreate_dateDesc(Status status);
 
     // tìm latest article mỗi parent category
-    @Query(value = "SELECT result1.* FROM (SELECT a.*, c.parent_id FROM article AS a " +
-            "JOIN category AS c ON a.category_id = c.id\n" +
-            "WHERE a.create_date = (\n" +
-            "  SELECT MAX(create_date)\n" +
-            "  FROM article AS a2\n" +
-            "  WHERE a.category_id = a2.category_id\n" +
-            ") AND a.`status` = \"PUBLIC\"\n" +
-            "GROUP BY c.parent_id) result1 JOIN category c ON result1.parent_id = c.id", nativeQuery = true)
+    @Query(value = """
+            SELECT result1.* FROM (SELECT a.*, c.parent_id FROM article AS a JOIN category AS c ON a.category_id = c.id
+            WHERE a.create_date = (
+              SELECT MAX(create_date)
+              FROM article AS a2
+              WHERE a.category_id = a2.category_id
+            ) AND a.`status` = "PUBLIC"
+            GROUP BY c.parent_id) result1 JOIN category c ON result1.parent_id = c.id""", nativeQuery = true)
     List<Article> findLatestArtPerParentCat();
 
     // lấy 4 bài viết có SL react max
-    @Query(value = "SELECT * FROM article a JOIN (SELECT article_id\n" +
-            "FROM react_emotion\n" +
-            "GROUP BY article_id\n" +
-            "ORDER BY COUNT(*) DESC\n" +
-            "LIMIT 4) react ON a.id = react.article_id",
+    @Query(value = """
+            SELECT * FROM article a JOIN (SELECT article_id
+            FROM react_emotion
+            GROUP BY article_id
+            ORDER BY COUNT(*) DESC
+            LIMIT 4) react ON a.id = react.article_id""",
             nativeQuery = true)
     List<Article> findMostReactArticle();
 

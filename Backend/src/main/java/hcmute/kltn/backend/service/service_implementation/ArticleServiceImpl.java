@@ -4,6 +4,7 @@ import com.darkprograms.speech.translator.GoogleTranslate;
 import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.AverageStar;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
+import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.entity.*;
 import hcmute.kltn.backend.entity.enum_entity.ArtSource;
 import hcmute.kltn.backend.entity.enum_entity.Status;
@@ -38,7 +39,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @PreAuthorize("hasAuthority('WRITER')")
     @Override
-    public ArticleDTO createArticle(MultipartFile file, ArticleRequest articleRequest) {
+    public ArticleDTO createArticle(MultipartFile file, ArticleRequest articleRequest,
+                                    TagArticleRequest tagArticleRequest) {
         Article article = new Article();
         Category category = categoryRepo.findById(articleRequest.getCategory().getId())
                 .orElseThrow(() -> new RuntimeException("Category not found."));
@@ -59,8 +61,19 @@ public class ArticleServiceImpl implements ArticleService {
             article.setCategory(category);
             article.setUser(user);
 
+            List<Tag> tagList = new ArrayList<>();
+            for (Tag tag : tagArticleRequest.getTagList()) {
+                Tag foundTag = tagRepo.findById(tag.getId())
+                        .orElseThrow(() -> new NullPointerException("No tag with id: " + tag.getId()));
+                tagList.add(foundTag);
+            }
             articleRepo.save(article);
-
+            for (Tag tag : tagList) {
+                TagArticle tagArticle = new TagArticle();
+                tagArticle.setArticle(article);
+                tagArticle.setTag(tag);
+                tagArticleRepo.save(tagArticle);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -85,56 +98,83 @@ public class ArticleServiceImpl implements ArticleService {
             } else {
                 List<TagArticle> tagArticleList = tagArticleRepo.findByArticle(article);
                 if (!tagArticleList.isEmpty()) {
-                    for (TagArticle tagArticle: tagArticleList) {
-                        Tag tag = tagRepo.findByValue(tagArticle.getTag().getValue());
-                        tagArticleRepo.delete(tagArticle);
-                        tagRepo.delete(tag);
+                    for (TagArticle tagArticle : tagArticleList) {
+
+                        List<TagArticle> tagArticleListByTag = tagArticleRepo.findByTag(tagArticle.getTag());
+                        if (tagArticleListByTag.size() == 1) {
+                            Tag tag = tagRepo.findByValue(tagArticle.getTag().getValue());
+                            tagArticleRepo.delete(tagArticle);
+                            tagRepo.delete(tag);
+                        } else {
+                            tagArticleRepo.delete(tagArticle);
+                        }
                     }
                 }
             }
             articleRepo.delete(article);
         }
-
         return "Deleted Successfully.";
     }
 
     @PreAuthorize("hasAuthority('WRITER')")
     @Override
-    public ArticleDTO updateArticle(String id, MultipartFile file, ArticleRequest articleRequest) {
+    public ArticleDTO updateArticle(String id, MultipartFile file, ArticleRequest articleRequest,
+                                    TagArticleRequest tagArticleRequest) {
         Article article = articleRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Article not found."));
-        User user = userRepo.findById(articleRequest.getUser().getId())
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new NullPointerException("Article not found."));
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
         Category category = categoryRepo.findById(articleRequest.getCategory().getId())
                 .orElseThrow(() -> new RuntimeException("Category not found."));
-
-        if (!file.isEmpty()) {
+        if (user != article.getUser()) {
+            throw new RuntimeException("Other users' posts cannot be updated.");
+        } else {
             try {
                 String urlImg = imageUploadService.saveImage(file, UploadPurpose.ARTICLE_AVATAR);
                 article.setAvatar(urlImg);
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage());
             }
+
+            if (articleRequest.getTitle() != null) {
+                article.setTitle(articleRequest.getTitle());
+            }
+            if (articleRequest.getAbstracts() != null) {
+                article.setAbstracts(articleRequest.getAbstracts());
+            }
+            if (articleRequest.getContent() != null) {
+                article.setContent(articleRequest.getContent());
+            }
+            article.setReading_time(readingTime(article.getContent()));
+            article.setStatus(Status.DRAFT);
+            if (category != null) {
+                article.setCategory(category);
+            }
+            article.setStatus(Status.DRAFT);
+            // update tag
+            if (!tagArticleRequest.getTagList().isEmpty()) {
+                // delete old tags
+                List<TagArticle> tagArticleList = tagArticleRepo.findByArticle(article);
+                tagArticleRepo.deleteAll(tagArticleList);
+                // insert new tags
+                List<Tag> tagList = new ArrayList<>();
+                for (Tag tag : tagArticleRequest.getTagList()) {
+                    Tag foundTag = tagRepo.findById(tag.getId())
+                            .orElseThrow(() -> new RuntimeException("No tag with id: " + tag.getId()));
+                    tagList.add(foundTag);
+                }
+                for (Tag tag : tagList) {
+                    TagArticle tagArticle = new TagArticle();
+                    tagArticle.setArticle(article);
+                    tagArticle.setTag(tag);
+                    tagArticleRepo.save(tagArticle);
+                }
+            }
+            articleRepo.save(article);
+            return modelMapper.map(article, ArticleDTO.class);
         }
-        if (articleRequest.getTitle() != null) {
-            article.setTitle(articleRequest.getTitle());
-        }
-        if (articleRequest.getAbstracts() != null) {
-            article.setAbstracts(articleRequest.getAbstracts());
-        }
-        if (articleRequest.getContent() != null) {
-            article.setContent(articleRequest.getContent());
-        }
-        article.setReading_time(readingTime(article.getContent()));
-        article.setStatus(Status.DRAFT);
-        if (user != null) {
-            article.setUser(user);
-        }
-        if (category != null) {
-            article.setCategory(category);
-        }
-        articleRepo.save(article);
-        return modelMapper.map(article, ArticleDTO.class);
+
     }
 
     @Override
@@ -147,7 +187,6 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<ArticleDTO> getTopStarArticle() {
         List<Article> publicArticles = articleRepo.findByStatus(Status.PUBLIC);
-        List<Article> result = new ArrayList<>();
         List<AverageStar> averageStarList = new ArrayList<>();
 
         for (Article publicArticle : publicArticles) {
@@ -156,7 +195,7 @@ public class ArticleServiceImpl implements ArticleService {
             averageStarList.add(averageStar);
         }
 
-        return result.stream()
+        return averageStarList.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
     }
@@ -222,7 +261,7 @@ public class ArticleServiceImpl implements ArticleService {
     public List<ArticleDTO> searchArticle(String keyword) {
         try {
             String language = GoogleTranslate.detectLanguage(keyword);
-            if (language == "en") {
+            if (Objects.equals(language, "en")) {
                 keyword = GoogleTranslate.translate("vi", keyword);
             }
             List<Article> articleList = articleRepo.searchArticle(keyword);
@@ -234,29 +273,12 @@ public class ArticleServiceImpl implements ArticleService {
         }
     }
 
-    private float readingTime(String content) {
+    @Override
+    public Float readingTime(String content) {
         int count = content.split("\\s+").length;
         int avgReadingSpeed = 200;
-        float time = count / avgReadingSpeed;
-        return time;
-    }
+        return (float) (count / avgReadingSpeed);
 
-//    @Override
-//    public List<ArticleDTO> findByCatId(String id, int page, int size) {
-//        Category category = categoryRepo.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Category not found."));
-//        List<Article> articleList = articleRepo.findByCatId(category.getId());
-//
-//        int totalResult = articleList.size();
-//        int startIndex = (page - 1) * size;
-//        int endIndex = Math.min(startIndex + size, totalResult);
-//        if (startIndex > endIndex) {
-//            startIndex = endIndex;
-//        }
-//        List<Article> articleSubList= articleList.subList(startIndex, endIndex);
-//        return articleSubList.stream()
-//                .map(article -> modelMapper.map(article, ArticleDTO.class))
-//                .collect(Collectors.toUnmodifiableList());
-//    }
+    }
 
 }

@@ -2,7 +2,9 @@ package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
+import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.service.ArticleService;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +20,19 @@ public class ArticleController {
 
     @PostMapping("/create")
     public ResponseEntity<ArticleDTO> createArticle(
-            @RequestPart("file") MultipartFile file,
-            @RequestPart("body") ArticleRequest articleRequest) {
-        return ResponseEntity.ok(articleService.createArticle(file, articleRequest));
+            @RequestPart(value = "image", required = false) MultipartFile file,
+            @RequestPart("body") ArticleRequest articleRequest,
+            @RequestPart(value = "tag", required = false) TagArticleRequest tagArticleRequest) {
+        return ResponseEntity.ok(articleService.createArticle(file, articleRequest, tagArticleRequest));
     }
 
     @PostMapping("/update")
     public ResponseEntity<ArticleDTO> updateArticle(
-            @RequestParam("articleId") String articleId,
-            @RequestPart("file") MultipartFile file,
-            @RequestPart("body") ArticleRequest articleRequest) {
-        return ResponseEntity.ok(articleService.updateArticle(articleId, file, articleRequest));
+            @RequestPart("articleId") String articleId,
+            @RequestPart(value = "image", required = false) MultipartFile file,
+            @RequestPart("body") ArticleRequest articleRequest,
+            @RequestPart(value = "tag", required = false) TagArticleRequest tagArticleRequest) {
+        return ResponseEntity.ok(articleService.updateArticle(articleId, file, articleRequest, tagArticleRequest));
     }
 
     @DeleteMapping("/delete")

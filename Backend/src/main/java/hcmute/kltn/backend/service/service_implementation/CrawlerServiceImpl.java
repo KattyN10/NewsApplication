@@ -10,6 +10,7 @@ import hcmute.kltn.backend.repository.ArticleRepo;
 import hcmute.kltn.backend.repository.CategoryRepo;
 import hcmute.kltn.backend.repository.TagArticleRepo;
 import hcmute.kltn.backend.repository.TagRepo;
+import hcmute.kltn.backend.service.ArticleService;
 import hcmute.kltn.backend.service.CrawlerService;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
@@ -28,6 +29,7 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class CrawlerServiceImpl implements CrawlerService {
+    private final ArticleService articleService;
     private final CategoryRepo categoryRepo;
     private final TagArticleRepo tagArticleRepo;
     private final TagRepo tagRepo;
@@ -36,10 +38,10 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public void crawlVnExpress() {
         String url = "https://vnexpress.net/tin-tuc-24h";
+
         try {
             Document document = Jsoup.connect(url).get();
             Elements articles = document.select(".item-news.item-news-common");
-
             // lấy 10 bài viết mới nhất thỏa mãn
             Elements newestArts = new Elements();
             for (Element art : articles) {
@@ -49,7 +51,6 @@ public class CrawlerServiceImpl implements CrawlerService {
                 }
                 if (newestArts.size() == 10) break;
             }
-
             for (Element newestArt : newestArts) {
                 Article article = new Article();
 
@@ -62,35 +63,41 @@ public class CrawlerServiceImpl implements CrawlerService {
 
                 boolean existedArt = articleRepo.existsByTitleOrAbstracts(article.getTitle(), article.getAbstracts());
                 if (!existedArt) {
-                    Article mainArticle = mainContentVnExpress(linkArticle);
-                    mainArticle.setTitle(article.getTitle());
-                    mainArticle.setAbstracts(article.getAbstracts());
+                    Article articleVnExpress = mainContentVnExpress(linkArticle);
+                    boolean existedArt2 = articleRepo.existsByArtSourceAndAvatarAndCreate_date(
+                            ArtSource.VN_EXPRESS, articleVnExpress.getAvatar(), articleVnExpress.getCreate_date());
+                    if (!existedArt2) {
+                        articleVnExpress.setTitle(article.getTitle());
+                        articleVnExpress.setAbstracts(article.getAbstracts());
 
-                    // save article, get and save tag
-                    if (mainArticle.getCategory() != null) {
-                        articleRepo.save(mainArticle);
+                        // save article, get and save tag
+                        if (articleVnExpress.getCategory() != null) {
+                            articleRepo.save(articleVnExpress);
 
-                        String[] listTags = getTagsVnExpress(linkArticle);
-                        for (String tagValue : listTags) {
-                            TagArticle tagArticle = new TagArticle();
-                            tagArticle.setArticle(mainArticle);
-                            Tag tag = tagRepo.findByValue(tagValue);
-                            if (tag == null) {
-                                Tag newTag = new Tag();
-                                newTag.setValue(tagValue);
-                                tagRepo.save(newTag);
-                                tagArticle.setTag(newTag);
-                            } else {
-                                tagArticle.setTag(tag);
+                            String[] listTags = getTagsVnExpress(linkArticle);
+                            assert listTags != null;
+                            for (String tagValue : listTags) {
+                                TagArticle tagArticle = new TagArticle();
+                                tagArticle.setArticle(articleVnExpress);
+                                Tag tag = tagRepo.findByValue(tagValue);
+                                if (tag == null) {
+                                    Tag newTag = new Tag();
+                                    newTag.setValue(tagValue);
+                                    tagRepo.save(newTag);
+                                    tagArticle.setTag(newTag);
+                                } else {
+                                    tagArticle.setTag(tag);
+                                }
+                                tagArticleRepo.save(tagArticle);
                             }
-                            tagArticleRepo.save(tagArticle);
                         }
                     }
                 }
             }
-        } catch (Exception e) {
-            new RuntimeException(e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     @Override
@@ -99,7 +106,6 @@ public class CrawlerServiceImpl implements CrawlerService {
         try {
             Document document = Jsoup.connect(url).get();
             Elements articles = document.select(".article-list.article-item");
-
             Elements newestArts = new Elements();
             for (Element art : articles) {
                 boolean check = checkValidDanTri(art);
@@ -111,36 +117,36 @@ public class CrawlerServiceImpl implements CrawlerService {
 
             for (int i = 1; i < newestArts.size(); i++) {
                 Article article = new Article();
-
                 String title = newestArts.get(i).select("h3.article-title > a").text();
                 String abstracts = newestArts.get(i).select("div.article-excerpt a").text();
                 String linkArticle = "https://dantri.com.vn/" + newestArts.get(i).select("div.article-excerpt a").attr("href");
-
                 article.setTitle(title);
                 article.setAbstracts(abstracts);
-
                 boolean existedArt = articleRepo.existsByTitleOrAbstracts(article.getTitle(), article.getAbstracts());
                 if (!existedArt) {
                     Article articleDT = mainContentDanTri(linkArticle);
-                    articleDT.setTitle(article.getTitle());
-                    articleDT.setAbstracts(article.getAbstracts());
-                    if (articleDT.getCategory() != null) {
-                        articleRepo.save(articleDT);
-                        List<String> listTags = getTagsDanTri(linkArticle);
-                        if (!listTags.isEmpty()) {
-                            for (int j = 0; j < listTags.size(); j++) {
-                                TagArticle tagArticle = new TagArticle();
-                                tagArticle.setArticle(articleDT);
-                                Tag tag = tagRepo.findByValue(listTags.get(j));
-                                if (tag == null) {
-                                    Tag newTag = new Tag();
-                                    newTag.setValue(listTags.get(j));
-                                    tagRepo.save(newTag);
-                                    tagArticle.setTag(newTag);
-                                } else {
-                                    tagArticle.setTag(tag);
+                    boolean existedArt2 = articleRepo.existsByArtSourceAndAvatarAndCreate_date(ArtSource.DAN_TRI, articleDT.getAvatar(), articleDT.getCreate_date());
+                    if (!existedArt2) {
+                        articleDT.setTitle(article.getTitle());
+                        articleDT.setAbstracts(article.getAbstracts());
+                        if (articleDT.getCategory() != null) {
+                            articleRepo.save(articleDT);
+                            List<String> listTags = getTagsDanTri(linkArticle);
+                            if (!listTags.isEmpty()) {
+                                for (String listTag : listTags) {
+                                    TagArticle tagArticle = new TagArticle();
+                                    tagArticle.setArticle(articleDT);
+                                    Tag tag = tagRepo.findByValue(listTag);
+                                    if (tag == null) {
+                                        Tag newTag = new Tag();
+                                        newTag.setValue(listTag);
+                                        tagRepo.save(newTag);
+                                        tagArticle.setTag(newTag);
+                                    } else {
+                                        tagArticle.setTag(tag);
+                                    }
+                                    tagArticleRepo.save(tagArticle);
                                 }
-                                tagArticleRepo.save(tagArticle);
                             }
                         }
                     }
@@ -159,12 +165,6 @@ public class CrawlerServiceImpl implements CrawlerService {
         // Check bài media
         Element mediaElement = document.selectFirst("span.icon_thumb_videophoto");
         return !title.isEmpty() && mediaElement == null;
-    }
-
-    private float readingTime(String content) {
-        int count = content.split("\\s+").length;
-        int avgReadingSpeed = 200;
-        return (float) (count / avgReadingSpeed);
     }
 
     private Article mainContentVnExpress(String url) {
@@ -220,7 +220,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                 article.setContent(content);
             }
 
-            article.setReading_time(readingTime(article.getContent()));
+            article.setReading_time(articleService.readingTime(article.getContent()));
             article.setStatus(Status.PUBLIC);
             article.setArtSource(ArtSource.VN_EXPRESS);
 
@@ -238,8 +238,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             Element tagElement = documentTag.selectFirst("meta[name=keywords]");
             if (tagElement != null) {
                 String tagContent = tagElement.attr("content");
-                String[] tags = tagContent.split(",");
-                return tags;
+                return tagContent.split(",");
             }
 
             return null;
@@ -276,7 +275,6 @@ public class CrawlerServiceImpl implements CrawlerService {
 
             // get category
             Elements elementsCat = document.select("ul.dt-text-c808080.dt-text-base.dt-leading-5.dt-p-0.dt-list-none > li");
-            String cat = null;
             Category category;
             if (elementsCat.size() == 1) {
                 category = categoryRepo.findParentCatByName(elementsCat.get(0).text());
@@ -313,7 +311,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                 article.setContent(content);
             }
 
-            article.setReading_time(readingTime(article.getContent()));
+            article.setReading_time(articleService.readingTime(article.getContent()));
             article.setStatus(Status.PUBLIC);
             article.setArtSource(ArtSource.DAN_TRI);
 

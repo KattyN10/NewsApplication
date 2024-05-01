@@ -31,13 +31,19 @@ public class TagController {
         return ResponseEntity.ok(tagService.deleteTag(tagId));
     }
 
-    @GetMapping("/get-all-tags")
+    @GetMapping("/anonymous/get-all-tags")
     public ResponseEntity<List<TagDTO>> getAllTags(){
         return ResponseEntity.ok(tagService.findAll());
     }
 
-    @GetMapping("/get-tag")
+    @GetMapping("/anonymous/get-tag")
     public ResponseEntity<TagDTO> getTag(@RequestParam("tagId") String tagId){
         return ResponseEntity.ok(tagService.findTagById(tagId));
+    }
+
+    @GetMapping("/anonymous/get-tags-of-art")
+    public ResponseEntity<List<TagDTO>> getTagsOfArt(
+            @RequestParam("articleId") String articleId){
+        return ResponseEntity.ok(tagService.getTagsOfArticle(articleId));
     }
 }

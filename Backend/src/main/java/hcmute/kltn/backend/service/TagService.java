@@ -10,4 +10,5 @@ public interface TagService {
     TagDTO findTagById(String id);
     List<TagDTO> findAll();
     TagDTO updateTag(TagDTO tagDTO, String id);
+    List<TagDTO> getTagsOfArticle(String articleId);
 }

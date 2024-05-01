@@ -2,7 +2,9 @@ package hcmute.kltn.backend.service.service_implementation;
 
 import hcmute.kltn.backend.dto.TagDTO;
 import hcmute.kltn.backend.dto.UserDTO;
+import hcmute.kltn.backend.entity.Article;
 import hcmute.kltn.backend.entity.Tag;
+import hcmute.kltn.backend.repository.ArticleRepo;
 import hcmute.kltn.backend.repository.TagRepo;
 import hcmute.kltn.backend.service.TagService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
     private final TagRepo tagRepo;
     private final ModelMapper modelMapper;
+    private final ArticleRepo articleRepo;
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'WRITER')")
     @Override
@@ -72,5 +75,15 @@ public class TagServiceImpl implements TagService {
             tagRepo.save(tag);
         }
         return modelMapper.map(tag, TagDTO.class);
+    }
+
+    @Override
+    public List<TagDTO> getTagsOfArticle(String articleId) {
+        Article article = articleRepo.findById(articleId)
+                .orElseThrow(() -> new NullPointerException("No article with id: " + articleId));
+        List<Tag> tagList = tagRepo.findByArticleId(article.getId());
+        return tagList.stream()
+                .map(tag -> modelMapper.map(tag, TagDTO.class))
+                .collect(Collectors.toList());
     }
 }
