@@ -22,7 +22,6 @@ public interface ArticleService {
 
     List<ArticleDTO> getTop4NewestArticle();
 
-    // (Page Home - Latest News)
     List<ArticleDTO> getLatestArtPerCat();
 
     List<ArticleDTO> getMostReactArt();

@@ -16,7 +16,7 @@ public class ScheduleService {
     public void crawlerArticleVnExpress() {
         System.out.println("\n" + LocalDateTime.now() + ": " + "Crawl in VnExpress");
         crawlerService.crawlVnExpress();
-        System.out.println("\n" + LocalDateTime.now() + ": " + "Crawl in DanTri");
+        System.out.println(LocalDateTime.now() + ": " + "Crawl in DanTri");
         crawlerService.crawlDanTri();
 
     }

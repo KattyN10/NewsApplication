@@ -29,9 +29,9 @@ public class ArticleController {
     @PostMapping("/update")
     public ResponseEntity<ArticleDTO> updateArticle(
             @RequestPart("articleId") String articleId,
-            @RequestPart(value = "image", required = false) MultipartFile file,
+            @RequestPart(value = "image") MultipartFile file,
             @RequestPart("body") ArticleRequest articleRequest,
-            @RequestPart(value = "tag", required = false) TagArticleRequest tagArticleRequest) {
+            @RequestPart(value = "tag") TagArticleRequest tagArticleRequest) {
         return ResponseEntity.ok(articleService.updateArticle(articleId, file, articleRequest, tagArticleRequest));
     }
 

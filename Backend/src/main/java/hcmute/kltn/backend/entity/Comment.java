@@ -6,9 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @Builder
@@ -48,7 +46,6 @@ public class Comment {
     @ManyToOne
     @JoinColumn(
             name = "parent_id",
-            nullable = true,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "comment_fk_3")
     )
