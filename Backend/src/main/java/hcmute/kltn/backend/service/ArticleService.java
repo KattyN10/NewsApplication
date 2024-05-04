@@ -18,13 +18,13 @@ public interface ArticleService {
 
     ArticleDTO findById(String id);
 
-    List<ArticleDTO> getTopStarArticle();
+    List<ArticleDTO> getTop3StarArticle();
 
-    List<ArticleDTO> getTop4NewestArticle();
+    List<ArticleDTO> getTop6NewestArticle();
 
     List<ArticleDTO> getLatestArtPerCat();
 
-    List<ArticleDTO> getMostReactArt();
+    List<ArticleDTO> getTop6ReactArt();
 
     List<ArticleDTO> getLatestByVnExpress();
 

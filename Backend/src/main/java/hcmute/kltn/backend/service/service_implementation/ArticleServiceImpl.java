@@ -185,25 +185,29 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDTO> getTopStarArticle() {
+    public List<ArticleDTO> getTop3StarArticle() {
         List<Article> publicArticles = articleRepo.findByStatus(Status.PUBLIC);
         List<AverageStar> averageStarList = new ArrayList<>();
-
+        List<Article> result = new ArrayList<>();
         for (Article publicArticle : publicArticles) {
             float star = voteStarService.getAverageStar(publicArticle.getId());
             AverageStar averageStar = new AverageStar(publicArticle.getId(), star);
             averageStarList.add(averageStar);
         }
+        for (AverageStar averageStar: averageStarList) {
+            Article newArticle = articleRepo.findById(averageStar.getId()).orElseThrow();
+            result.add(newArticle);
+        }
 
-        return averageStarList.stream()
+        return result.subList(0, 3).stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ArticleDTO> getTop4NewestArticle() {
+    public List<ArticleDTO> getTop6NewestArticle() {
         List<Article> publicArticles = articleRepo.findByStatusOrderByCreate_dateDesc(Status.PUBLIC);
-        List<Article> result = publicArticles.subList(0, 4);
+        List<Article> result = publicArticles.subList(0, 6);
         return result.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
@@ -218,7 +222,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDTO> getMostReactArt() {
+    public List<ArticleDTO> getTop6ReactArt() {
         List<Article> articleList = articleRepo.findMostReactArticle();
         return articleList.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))

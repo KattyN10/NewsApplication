@@ -52,7 +52,7 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             FROM react_emotion
             GROUP BY article_id
             ORDER BY COUNT(*) DESC
-            LIMIT 4) react ON a.id = react.article_id""",
+            LIMIT 6) react ON a.id = react.article_id""",
             nativeQuery = true)
     List<Article> findMostReactArticle();
 

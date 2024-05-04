@@ -4,7 +4,6 @@ import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
 import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.service.ArticleService;
-import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,14 +40,14 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.deleteArticle(articleId));
     }
 
-    @GetMapping("/anonymous/get-top-star")
-    public ResponseEntity<List<ArticleDTO>> getTopStar() {
-        return ResponseEntity.ok(articleService.getTopStarArticle());
+    @GetMapping("/anonymous/get-top3-star")
+    public ResponseEntity<List<ArticleDTO>> getTop3Star() {
+        return ResponseEntity.ok(articleService.getTop3StarArticle());
     }
 
-    @GetMapping("/anonymous/get-top4-newest")
-    public ResponseEntity<List<ArticleDTO>> getTop4Newest() {
-        return ResponseEntity.ok(articleService.getTop4NewestArticle());
+    @GetMapping("/anonymous/get-top6-newest")
+    public ResponseEntity<List<ArticleDTO>> getTop6Newest() {
+        return ResponseEntity.ok(articleService.getTop6NewestArticle());
     }
 
     @GetMapping("/anonymous/get-latest-per-parent-cat")
@@ -56,9 +55,9 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.getLatestArtPerCat());
     }
 
-    @GetMapping("/anonymous/get-top4-react-article")
-    public ResponseEntity<List<ArticleDTO>> getMostReactArticle() {
-        return ResponseEntity.ok(articleService.getMostReactArt());
+    @GetMapping("/anonymous/get-top6-react-article")
+    public ResponseEntity<List<ArticleDTO>> getTop6ReactArticle() {
+        return ResponseEntity.ok(articleService.getTop6ReactArt());
     }
 
     @GetMapping("/anonymous/get-latest-vnexpress")
