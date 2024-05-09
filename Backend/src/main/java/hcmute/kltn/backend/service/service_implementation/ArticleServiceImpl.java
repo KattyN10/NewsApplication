@@ -205,9 +205,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDTO> getTop6NewestArticle() {
+    public List<ArticleDTO> getTop5NewestArticle() {
         List<Article> publicArticles = articleRepo.findByStatusOrderByCreate_dateDesc(Status.PUBLIC);
-        List<Article> result = publicArticles.subList(0, 6);
+        List<Article> result = publicArticles.subList(0, 5);
         return result.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());

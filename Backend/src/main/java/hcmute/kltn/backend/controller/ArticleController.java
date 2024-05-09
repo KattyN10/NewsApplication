@@ -45,9 +45,9 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.getTop3StarArticle());
     }
 
-    @GetMapping("/anonymous/get-top6-newest")
-    public ResponseEntity<List<ArticleDTO>> getTop6Newest() {
-        return ResponseEntity.ok(articleService.getTop6NewestArticle());
+    @GetMapping("/anonymous/get-top5-newest")
+    public ResponseEntity<List<ArticleDTO>> getTop5Newest() {
+        return ResponseEntity.ok(articleService.getTop5NewestArticle());
     }
 
     @GetMapping("/anonymous/get-latest-per-parent-cat")

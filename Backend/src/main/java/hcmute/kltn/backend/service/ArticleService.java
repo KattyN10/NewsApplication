@@ -20,7 +20,7 @@ public interface ArticleService {
 
     List<ArticleDTO> getTop3StarArticle();
 
-    List<ArticleDTO> getTop6NewestArticle();
+    List<ArticleDTO> getTop5NewestArticle();
 
     List<ArticleDTO> getLatestArtPerCat();
 
