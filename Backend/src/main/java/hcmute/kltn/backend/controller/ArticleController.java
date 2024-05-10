@@ -51,8 +51,8 @@ public class ArticleController {
     }
 
     @GetMapping("/anonymous/get-latest-per-parent-cat")
-    public ResponseEntity<List<ArticleDTO>> getLatestPerParentCat() {
-        return ResponseEntity.ok(articleService.getLatestArtPerCat());
+    public ResponseEntity<List<ArticleDTO>> getLatestPer4Cat() {
+        return ResponseEntity.ok(articleService.getLatestArtPer4Cat());
     }
 
     @GetMapping("/anonymous/get-top6-react-article")

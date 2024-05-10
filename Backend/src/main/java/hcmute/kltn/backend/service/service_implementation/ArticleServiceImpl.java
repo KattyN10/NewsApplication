@@ -194,7 +194,7 @@ public class ArticleServiceImpl implements ArticleService {
             AverageStar averageStar = new AverageStar(publicArticle.getId(), star);
             averageStarList.add(averageStar);
         }
-        for (AverageStar averageStar: averageStarList) {
+        for (AverageStar averageStar : averageStarList) {
             Article newArticle = articleRepo.findById(averageStar.getId()).orElseThrow();
             result.add(newArticle);
         }
@@ -214,9 +214,14 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDTO> getLatestArtPerCat() {
-        List<Article> articleList = articleRepo.findLatestArtPerParentCat();
-        return articleList.stream()
+    public List<ArticleDTO> getLatestArtPer4Cat() {
+        List<Category> categoryList = categoryRepo.find4ParentCatHaveMaxArticle();
+        List<Article> result = new ArrayList<>();
+        for (Category category : categoryList) {
+            Article article = articleRepo.findLatestArtPerCat(category.getId());
+            result.add(article);
+        }
+        return result.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
     }

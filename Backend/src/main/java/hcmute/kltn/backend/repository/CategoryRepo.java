@@ -28,5 +28,16 @@ public interface CategoryRepo extends JpaRepository<Category, String> {
             "WHERE c.second_name = :second_name OR c.`name`= :second_name LIMIT 1", nativeQuery = true)
     Category findBySecondOrName(String second_name);
 
+    // lấy 4 chuyên mục cha có số lượng bài viết nhiều nhất
+    @Query(value = """
+            SELECT result.id, result.name, result.second_name, result.parent_id, result.create_date
+            FROM (SELECT parent.*, COUNT(*) AS post_count
+            FROM category AS child
+            JOIN category AS parent ON child.parent_id = parent.id
+            JOIN article ON article.category_id = child.id
+            GROUP BY parent.id, parent.name
+            ORDER BY post_count DESC
+            LIMIT 4) result\s""", nativeQuery = true)
+    List<Category> find4ParentCatHaveMaxArticle();
 
 }

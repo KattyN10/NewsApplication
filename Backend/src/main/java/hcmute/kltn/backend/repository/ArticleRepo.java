@@ -36,15 +36,11 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     List<Article> findByStatusOrderByCreate_dateDesc(Status status);
 
     // tìm latest article mỗi parent category
-    @Query(value = """
-            SELECT result1.* FROM (SELECT a.*, c.parent_id FROM article AS a JOIN category AS c ON a.category_id = c.id
-            WHERE a.create_date = (
-              SELECT MAX(create_date)
-              FROM article AS a2
-              WHERE a.category_id = a2.category_id
-            ) AND a.`status` = "PUBLIC"
-            GROUP BY c.parent_id) result1 JOIN category c ON result1.parent_id = c.id""", nativeQuery = true)
-    List<Article> findLatestArtPerParentCat();
+    @Query(value = "SELECT a.* FROM article a JOIN category c ON a.category_id=c.id " +
+            "WHERE c.parent_id = :categoryId AND a.status=\"PUBLIC\" AND a.create_date = " +
+            "(SELECT MAX(a.create_date) FROM article a  JOIN category c ON a.category_id=c.id " +
+            "WHERE c.parent_id = :categoryId AND a.status=\"PUBLIC\")", nativeQuery = true)
+    Article findLatestArtPerCat(String categoryId);
 
     // lấy 4 bài viết có SL react max
     @Query(value = """

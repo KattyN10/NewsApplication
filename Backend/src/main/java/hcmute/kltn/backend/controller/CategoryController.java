@@ -2,10 +2,8 @@ package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.CategoryDTO;
 import hcmute.kltn.backend.service.CategoryService;
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,4 +55,5 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDTO>> getParentCats() {
         return ResponseEntity.ok(categoryService.findParentCategories());
     }
+
 }

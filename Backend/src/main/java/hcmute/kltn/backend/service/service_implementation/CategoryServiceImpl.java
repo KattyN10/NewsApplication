@@ -104,4 +104,5 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(parent -> modelMapper.map(parent, CategoryDTO.class))
                 .collect(Collectors.toList());
     }
+
 }
