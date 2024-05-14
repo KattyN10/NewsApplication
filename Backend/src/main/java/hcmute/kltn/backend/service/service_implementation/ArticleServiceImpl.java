@@ -3,6 +3,7 @@ package hcmute.kltn.backend.service.service_implementation;
 import com.darkprograms.speech.translator.GoogleTranslate;
 import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.AverageStar;
+import hcmute.kltn.backend.dto.FeedbackDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
 import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.entity.*;
@@ -15,6 +16,7 @@ import hcmute.kltn.backend.service.ImageUploadService;
 import hcmute.kltn.backend.service.VoteStarService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -36,11 +38,12 @@ public class ArticleServiceImpl implements ArticleService {
     private final VoteStarService voteStarService;
     private final TagArticleRepo tagArticleRepo;
     private final TagRepo tagRepo;
+    private final FeedbackRepo feedbackRepo;
 
     @PreAuthorize("hasAuthority('WRITER')")
     @Override
-    public ArticleDTO createArticle(MultipartFile file, ArticleRequest articleRequest,
-                                    TagArticleRequest tagArticleRequest) {
+    public ArticleDTO createArticle(@Nullable MultipartFile file, ArticleRequest articleRequest,
+                                    @Nullable TagArticleRequest tagArticleRequest) {
         Article article = new Article();
         Category category = categoryRepo.findById(articleRequest.getCategory().getId())
                 .orElseThrow(() -> new RuntimeException("Category not found."));
@@ -49,30 +52,36 @@ public class ArticleServiceImpl implements ArticleService {
         User user = userRepo.findByEmail(name).orElseThrow();
 
         try {
-            String imgUrl = imageUploadService.saveImage(file, UploadPurpose.ARTICLE_AVATAR);
+            if (file != null) {
+                String imgUrl = imageUploadService.saveImage(file, UploadPurpose.ARTICLE_AVATAR);
+                article.setAvatar(imgUrl);
+            }
             article.setTitle(articleRequest.getTitle());
             article.setAbstracts(articleRequest.getAbstracts());
             article.setContent(articleRequest.getContent());
             article.setCreate_date(LocalDateTime.now());
-            article.setReading_time(readingTime(articleRequest.getContent()));
+            article.setReading_time(readingTime(article.getContent()));
             article.setStatus(Status.DRAFT);
-            article.setAvatar(imgUrl);
             article.setArtSource(ArtSource.PQ_EXPRESS);
             article.setCategory(category);
             article.setUser(user);
 
-            List<Tag> tagList = new ArrayList<>();
-            for (Tag tag : tagArticleRequest.getTagList()) {
-                Tag foundTag = tagRepo.findById(tag.getId())
-                        .orElseThrow(() -> new NullPointerException("No tag with id: " + tag.getId()));
-                tagList.add(foundTag);
-            }
-            articleRepo.save(article);
-            for (Tag tag : tagList) {
-                TagArticle tagArticle = new TagArticle();
-                tagArticle.setArticle(article);
-                tagArticle.setTag(tag);
-                tagArticleRepo.save(tagArticle);
+            if (tagArticleRequest != null) {
+                List<Tag> tagList = new ArrayList<>();
+                for (Tag tag : tagArticleRequest.getTagList()) {
+                    Tag foundTag = tagRepo.findById(tag.getId())
+                            .orElseThrow(() -> new NullPointerException("No tag with id: " + tag.getId()));
+                    tagList.add(foundTag);
+                }
+                articleRepo.save(article);
+                for (Tag tag : tagList) {
+                    TagArticle tagArticle = new TagArticle();
+                    tagArticle.setArticle(article);
+                    tagArticle.setTag(tag);
+                    tagArticleRepo.save(tagArticle);
+                }
+            } else {
+                articleRepo.save(article);
             }
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
@@ -118,8 +127,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @PreAuthorize("hasAuthority('WRITER')")
     @Override
-    public ArticleDTO updateArticle(String id, MultipartFile file, ArticleRequest articleRequest,
-                                    TagArticleRequest tagArticleRequest) {
+    public ArticleDTO updateArticle(String id, @Nullable MultipartFile file,
+                                    ArticleRequest articleRequest,
+                                    @Nullable TagArticleRequest tagArticleRequest) {
         Article article = articleRepo.findById(id)
                 .orElseThrow(() -> new NullPointerException("Article not found."));
         var context = SecurityContextHolder.getContext();
@@ -130,13 +140,14 @@ public class ArticleServiceImpl implements ArticleService {
         if (user != article.getUser()) {
             throw new RuntimeException("Other users' posts cannot be updated.");
         } else {
-            try {
-                String urlImg = imageUploadService.saveImage(file, UploadPurpose.ARTICLE_AVATAR);
-                article.setAvatar(urlImg);
-            } catch (IOException e) {
-                throw new RuntimeException(e.getMessage());
+            if (file != null) {
+                try {
+                    String urlImg = imageUploadService.saveImage(file, UploadPurpose.ARTICLE_AVATAR);
+                    article.setAvatar(urlImg);
+                } catch (IOException e) {
+                    throw new RuntimeException(e.getMessage());
+                }
             }
-
             if (articleRequest.getTitle() != null) {
                 article.setTitle(articleRequest.getTitle());
             }
@@ -152,8 +163,9 @@ public class ArticleServiceImpl implements ArticleService {
                 article.setCategory(category);
             }
             article.setStatus(Status.DRAFT);
+
             // update tag
-            if (!tagArticleRequest.getTagList().isEmpty()) {
+            if (tagArticleRequest != null) {
                 // delete old tags
                 List<TagArticle> tagArticleList = tagArticleRepo.findByArticle(article);
                 tagArticleRepo.deleteAll(tagArticleList);
@@ -267,6 +279,12 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public List<ArticleDTO> findByCatId(String id) {
+        List<Article> articleList = articleRepo.findByCatId(id);
+        return null;
+    }
+
+    @Override
     public List<ArticleDTO> searchArticle(String keyword) {
         try {
             String language = GoogleTranslate.detectLanguage(keyword);
@@ -280,6 +298,48 @@ public class ArticleServiceImpl implements ArticleService {
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    @PreAuthorize("hasAuthority('EDITOR')")
+    @Override
+    public List<ArticleDTO> findDraftArticles() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
+        List<Article> articleList = articleRepo.findDraftArticle(user.getId());
+        return articleList.stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasAuthority('EDITOR')")
+    @Override
+    public ArticleDTO publicArticle(String articleId) {
+        Article article = articleRepo.findById(articleId)
+                .orElseThrow(() -> new NullPointerException("No article with id: " + articleId));
+        article.setStatus(Status.PUBLIC);
+        articleRepo.save(article);
+        return modelMapper.map(article, ArticleDTO.class);
+    }
+
+    @PreAuthorize("hasAuthority('EDITOR')")
+    @Override
+    public ArticleDTO refuseArticle(FeedbackDTO feedbackDTO) {
+        Article article = articleRepo.findById(feedbackDTO.getArticle().getId())
+                .orElseThrow(() -> new NullPointerException("No article with id: " + feedbackDTO.getArticle().getId()));
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
+
+        article.setStatus(Status.REFUSED);
+        articleRepo.save(article);
+
+        Feedback feedback = new Feedback();
+        feedback.setArticle(article);
+        feedback.setUser(user);
+        feedback.setFeedback(feedbackDTO.getFeedback());
+        feedbackRepo.save(feedback);
+        return modelMapper.map(article, ArticleDTO.class);
     }
 
     @Override

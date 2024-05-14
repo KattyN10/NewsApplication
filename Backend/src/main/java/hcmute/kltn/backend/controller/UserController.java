@@ -1,7 +1,6 @@
 package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.request.UpdatePassRequest;
-import hcmute.kltn.backend.dto.response.ApiResponse;
 import hcmute.kltn.backend.dto.UserDTO;
 import hcmute.kltn.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +54,11 @@ public class UserController {
     public ResponseEntity<String> updatePassword(
             @RequestBody UpdatePassRequest updatePassRequest){
         return ResponseEntity.ok(userService.updatePassword(updatePassRequest));
+    }
+
+    @GetMapping("/find-editors")
+    public ResponseEntity<List<UserDTO>> getEditorList(){
+        return ResponseEntity.ok(userService.findEditors());
     }
 
 

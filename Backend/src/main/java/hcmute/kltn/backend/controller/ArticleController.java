@@ -1,6 +1,7 @@
 package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.ArticleDTO;
+import hcmute.kltn.backend.dto.FeedbackDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
 import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.service.ArticleService;
@@ -21,16 +22,16 @@ public class ArticleController {
     public ResponseEntity<ArticleDTO> createArticle(
             @RequestPart(value = "image", required = false) MultipartFile file,
             @RequestPart("body") ArticleRequest articleRequest,
-            @RequestPart(value = "tag", required = false) TagArticleRequest tagArticleRequest) {
+            @RequestPart(value = "tag", required =  false) TagArticleRequest tagArticleRequest) {
         return ResponseEntity.ok(articleService.createArticle(file, articleRequest, tagArticleRequest));
     }
 
     @PostMapping("/update")
     public ResponseEntity<ArticleDTO> updateArticle(
             @RequestPart("articleId") String articleId,
-            @RequestPart(value = "image") MultipartFile file,
+            @RequestPart(value = "image", required = false) MultipartFile file,
             @RequestPart("body") ArticleRequest articleRequest,
-            @RequestPart(value = "tag") TagArticleRequest tagArticleRequest) {
+            @RequestPart(value = "tag", required = false) TagArticleRequest tagArticleRequest) {
         return ResponseEntity.ok(articleService.updateArticle(articleId, file, articleRequest, tagArticleRequest));
     }
 
@@ -80,6 +81,21 @@ public class ArticleController {
     public ResponseEntity<List<ArticleDTO>> searchArticle(
             @RequestParam("keyword") String keyword) {
         return ResponseEntity.ok(articleService.searchArticle(keyword));
+    }
+
+    @GetMapping("/find-draft")
+    public ResponseEntity<List<ArticleDTO>> findDraft() {
+        return ResponseEntity.ok(articleService.findDraftArticles());
+    }
+
+    @PostMapping("/public-article")
+    public ResponseEntity<ArticleDTO> publicArt(@RequestParam("articleId") String id){
+        return ResponseEntity.ok(articleService.publicArticle(id));
+    }
+
+    @PostMapping("/refuse-article")
+    public ResponseEntity<ArticleDTO> refuseArt(@RequestBody FeedbackDTO feedbackDTO){
+        return ResponseEntity.ok(articleService.refuseArticle(feedbackDTO));
     }
 
 }

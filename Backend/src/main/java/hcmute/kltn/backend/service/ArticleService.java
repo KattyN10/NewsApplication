@@ -1,8 +1,10 @@
 package hcmute.kltn.backend.service;
 
 import hcmute.kltn.backend.dto.ArticleDTO;
+import hcmute.kltn.backend.dto.FeedbackDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
 import hcmute.kltn.backend.dto.request.TagArticleRequest;
+import hcmute.kltn.backend.entity.Article;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -32,7 +34,11 @@ public interface ArticleService {
 
     List<ArticleDTO> getRandomArtSameCat(String catId);
 
-//    List<ArticleDTO> findByCatId(String id, int page, int size);
+    List<ArticleDTO> findByCatId(String id);
 
     List<ArticleDTO> searchArticle(String keyword);
+
+    List<ArticleDTO> findDraftArticles();
+    ArticleDTO publicArticle(String articleId);
+    ArticleDTO refuseArticle(FeedbackDTO feedbackDTO);
 }

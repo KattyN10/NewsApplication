@@ -113,7 +113,6 @@ public class UserServiceImpl implements UserService {
 
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
-
         User user = userRepo.findByEmail(name)
                 .orElseThrow(() -> new RuntimeException("User not found."));
         boolean oldPassMatchOldPass = passwordEncoder.matches(updatePassRequest.getOldPassword(), user.getPassword());
@@ -131,6 +130,15 @@ public class UserServiceImpl implements UserService {
             userRepo.save(user);
             return "Update password successfully.";
         }
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Override
+    public List<UserDTO> findEditors() {
+        List<User> editorList = userRepo.findEditors();
+        return editorList.stream()
+                .map(user -> modelMapper.map(user, UserDTO.class))
+                .collect(Collectors.toList());
     }
 
 }
