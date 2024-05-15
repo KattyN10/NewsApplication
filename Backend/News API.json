@@ -223,6 +223,21 @@
 						"url": "http://localhost:8080/api/v1/user/update-password"
 					},
 					"response": []
+				},
+				{
+					"name": "Find Editors",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxNTY3MDI3MywiZXhwIjoxNzE1Njg0NzEzfQ.K4-v7caoNKQfQ9TBeSh8slvcIc3C7rW8NvuwKnpyHoM"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/v1/user/find-editors"
+					},
+					"response": []
 				}
 			]
 		},
@@ -593,7 +608,7 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxdXlAZ21haWwuY29tIiwiaWF0IjoxNzE0NTMwMjg4LCJleHAiOjE3MTQ1NDQ3Mjh9.45kzc4hGdoxt0nm5rmOustZcdJjI2bYTBUbzsbfJCSU"
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxdXlAZ21haWwuY29tIiwiaWF0IjoxNzE1Njc2NjEwLCJleHAiOjE3MTU2OTEwNTB9.UIhal-DueMaGrwNxS8aGwBX74hXYv0VW2wcUWnJRwps"
 							}
 						},
 						"method": "POST",
@@ -603,21 +618,21 @@
 							"formdata": [
 								{
 									"key": "image",
-									"contentType": "",
 									"type": "file",
-									"src": "/C:/Users/truon/OneDrive/Hình ảnh/Cuộn phim/WIN_20240501_09_29_05_Pro.jpg"
+									"src": [],
+									"disabled": true
 								},
 								{
 									"key": "body",
-									"value": "{\n    \"title\" : \"test title\",\n    \"abstracts\" : \"test abstracts\",\n    \"content\" : \"test content content content content\",\n    \"category\" : {\n        \"id\" : \"b42ae747-e2f7-4447-ac70-142561c71358\"\n    }\n}",
+									"value": "{\n    \"title\" : \"test title udpate\",\n    \"abstracts\" : \"test abstracts update\",\n    \"content\" : \"test content content content content update\",\n    \"category\" : {\n        \"id\" : \"b42ae747-e2f7-4447-ac70-142561c71358\"\n    }\n}",
 									"contentType": "application/json",
 									"type": "text"
 								},
 								{
 									"key": "tag",
-									"value": "{\n  \"tagList\": [\n    {\n      \"id\": \"34353b45-aeba-4525-b40e-9290edf915a4\"\n    },\n    {\n      \"id\": \"754f03d1-ec2b-4af1-a414-7b27c2b14884\"\n    }\n  ]\n}",
-									"contentType": "application/json",
-									"type": "text"
+									"value": "",
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -702,6 +717,35 @@
 					"response": []
 				},
 				{
+					"name": "Find By Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/article/anonymous/find-by-category?categoryId=02a94e20-3bcc-4bea-9ddc-149ea8fd94b8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"article",
+								"anonymous",
+								"find-by-category"
+							],
+							"query": [
+								{
+									"key": "categoryId",
+									"value": "02a94e20-3bcc-4bea-9ddc-149ea8fd94b8"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Top3 Star Article",
 					"request": {
 						"method": "GET",
@@ -711,11 +755,11 @@
 					"response": []
 				},
 				{
-					"name": "Get Top6 Newest",
+					"name": "Get Top5 Newest",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "http://localhost:8080/api/v1/article/anonymous/get-top6-newest"
+						"url": "http://localhost:8080/api/v1/article/anonymous/get-top5-newest"
 					},
 					"response": []
 				},
@@ -786,30 +830,37 @@
 				},
 				{
 					"name": "Search",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/v1/article/anonymous/search?keyword=baby",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"v1",
-								"article",
-								"anonymous",
-								"search"
-							],
-							"query": [
-								{
-									"key": "keyword",
-									"value": "baby"
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"keyList\":[\"xe đạp\", \"vàng\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
-						}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/article/anonymous/search"
+					},
+					"response": []
+				},
+				{
+					"name": "Editor Find Draft Art",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhAZ21haWwuY29tIiwiaWF0IjoxNzE1Njc2MDc2LCJleHAiOjE3MTU2OTA1MTZ9.xSt4A7MNwukceaJkpCfem8I8cb-rEQf8iQzoMDMljwQ"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/v1/article/find-draft"
 					},
 					"response": []
 				}
@@ -1283,6 +1334,210 @@
 						"method": "GET",
 						"header": [],
 						"url": "http://localhost:8080/api/v1/follow-category/get-followed-articles"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Editor Manage Cat API",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxNTY3MDI3MywiZXhwIjoxNzE1Njg0NzEzfQ.K4-v7caoNKQfQ9TBeSh8slvcIc3C7rW8NvuwKnpyHoM"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\":{\r\n        \"id\":\"d3f3c11a-0564-4eb0-9852-a951fe75e39f\"\r\n    },\r\n    \"category\":{\r\n        \"id\":\"\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/editor-manage/create"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxNTY3MDI3MywiZXhwIjoxNzE1Njg0NzEzfQ.K4-v7caoNKQfQ9TBeSh8slvcIc3C7rW8NvuwKnpyHoM"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/editor-manage/delete?id=f1ccfab3-c98a-4ea2-9351-8c1a865cedce",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"editor-manage",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "f1ccfab3-c98a-4ea2-9351-8c1a865cedce"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxNTY3MDI3MywiZXhwIjoxNzE1Njg0NzEzfQ.K4-v7caoNKQfQ9TBeSh8slvcIc3C7rW8NvuwKnpyHoM"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\":{\r\n        \"id\":\"dead4d20-01d2-419c-ab42-3b91abf49fde\"\r\n    },\r\n    \"category\":{\r\n        \"id\":\"2afc7980-6f4d-4a1e-a4c8-fc6da7d3ceee\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/editor-manage/update?id=0e0e1fab-872c-4220-bec5-a2c061152799",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"editor-manage",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "0e0e1fab-872c-4220-bec5-a2c061152799"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxNTY3Mjg1NywiZXhwIjoxNzE1Njg3Mjk3fQ.yx_US8OlHKWNf0bdwSsvpogYHGtgaicqTt9UnOyHY7I"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/v1/editor-manage/get-all"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Editor Public Article",
+			"item": [
+				{
+					"name": "Public Article",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhAZ21haWwuY29tIiwiaWF0IjoxNzE1Njc5MTMxLCJleHAiOjE3MTU2OTM1NzF9.BLb61PWz2AuaWiyp7Qdp3aLWo6srwvV0NDEYnRNgIJQ"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/article/public-article?articleId=c03eecc7-7e3e-44ea-8410-58f8939bac43",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"article",
+								"public-article"
+							],
+							"query": [
+								{
+									"key": "articleId",
+									"value": "c03eecc7-7e3e-44ea-8410-58f8939bac43"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refuse Article",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhAZ21haWwuY29tIiwiaWF0IjoxNzE1Njc5MTMxLCJleHAiOjE3MTU2OTM1NzF9.BLb61PWz2AuaWiyp7Qdp3aLWo6srwvV0NDEYnRNgIJQ"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"article\":{\r\n        \"id\":\"c03eecc7-7e3e-44ea-8410-58f8939bac43\"\r\n    },\r\n    \"feedback\":\"nnnnnnnnn\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/article/refuse-article"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Feedback API",
+			"item": [
+				{
+					"name": "Find Feedback List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxdXlAZ21haWwuY29tIiwiaWF0IjoxNzE1NjgwNzA3LCJleHAiOjE3MTU2OTUxNDd9.xgnn1qJxn8o0KDqyS4nxZN8sloZ-bL16HJvINsqNTlQ"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/v1/feedback/find-feedback"
 					},
 					"response": []
 				}

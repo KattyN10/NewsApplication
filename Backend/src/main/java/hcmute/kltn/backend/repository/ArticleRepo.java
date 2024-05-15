@@ -65,11 +65,15 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     @Query("select a from Article a where a.artSource = ?1 order by a.create_date DESC")
     List<Article> findByArtSourceOrderByCreate_dateDesc(ArtSource artSource);
 
-    @Query(value = "SELECT * FROM article WHERE MATCH(title, abstracts, content) AGAINST(?1) AND `status`=\"PUBLIC\"", nativeQuery = true)
+//    @Query(value = "SELECT * FROM article WHERE MATCH(title, abstracts, content) AGAINST(?1) AND `status`=\"PUBLIC\"", nativeQuery = true)
+//    List<Article> searchArticle(String keyword);
+
+    @Query(value = "SELECT * FROM article WHERE title LIKE %:keyword% OR abstracts LIKE %:keyword% " +
+            "OR content LIKE %:keyword% AND status='PUBLIC'", nativeQuery = true)
     List<Article> searchArticle(String keyword);
 
     // editor lấy những bài draft có chuyên mục được editor quản lý
-    @Query(value = """
+    @Query(value = """  
             SELECT a.* FROM article a JOIN editor_manage_cat e ON a.category_id=e.category_id\s
             WHERE a.`status`="DRAFT" AND e.editor_id=:editorId\s
             ORDER BY a.create_date DESC""", nativeQuery = true)

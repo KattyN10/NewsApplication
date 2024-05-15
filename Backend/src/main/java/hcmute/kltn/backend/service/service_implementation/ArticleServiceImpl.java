@@ -5,6 +5,7 @@ import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.AverageStar;
 import hcmute.kltn.backend.dto.FeedbackDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
+import hcmute.kltn.backend.dto.request.SearchRequest;
 import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.entity.*;
 import hcmute.kltn.backend.entity.enum_entity.ArtSource;
@@ -297,16 +298,49 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDTO> searchArticle(String keyword) {
-        try {
-            String language = GoogleTranslate.detectLanguage(keyword);
-            if (Objects.equals(language, "en")) {
-                keyword = GoogleTranslate.translate("vi", keyword);
+    public List<ArticleDTO> searchArticle(SearchRequest searchRequest) {
+        List<String> keyRequest = searchRequest.getKeyList();
+        List<String> keyList = new ArrayList<>();
+        List<Article> searchResult = new ArrayList<>();
+        if (!keyRequest.isEmpty()) {
+            for (String word : keyRequest) {
+                word = translateEnToVi(word);
+                keyList.add(word);
             }
-            List<Article> articleList = articleRepo.searchArticle(keyword);
-            return articleList.stream()
-                    .map(article -> modelMapper.map(article, ArticleDTO.class))
-                    .collect(Collectors.toList());
+            for (String keyword : keyList) {
+                List<Article> articleList = articleRepo.searchArticle(keyword);
+                for (Article art : articleList) {
+                    if (!checkExistsInResult(searchResult, art)){
+                        searchResult.add(art);
+                    }
+                }
+            }
+            System.out.println("Count search result: " + searchResult.size());
+        }
+        return searchResult.stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    private boolean checkExistsInResult(List<Article> articleList, Article article) {
+        if (!articleList.isEmpty()) {
+            for (Article art : articleList) {
+                if (art.getId().equals(article.getId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private String translateEnToVi(String word) {
+        String result = word;
+        try {
+            String language = GoogleTranslate.detectLanguage(word);
+            if (Objects.equals(language, "en")) {
+                result = GoogleTranslate.translate("vi", word);
+            }
+            return result;
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }

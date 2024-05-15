@@ -3,6 +3,7 @@ package hcmute.kltn.backend.service;
 import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.FeedbackDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
+import hcmute.kltn.backend.dto.request.SearchRequest;
 import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.entity.Article;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +37,7 @@ public interface ArticleService {
 
     List<ArticleDTO> findByCatId(String categoryId);
 
-    List<ArticleDTO> searchArticle(String keyword);
+    List<ArticleDTO> searchArticle(SearchRequest searchRequest);
 
     List<ArticleDTO> findDraftArticles();
 

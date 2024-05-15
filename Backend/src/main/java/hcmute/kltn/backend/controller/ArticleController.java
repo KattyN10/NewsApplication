@@ -3,6 +3,7 @@ package hcmute.kltn.backend.controller;
 import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.FeedbackDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
+import hcmute.kltn.backend.dto.request.SearchRequest;
 import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.service.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -79,8 +80,8 @@ public class ArticleController {
 
     @GetMapping("/anonymous/search")
     public ResponseEntity<List<ArticleDTO>> searchArticle(
-            @RequestParam("keyword") String keyword) {
-        return ResponseEntity.ok(articleService.searchArticle(keyword));
+            @RequestBody SearchRequest searchRequest) {
+        return ResponseEntity.ok(articleService.searchArticle(searchRequest));
     }
 
     @GetMapping("/anonymous/find-by-category")
