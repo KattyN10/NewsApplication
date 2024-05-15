@@ -14,9 +14,19 @@ import java.util.List;
 @Repository
 public interface ArticleRepo extends JpaRepository<Article, String> {
     // tìm cat theo catId
-    @Query(value = "SELECT * FROM article a WHERE a.category_id = :catId AND a.`status`=\"PUBLIC\" " +
-            "ORDER BY a.create_date DESC", nativeQuery = true)
-    List<Article> findByCatId(String catId);
+    @Query(value = """
+            SELECT a.* FROM article a JOIN category c ON a.category_id=c.id\s
+            WHERE c.parent_id=:categoryId AND a.`status`="PUBLIC" 
+            ORDER BY a.create_date DESC
+            """, nativeQuery = true)
+    List<Article> findByParentCat(String categoryId);
+
+    @Query(value = """
+            SELECT a.* FROM article a WHERE a.`status`=\"PUBLIC\" 
+            AND a.category_id=:categoryId 
+            ORDER BY a.create_date DESC
+            """, nativeQuery = true)
+    List<Article> findByChildCat(String categoryId);
 
     // check exists article by title and abstracts
     boolean existsByTitleOrAbstracts(String title, String abstracts);

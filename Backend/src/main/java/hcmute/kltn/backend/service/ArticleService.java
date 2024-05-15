@@ -34,11 +34,13 @@ public interface ArticleService {
 
     List<ArticleDTO> getRandomArtSameCat(String catId);
 
-    List<ArticleDTO> findByCatId(String id);
+    List<ArticleDTO> findByCatId(String categoryId);
 
     List<ArticleDTO> searchArticle(String keyword);
 
     List<ArticleDTO> findDraftArticles();
+
     ArticleDTO publicArticle(String articleId);
+
     ArticleDTO refuseArticle(FeedbackDTO feedbackDTO);
 }

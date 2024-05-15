@@ -264,7 +264,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleDTO> getRandomArtSameCat(String catId) {
-        List<Article> articleList = articleRepo.findByCatId(catId);
+        List<Article> articleList = articleRepo.findByChildCat(catId);
         Collections.shuffle(articleList);
         if (articleList.size() < 5) {
             return articleList.stream()
@@ -279,9 +279,21 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDTO> findByCatId(String id) {
-        List<Article> articleList = articleRepo.findByCatId(id);
-        return null;
+    public List<ArticleDTO> findByCatId(String categoryId) {
+        Category category = categoryRepo.findById(categoryId)
+                .orElseThrow(() -> new NullPointerException("No category with i: " + categoryId));
+        List<Category> categoryList = categoryRepo.findChildCategories(category.getId());
+        List<Article> articleList;
+        if (!categoryList.isEmpty()) {
+            // là chuyên mục cha
+            articleList = articleRepo.findByParentCat(categoryId);
+        } else {
+            // là chuyên mục con
+            articleList = articleRepo.findByChildCat(categoryId);
+        }
+        return articleList.stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override

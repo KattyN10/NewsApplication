@@ -10,6 +10,8 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepo extends JpaRepository<Category, String> {
+
+    @Query("select (count(c) > 0) from Category c where c.name = ?1 and c.parent = ?2")
     boolean existsByNameAndParent(String name, Category parent);
 
     @Query("SELECT new hcmute.kltn.backend.entity.Category(c.id, c.name,c.second_name, c.create_date, " +

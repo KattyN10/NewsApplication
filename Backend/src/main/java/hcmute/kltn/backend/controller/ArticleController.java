@@ -22,7 +22,7 @@ public class ArticleController {
     public ResponseEntity<ArticleDTO> createArticle(
             @RequestPart(value = "image", required = false) MultipartFile file,
             @RequestPart("body") ArticleRequest articleRequest,
-            @RequestPart(value = "tag", required =  false) TagArticleRequest tagArticleRequest) {
+            @RequestPart(value = "tag", required = false) TagArticleRequest tagArticleRequest) {
         return ResponseEntity.ok(articleService.createArticle(file, articleRequest, tagArticleRequest));
     }
 
@@ -83,18 +83,24 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.searchArticle(keyword));
     }
 
+    @GetMapping("/anonymous/find-by-category")
+    public ResponseEntity<List<ArticleDTO>> findByCat(
+            @RequestParam("categoryId") String categoryId) {
+        return ResponseEntity.ok(articleService.findByCatId(categoryId));
+    }
+
     @GetMapping("/find-draft")
     public ResponseEntity<List<ArticleDTO>> findDraft() {
         return ResponseEntity.ok(articleService.findDraftArticles());
     }
 
     @PostMapping("/public-article")
-    public ResponseEntity<ArticleDTO> publicArt(@RequestParam("articleId") String id){
+    public ResponseEntity<ArticleDTO> publicArt(@RequestParam("articleId") String id) {
         return ResponseEntity.ok(articleService.publicArticle(id));
     }
 
     @PostMapping("/refuse-article")
-    public ResponseEntity<ArticleDTO> refuseArt(@RequestBody FeedbackDTO feedbackDTO){
+    public ResponseEntity<ArticleDTO> refuseArt(@RequestBody FeedbackDTO feedbackDTO) {
         return ResponseEntity.ok(articleService.refuseArticle(feedbackDTO));
     }
 
