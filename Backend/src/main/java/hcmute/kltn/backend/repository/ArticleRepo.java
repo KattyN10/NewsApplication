@@ -50,7 +50,7 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             "WHERE c.parent_id = :categoryId AND a.status=\"PUBLIC\" AND a.create_date = " +
             "(SELECT MAX(a.create_date) FROM article a  JOIN category c ON a.category_id=c.id " +
             "WHERE c.parent_id = :categoryId AND a.status=\"PUBLIC\")", nativeQuery = true)
-    Article findLatestArtPerCat(String categoryId);
+    Article findLatestArtOfCat(String categoryId);
 
     // lấy 4 bài viết có SL react max
     @Query(value = """

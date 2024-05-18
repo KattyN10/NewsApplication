@@ -51,9 +51,14 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.findChildCategories(categoryId));
     }
 
-    @GetMapping("/anonymous/get-parent")
-    public ResponseEntity<List<CategoryDTO>> getParentCats() {
+    @GetMapping("/anonymous/get-all-parent")
+    public ResponseEntity<List<CategoryDTO>> getAllParentCats() {
         return ResponseEntity.ok(categoryService.findParentCategories());
+    }
+
+    @GetMapping("/anonymous/get-shorten-parent")
+    public ResponseEntity<List<CategoryDTO>> getShortenParentCats() {
+        return ResponseEntity.ok(categoryService.findParentCategoriesShorten());
     }
 
 }

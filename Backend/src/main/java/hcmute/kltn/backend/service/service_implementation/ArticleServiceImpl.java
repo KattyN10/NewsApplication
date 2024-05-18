@@ -231,9 +231,23 @@ public class ArticleServiceImpl implements ArticleService {
         List<Category> categoryList = categoryRepo.find4ParentCatHaveMaxArticle();
         List<Article> result = new ArrayList<>();
         for (Category category : categoryList) {
-            Article article = articleRepo.findLatestArtPerCat(category.getId());
+            Article article = articleRepo.findLatestArtOfCat(category.getId());
             result.add(article);
         }
+        return result.stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ArticleDTO> getLatestArtPerParentCat() {
+        List<Category> categoryList = categoryRepo.findParentCategories();
+        List<Article> result = new ArrayList<>();
+        for (Category category:categoryList){
+            Article article = articleRepo.findLatestArtOfCat(category.getId());
+            result.add(article);
+        }
+        System.out.println("SL: " + result.size());
         return result.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());

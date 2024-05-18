@@ -12,4 +12,5 @@ public interface CategoryService {
     CategoryDTO updateCategory(CategoryDTO categoryDTO, String id);
     List<CategoryDTO> findChildCategories(String parentId);
     List<CategoryDTO> findParentCategories();
+    List<CategoryDTO> findParentCategoriesShorten();
 }

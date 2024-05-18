@@ -52,9 +52,14 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.getTop5NewestArticle());
     }
 
-    @GetMapping("/anonymous/get-latest-per-parent-cat")
+    @GetMapping("/anonymous/get-latest-per-4-cat")
     public ResponseEntity<List<ArticleDTO>> getLatestPer4Cat() {
         return ResponseEntity.ok(articleService.getLatestArtPer4Cat());
+    }
+
+    @GetMapping("/anonymous/get-latest-per-parent-cat")
+    public ResponseEntity<List<ArticleDTO>> getLatestPerParentCat() {
+        return ResponseEntity.ok(articleService.getLatestArtPerParentCat());
     }
 
     @GetMapping("/anonymous/get-top6-react-article")

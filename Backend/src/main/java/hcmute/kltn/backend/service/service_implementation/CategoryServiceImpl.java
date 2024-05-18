@@ -105,4 +105,12 @@ public class CategoryServiceImpl implements CategoryService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<CategoryDTO> findParentCategoriesShorten() {
+        List<Category> parentCat = categoryRepo.findParentCategories();
+        return parentCat.subList(0, 12).stream()
+                .map(parent -> modelMapper.map(parent, CategoryDTO.class))
+                .collect(Collectors.toList());
+    }
+
 }
