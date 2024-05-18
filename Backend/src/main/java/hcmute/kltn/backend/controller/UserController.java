@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping("/get-my-infor")
-    public ResponseEntity<UserDTO> getMyInfor(){
+    public ResponseEntity<UserDTO> getMyInfor() {
         return ResponseEntity.ok(userService.getMyInfor());
     }
 
@@ -45,19 +45,18 @@ public class UserController {
 
     @PostMapping("/update-user-avatar")
     public ResponseEntity<UserDTO> updateUserAvatar(
-            @RequestParam("userId") String userId,
-            @RequestParam("file") MultipartFile file ) {
-        return ResponseEntity.ok(userService.updateUserAvatar(userId, file));
+            @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(userService.updateUserAvatar(file));
     }
 
     @PostMapping("/update-password")
     public ResponseEntity<String> updatePassword(
-            @RequestBody UpdatePassRequest updatePassRequest){
+            @RequestBody UpdatePassRequest updatePassRequest) {
         return ResponseEntity.ok(userService.updatePassword(updatePassRequest));
     }
 
     @GetMapping("/find-editors")
-    public ResponseEntity<List<UserDTO>> getEditorList(){
+    public ResponseEntity<List<UserDTO>> getEditorList() {
         return ResponseEntity.ok(userService.findEditors());
     }
 

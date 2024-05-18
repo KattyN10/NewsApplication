@@ -85,9 +85,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUserAvatar(String id, MultipartFile file) {
-        User user = userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public UserDTO updateUserAvatar(MultipartFile file) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
         try {
             String imageUrl = imageUploadService.saveImage(file, UploadPurpose.USER_AVATAR);
             user.setAvatar(imageUrl);
