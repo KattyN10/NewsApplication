@@ -63,13 +63,13 @@ public class ArticleController {
     }
 
     @GetMapping("/anonymous/get-latest-vnexpress")
-    public ResponseEntity<List<ArticleDTO>> getLatestVnExpress() {
-        return ResponseEntity.ok(articleService.getLatestByVnExpress());
+    public ResponseEntity<List<ArticleDTO>> getLatestVnExpress(@RequestParam("count") int count) {
+        return ResponseEntity.ok(articleService.getLatestByVnExpress(count));
     }
 
     @GetMapping("/anonymous/get-latest-dantri")
-    public ResponseEntity<List<ArticleDTO>> getLatestDanTri() {
-        return ResponseEntity.ok(articleService.getLatestByDanTri());
+    public ResponseEntity<List<ArticleDTO>> getLatestDanTri(@RequestParam("count") int count) {
+        return ResponseEntity.ok(articleService.getLatestByDanTri(count));
     }
 
     @GetMapping("/anonymous/get-random-same-category")

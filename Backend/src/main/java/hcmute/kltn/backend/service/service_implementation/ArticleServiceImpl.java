@@ -248,17 +248,17 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDTO> getLatestByVnExpress() {
+    public List<ArticleDTO> getLatestByVnExpress(int count) {
         List<Article> articleList = articleRepo.findByArtSourceOrderByCreate_dateDesc(ArtSource.VN_EXPRESS);
-        return articleList.subList(0, 6).stream()
+        return articleList.subList(0, count).stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ArticleDTO> getLatestByDanTri() {
+    public List<ArticleDTO> getLatestByDanTri(int count) {
         List<Article> articleList = articleRepo.findByArtSourceOrderByCreate_dateDesc(ArtSource.DAN_TRI);
-        return articleList.subList(0, 5).stream()
+        return articleList.subList(0, count).stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
     }
@@ -310,7 +310,7 @@ public class ArticleServiceImpl implements ArticleService {
             for (String keyword : keyList) {
                 List<Article> articleList = articleRepo.searchArticle(keyword);
                 for (Article art : articleList) {
-                    if (!checkExistsInResult(searchResult, art)){
+                    if (!checkExistsInResult(searchResult, art)) {
                         searchResult.add(art);
                     }
                 }
@@ -320,30 +320,6 @@ public class ArticleServiceImpl implements ArticleService {
         return searchResult.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
-    }
-
-    private boolean checkExistsInResult(List<Article> articleList, Article article) {
-        if (!articleList.isEmpty()) {
-            for (Article art : articleList) {
-                if (art.getId().equals(article.getId())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private String translateEnToVi(String word) {
-        String result = word;
-        try {
-            String language = GoogleTranslate.detectLanguage(word);
-            if (Objects.equals(language, "en")) {
-                result = GoogleTranslate.translate("vi", word);
-            }
-            return result;
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
     }
 
     @PreAuthorize("hasAuthority('EDITOR')")
@@ -394,6 +370,30 @@ public class ArticleServiceImpl implements ArticleService {
         int avgReadingSpeed = 200;
         return (float) (count / avgReadingSpeed);
 
+    }
+
+    private boolean checkExistsInResult(List<Article> articleList, Article article) {
+        if (!articleList.isEmpty()) {
+            for (Article art : articleList) {
+                if (art.getId().equals(article.getId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private String translateEnToVi(String word) {
+        String result = word;
+        try {
+            String language = GoogleTranslate.detectLanguage(word);
+            if (Objects.equals(language, "en")) {
+                result = GoogleTranslate.translate("vi", word);
+            }
+            return result;
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
 }

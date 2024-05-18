@@ -29,9 +29,9 @@ public interface ArticleService {
 
     List<ArticleDTO> getTop6ReactArt();
 
-    List<ArticleDTO> getLatestByVnExpress();
+    List<ArticleDTO> getLatestByVnExpress(int count);
 
-    List<ArticleDTO> getLatestByDanTri();
+    List<ArticleDTO> getLatestByDanTri(int count);
 
     List<ArticleDTO> getRandomArtSameCat(String catId);
 
