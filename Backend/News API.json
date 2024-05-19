@@ -755,6 +755,35 @@
 					"response": []
 				},
 				{
+					"name": "Get Detail Art",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/article/anonymous/get-detail-art?articleId=015db0c9-1256-466e-b39c-6b2e957c05fc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"article",
+								"anonymous",
+								"get-detail-art"
+							],
+							"query": [
+								{
+									"key": "articleId",
+									"value": "015db0c9-1256-466e-b39c-6b2e957c05fc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Top3 Star Article",
 					"request": {
 						"method": "GET",

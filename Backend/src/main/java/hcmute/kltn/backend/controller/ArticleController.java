@@ -42,6 +42,11 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.deleteArticle(articleId));
     }
 
+    @GetMapping("/anonymous/get-detail-art")
+    public ResponseEntity<ArticleDTO> getDetail(@RequestParam("articleId") String articleId) {
+        return ResponseEntity.ok(articleService.findById(articleId));
+    }
+
     @GetMapping("/anonymous/get-top3-star")
     public ResponseEntity<List<ArticleDTO>> getTop3Star() {
         return ResponseEntity.ok(articleService.getTop3StarArticle());
