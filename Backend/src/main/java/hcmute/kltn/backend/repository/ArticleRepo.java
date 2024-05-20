@@ -79,5 +79,13 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             ORDER BY a.create_date DESC""", nativeQuery = true)
     List<Article> findDraftArticle(String editorId);
 
+    // lấy article list theo tag
+    @Query(value = """
+            SELECT a.* FROM `article` a JOIN tag_article t ON a.id=t.article_id\s
+            WHERE t.tags_id=:tagId AND a.`status`="PUBLIC"\s
+            ORDER BY a.create_date DESC
+            """, nativeQuery = true)
+    List<Article> findByTag(String tagId);
+
 
 }

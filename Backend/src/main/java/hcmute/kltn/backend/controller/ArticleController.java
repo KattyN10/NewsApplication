@@ -100,6 +100,12 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.findByCatId(categoryId));
     }
 
+    @GetMapping("anonymous/find-by-tag")
+    public ResponseEntity<List<ArticleDTO>> findByTag(
+            @RequestParam("tagId") String tagId){
+        return ResponseEntity.ok(articleService.findByTagId(tagId));
+    }
+
     @GetMapping("/find-draft")
     public ResponseEntity<List<ArticleDTO>> findDraft() {
         return ResponseEntity.ok(articleService.findDraftArticles());

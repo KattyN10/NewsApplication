@@ -37,6 +37,7 @@ public interface ArticleService {
     List<ArticleDTO> getRandomArtSameCat(String catId);
 
     List<ArticleDTO> findByCatId(String categoryId);
+    List<ArticleDTO> findByTagId(String tagId);
 
     List<ArticleDTO> searchArticle(SearchRequest searchRequest);
 

@@ -312,6 +312,16 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public List<ArticleDTO> findByTagId(String tagId) {
+        Tag tag = tagRepo.findById(tagId)
+                .orElseThrow(() -> new NullPointerException("No tag with id: " + tagId));
+        List<Article> articleList = articleRepo.findByTag(tag.getId());
+        return articleList.stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<ArticleDTO> searchArticle(SearchRequest searchRequest) {
         List<String> keyRequest = searchRequest.getKeyList();
         List<String> keyList = new ArrayList<>();
