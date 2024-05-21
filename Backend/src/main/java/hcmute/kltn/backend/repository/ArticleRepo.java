@@ -46,10 +46,12 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     List<Article> findByStatusOrderByCreate_dateDesc(Status status);
 
     // tìm latest article mỗi parent category
-    @Query(value = "SELECT a.* FROM article a JOIN category c ON a.category_id=c.id " +
-            "WHERE c.parent_id = :categoryId AND a.status=\"PUBLIC\" AND a.create_date = " +
-            "(SELECT MAX(a.create_date) FROM article a  JOIN category c ON a.category_id=c.id " +
-            "WHERE c.parent_id = :categoryId AND a.status=\"PUBLIC\")", nativeQuery = true)
+    @Query(value = """
+        SELECT a.* FROM article a JOIN category c ON a.category_id=c.id WHERE c.parent_id = :categoryId 
+        AND a.status="PUBLIC" AND a.create_date = (SELECT MAX(a.create_date) FROM article a  
+        JOIN category c ON a.category_id=c.id WHERE c.parent_id = :categoryId 
+        AND a.status="PUBLIC") LIMIT 1
+            """, nativeQuery = true)
     Article findLatestArtOfCat(String categoryId);
 
     // lấy 4 bài viết có SL react max
@@ -69,7 +71,7 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
 //    List<Article> searchArticle(String keyword);
 
     @Query(value = "SELECT * FROM article WHERE title LIKE %:keyword% OR abstracts LIKE %:keyword% " +
-            "OR content LIKE %:keyword% AND status='PUBLIC'", nativeQuery = true)
+            "OR content LIKE %:keyword% AND status='PUBLIC'" , nativeQuery = true)
     List<Article> searchArticle(String keyword);
 
     // editor lấy những bài draft có chuyên mục được editor quản lý
