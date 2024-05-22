@@ -33,6 +33,7 @@ public interface ArticleService {
     List<ArticleDTO> getLatestByVnExpress(int count);
 
     List<ArticleDTO> getLatestByDanTri(int count);
+    List<ArticleDTO> getLatestByPqExpress(int count);
 
     List<ArticleDTO> getRandomArtSameCat(String catId);
 

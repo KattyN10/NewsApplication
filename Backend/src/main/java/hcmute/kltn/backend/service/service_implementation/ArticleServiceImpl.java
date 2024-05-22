@@ -243,7 +243,7 @@ public class ArticleServiceImpl implements ArticleService {
     public List<ArticleDTO> getLatestArtPerParentCat() {
         List<Category> categoryList = categoryRepo.findParentCategories();
         List<Article> result = new ArrayList<>();
-        for (Category category:categoryList){
+        for (Category category : categoryList) {
             Article article = articleRepo.findLatestArtOfCat(category.getId());
             result.add(article);
         }
@@ -263,7 +263,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleDTO> getLatestByVnExpress(int count) {
-        List<Article> articleList = articleRepo.findByArtSourceOrderByCreate_dateDesc(ArtSource.VN_EXPRESS);
+        List<Article> articleList = articleRepo.findByArtSourceAndStatusOrderByCreate_dateDesc(ArtSource.VN_EXPRESS, Status.PUBLIC);
         return articleList.subList(0, count).stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
@@ -271,7 +271,15 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleDTO> getLatestByDanTri(int count) {
-        List<Article> articleList = articleRepo.findByArtSourceOrderByCreate_dateDesc(ArtSource.DAN_TRI);
+        List<Article> articleList = articleRepo.findByArtSourceAndStatusOrderByCreate_dateDesc(ArtSource.DAN_TRI, Status.PUBLIC);
+        return articleList.subList(0, count).stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ArticleDTO> getLatestByPqExpress(int count) {
+        List<Article> articleList = articleRepo.findByArtSourceAndStatusOrderByCreate_dateDesc(ArtSource.PQ_EXPRESS, Status.PUBLIC);
         return articleList.subList(0, count).stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());

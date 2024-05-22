@@ -64,8 +64,8 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             nativeQuery = true)
     List<Article> findMostReactArticle();
 
-    @Query("select a from Article a where a.artSource = ?1 order by a.create_date DESC")
-    List<Article> findByArtSourceOrderByCreate_dateDesc(ArtSource artSource);
+    @Query("select a from Article a where a.artSource = ?1 and a.status = ?2 order by a.create_date DESC")
+    List<Article> findByArtSourceAndStatusOrderByCreate_dateDesc(ArtSource artSource, Status status);
 
 //    @Query(value = "SELECT * FROM article WHERE MATCH(title, abstracts, content) AGAINST(?1) AND `status`=\"PUBLIC\"", nativeQuery = true)
 //    List<Article> searchArticle(String keyword);

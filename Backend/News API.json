@@ -863,7 +863,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/article/anonymous/get-latest-vnexpress?count=4",
+							"raw": "http://localhost:8080/api/v1/article/anonymous/get-latest-vnexpress?count=6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -879,7 +879,7 @@
 							"query": [
 								{
 									"key": "count",
-									"value": "4"
+									"value": "6"
 								}
 							]
 						}
@@ -892,7 +892,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/article/anonymous/get-latest-dantri?count=4",
+							"raw": "http://localhost:8080/api/v1/article/anonymous/get-latest-dantri?count=6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -908,7 +908,36 @@
 							"query": [
 								{
 									"key": "count",
-									"value": "4"
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Latest PqExpress",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/article/anonymous/get-latest-pqexpress?count=6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"article",
+								"anonymous",
+								"get-latest-pqexpress"
+							],
+							"query": [
+								{
+									"key": "count",
+									"value": "6"
 								}
 							]
 						}

@@ -82,6 +82,11 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.getLatestByDanTri(count));
     }
 
+    @GetMapping("/anonymous/get-latest-pqexpress")
+    public ResponseEntity<List<ArticleDTO>> getLatestPqExpress(@RequestParam("count") int count) {
+        return ResponseEntity.ok(articleService.getLatestByPqExpress(count));
+    }
+
     @GetMapping("/anonymous/get-random-same-category")
     public ResponseEntity<List<ArticleDTO>> getRandomArtSameCat(
             @RequestParam("categoryId") String categoryId) {
