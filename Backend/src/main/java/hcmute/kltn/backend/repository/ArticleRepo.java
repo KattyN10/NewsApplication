@@ -70,8 +70,10 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
 //    @Query(value = "SELECT * FROM article WHERE MATCH(title, abstracts, content) AGAINST(?1) AND `status`=\"PUBLIC\"", nativeQuery = true)
 //    List<Article> searchArticle(String keyword);
 
-    @Query(value = "SELECT * FROM article WHERE title LIKE %:keyword% OR abstracts LIKE %:keyword% " +
-            "AND status='PUBLIC'", nativeQuery = true)
+    @Query(value = """
+            SELECT * FROM article WHERE (title LIKE CONCAT('% ', :keyword, ' %') 
+            OR abstracts LIKE CONCAT('% ', :keyword, ' %'))AND status='PUBLIC'
+            """, nativeQuery = true)
     List<Article> searchArticle(String keyword);
 
     // editor lấy những bài draft có chuyên mục được editor quản lý
