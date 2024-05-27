@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstname\":\"Quy\",\r\n    \"lastname\":\"Cao Tran Khanh\",\r\n    \"email\":\"ngan@gmail.com\",\r\n    \"password\":\"123\",\r\n    \"dob\": \"2004-10-09\"\r\n}",
+							"raw": "{\r\n    \"firstname\":\"Quy\",\r\n    \"lastname\":\"Cao Tran Khanh\",\r\n    \"email\":\"ngan@gmail.com\",\r\n    \"password\":\"123\",\r\n    \"dob\": \"2004-10-09\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1006,6 +1006,36 @@
 						"method": "GET",
 						"header": [],
 						"url": "http://localhost:8080/api/v1/article/find-draft"
+					},
+					"response": []
+				},
+				{
+					"name": "Writer Get Non-Public Art",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxdXlAZ21haWwuY29tIiwiaWF0IjoxNzE2Nzk3NzQ0LCJleHAiOjE3MTY4MTIxODR9.2mOPR9ExGdy0vluxE08h5nbeJhRNMFHAtocBr1t1x5E"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/v1/article/writer-get-non-public-art"
+					},
+					"response": []
+				},
+				{
+					"name": "Writer Get Public Art",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxdXlAZ21haWwuY29tIiwiaWF0IjoxNzE2Nzk3NzQ0LCJleHAiOjE3MTY4MTIxODR9.2mOPR9ExGdy0vluxE08h5nbeJhRNMFHAtocBr1t1x5E"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/v1/article/writer-get-public-art"
 					},
 					"response": []
 				}

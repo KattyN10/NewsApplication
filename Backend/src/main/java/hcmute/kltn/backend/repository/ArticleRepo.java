@@ -47,11 +47,11 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
 
     // tìm latest article mỗi parent category
     @Query(value = """
-        SELECT a.* FROM article a JOIN category c ON a.category_id=c.id WHERE c.parent_id = :categoryId 
-        AND a.status="PUBLIC" AND a.create_date = (SELECT MAX(a.create_date) FROM article a  
-        JOIN category c ON a.category_id=c.id WHERE c.parent_id = :categoryId 
-        AND a.status="PUBLIC") LIMIT 1
-            """, nativeQuery = true)
+            SELECT a.* FROM article a JOIN category c ON a.category_id=c.id WHERE c.parent_id = :categoryId 
+            AND a.status="PUBLIC" AND a.create_date = (SELECT MAX(a.create_date) FROM article a  
+            JOIN category c ON a.category_id=c.id WHERE c.parent_id = :categoryId 
+            AND a.status="PUBLIC") LIMIT 1
+                """, nativeQuery = true)
     Article findLatestArtOfCat(String categoryId);
 
     // lấy 4 bài viết có SL react max
@@ -71,7 +71,7 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
 //    List<Article> searchArticle(String keyword);
 
     @Query(value = "SELECT * FROM article WHERE title LIKE %:keyword% OR abstracts LIKE %:keyword% " +
-            "OR content LIKE %:keyword% AND status='PUBLIC'" , nativeQuery = true)
+            "OR content LIKE %:keyword% AND status='PUBLIC'", nativeQuery = true)
     List<Article> searchArticle(String keyword);
 
     // editor lấy những bài draft có chuyên mục được editor quản lý
@@ -88,6 +88,23 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             ORDER BY a.create_date DESC
             """, nativeQuery = true)
     List<Article> findByTag(String tagId);
+
+    // writer lấy list non-public cá nhân
+    @Query(value = """
+            SELECT a.*, u.firstname FROM article a JOIN user u ON a.writer_id=u.id 
+            WHERE (a.status='DRAFT' OR a.status='REFUSED') 
+            AND u.id=:writerId 
+            ORDER BY a.create_date DESC
+                        """, nativeQuery = true)
+    List<Article> writerGetNonPublicArt(String writerId);
+
+    // writer lấy list public cá nhân
+    @Query(value = """
+            SELECT a.*, u.firstname FROM article a JOIN user u ON a.writer_id=u.id
+            WHERE a.status='PUBLIC' AND u.id=:writerId
+            ORDER BY a.create_date DESC
+            """, nativeQuery = true)
+    List<Article> writerGetPublicArt(String writerId);
 
 
 }

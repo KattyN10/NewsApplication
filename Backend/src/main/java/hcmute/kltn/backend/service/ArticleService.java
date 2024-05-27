@@ -24,6 +24,7 @@ public interface ArticleService {
     List<ArticleDTO> getTop5NewestArticle();
 
     List<ArticleDTO> getLatestArtPer4Cat();
+
     List<ArticleDTO> getLatestArtPerParentCat();
 
     List<ArticleDTO> getTop6ReactArt();
@@ -31,11 +32,13 @@ public interface ArticleService {
     List<ArticleDTO> getLatestByVnExpress(int count);
 
     List<ArticleDTO> getLatestByDanTri(int count);
+
     List<ArticleDTO> getLatestByPqExpress(int count);
 
     List<ArticleDTO> getRandomArtSameCat(String catId);
 
     List<ArticleDTO> findByCatId(String categoryId);
+
     List<ArticleDTO> findByTagId(String tagId);
 
     List<ArticleDTO> searchArticle(List<String> keyList);
@@ -45,4 +48,8 @@ public interface ArticleService {
     ArticleDTO publicArticle(String articleId);
 
     ArticleDTO refuseArticle(FeedbackDTO feedbackDTO);
+
+    List<ArticleDTO> writerGetListNonPublicArt();
+
+    List<ArticleDTO> writerGetListPublicArt();
 }

@@ -125,4 +125,14 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.refuseArticle(feedbackDTO));
     }
 
+    @GetMapping("/writer-get-non-public-art")
+    public ResponseEntity<List<ArticleDTO>> getNonPublicArticle() {
+        return ResponseEntity.ok(articleService.writerGetListNonPublicArt());
+    }
+
+    @GetMapping("/writer-get-public-art")
+    public ResponseEntity<List<ArticleDTO>> getPublicArticle() {
+        return ResponseEntity.ok(articleService.writerGetListPublicArt());
+    }
+
 }

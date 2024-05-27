@@ -394,6 +394,30 @@ public class ArticleServiceImpl implements ArticleService {
         return modelMapper.map(article, ArticleDTO.class);
     }
 
+    @PreAuthorize("hasAuthority('WRITER')")
+    @Override
+    public List<ArticleDTO> writerGetListNonPublicArt() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
+        List<Article> articleList = articleRepo.writerGetNonPublicArt(user.getId());
+        return articleList.stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasAuthority('WRITER')")
+    @Override
+    public List<ArticleDTO> writerGetListPublicArt() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
+        List<Article> articleList = articleRepo.writerGetPublicArt(user.getId());
+        return articleList.stream()
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
+    }
+
     @Override
     public Float readingTime(String content) {
         int count = content.split("\\s+").length;
