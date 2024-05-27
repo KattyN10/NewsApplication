@@ -5,7 +5,6 @@ import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.AverageStar;
 import hcmute.kltn.backend.dto.FeedbackDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
-import hcmute.kltn.backend.dto.request.SearchRequest;
 import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.entity.*;
 import hcmute.kltn.backend.entity.enum_entity.ArtSource;
@@ -330,20 +329,19 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDTO> searchArticle(SearchRequest searchRequest) {
-        List<String> keyRequest = searchRequest.getKeyList();
-        List<String> keyList = new ArrayList<>();
+    public List<ArticleDTO> searchArticle(List<String> keyList) {
+        List<String> vnKeyList = new ArrayList<>();
         List<Article> searchResult = new ArrayList<>();
-        if (!keyRequest.isEmpty()) {
-            for (String word : keyRequest) {
+        if (!keyList.isEmpty()) {
+            for (String word : keyList) {
                 word = translateEnToVi(word);
-                keyList.add(word);
+                vnKeyList.add(word);
             }
-            for (String keyword : keyList) {
+            for (String keyword : vnKeyList) {
                 List<Article> articleList = articleRepo.searchArticle(keyword);
-                for (Article art : articleList) {
-                    if (!checkExistsInResult(searchResult, art)) {
-                        searchResult.add(art);
+                for (Article article : articleList) {
+                    if (!checkExistsInResult(searchResult, article)) {
+                        searchResult.add(article);
                     }
                 }
             }
