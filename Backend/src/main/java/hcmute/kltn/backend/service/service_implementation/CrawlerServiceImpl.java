@@ -276,17 +276,23 @@ public class CrawlerServiceImpl implements CrawlerService {
             // get category
             Elements elementsCat = document.select("ul.dt-text-c808080.dt-text-base.dt-leading-5.dt-p-0.dt-list-none > li");
             Category category;
+            Category parentCat = categoryRepo.findParentCatByNameOrSecond(elementsCat.get(0).text());
             if (elementsCat.size() == 1) {
-                category = categoryRepo.findParentCatByName(elementsCat.get(0).text());
-                if (category != null) {
+                if (parentCat != null) {
                     Random random = new Random();
-                    List<Category> childCat = categoryRepo.findChildCategories(category.getId());
+                    List<Category> childCat = categoryRepo.findChildCategories(parentCat.getId());
                     article.setCategory(childCat.get(random.nextInt(childCat.size())));
                 }
-            } else if (elementsCat.size() != 0) {
+            } else {
                 category = categoryRepo.findBySecondOrName(elementsCat.get(1).text());
                 if (category != null) {
                     article.setCategory(category);
+                } else {
+                    if (parentCat != null) {
+                        Random random = new Random();
+                        List<Category> childCat = categoryRepo.findChildCategories(parentCat.getId());
+                        article.setCategory(childCat.get(random.nextInt(childCat.size())));
+                    }
                 }
             }
 

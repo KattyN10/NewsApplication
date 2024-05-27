@@ -24,6 +24,9 @@ public interface CategoryRepo extends JpaRepository<Category, String> {
     @Query(value = "SELECT * FROM category c WHERE c.parent_id IS NULL AND c.name = :name ", nativeQuery = true)
     Category findParentCatByName(@Param("name") String name);
 
+    @Query(value = "SELECT * FROM category c WHERE c.parent_id IS NULL AND (c.name = :name OR c.second_name= :name)", nativeQuery = true)
+    Category findParentCatByNameOrSecond(String name);
+
     Category findByNameAndParent(String name, Category parent);
 
     @Query(value = "SELECT * FROM (SELECT * FROM category WHERE category.parent_id IS NOT NULL) c \n" +

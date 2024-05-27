@@ -71,7 +71,7 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
 //    List<Article> searchArticle(String keyword);
 
     @Query(value = "SELECT * FROM article WHERE title LIKE %:keyword% OR abstracts LIKE %:keyword% " +
-            "OR content LIKE %:keyword% AND status='PUBLIC'", nativeQuery = true)
+            "AND status='PUBLIC'", nativeQuery = true)
     List<Article> searchArticle(String keyword);
 
     // editor lấy những bài draft có chuyên mục được editor quản lý
