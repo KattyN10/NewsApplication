@@ -1,7 +1,6 @@
 package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.ArticleDTO;
-import hcmute.kltn.backend.dto.FeedbackDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
 import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.service.ArticleService;
@@ -121,8 +120,8 @@ public class ArticleController {
     }
 
     @PostMapping("/refuse-article")
-    public ResponseEntity<ArticleDTO> refuseArt(@RequestBody FeedbackDTO feedbackDTO) {
-        return ResponseEntity.ok(articleService.refuseArticle(feedbackDTO));
+    public ResponseEntity<ArticleDTO> refuseArt(@RequestParam("articleId") String id) {
+        return ResponseEntity.ok(articleService.refuseArticle(id));
     }
 
     @GetMapping("/writer-get-non-public-art")

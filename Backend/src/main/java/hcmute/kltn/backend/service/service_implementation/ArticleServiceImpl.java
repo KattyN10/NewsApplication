@@ -3,7 +3,6 @@ package hcmute.kltn.backend.service.service_implementation;
 import com.darkprograms.speech.translator.GoogleTranslate;
 import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.dto.AverageStar;
-import hcmute.kltn.backend.dto.FeedbackDTO;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
 import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.entity.*;
@@ -38,7 +37,6 @@ public class ArticleServiceImpl implements ArticleService {
     private final VoteStarService voteStarService;
     private final TagArticleRepo tagArticleRepo;
     private final TagRepo tagRepo;
-    private final FeedbackRepo feedbackRepo;
 
     @PreAuthorize("hasAuthority('WRITER')")
     @Override
@@ -376,21 +374,17 @@ public class ArticleServiceImpl implements ArticleService {
 
     @PreAuthorize("hasAuthority('EDITOR')")
     @Override
-    public ArticleDTO refuseArticle(FeedbackDTO feedbackDTO) {
-        Article article = articleRepo.findById(feedbackDTO.getArticle().getId())
-                .orElseThrow(() -> new NullPointerException("No article with id: " + feedbackDTO.getArticle().getId()));
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
-        User user = userRepo.findByEmail(name).orElseThrow();
-
+    public ArticleDTO refuseArticle(String articleId) {
+        Article article = articleRepo.findById(articleId)
+                .orElseThrow(() -> new NullPointerException("No article with id: " + articleId));
         article.setStatus(Status.REFUSED);
         articleRepo.save(article);
 
-        Feedback feedback = new Feedback();
-        feedback.setArticle(article);
-        feedback.setUser(user);
-        feedback.setFeedback(feedbackDTO.getFeedback());
-        feedbackRepo.save(feedback);
+//        Feedback feedback = new Feedback();
+//        feedback.setArticle(article);
+//        feedback.setUser(user);
+//        feedback.setFeedback(feedbackDTO.getFeedback());
+//        feedbackRepo.save(feedback);
         return modelMapper.map(article, ArticleDTO.class);
     }
 

@@ -1678,41 +1678,31 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhAZ21haWwuY29tIiwiaWF0IjoxNzE1Njc5MTMxLCJleHAiOjE3MTU2OTM1NzF9.BLb61PWz2AuaWiyp7Qdp3aLWo6srwvV0NDEYnRNgIJQ"
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmhAZ21haWwuY29tIiwiaWF0IjoxNzE2Nzk4NDQ1LCJleHAiOjE3MTY4MTI4ODV9.HHlBazUAZ5hApDDtc5s199Sky79Xg1BaCze-A61ONDk"
 							}
 						},
 						"method": "POST",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"article\":{\r\n        \"id\":\"c03eecc7-7e3e-44ea-8410-58f8939bac43\"\r\n    },\r\n    \"feedback\":\"nnnnnnnnn\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+						"url": {
+							"raw": "http://localhost:8080/api/v1/article/refuse-article?articleId=02003c9b-3f20-4768-838d-d1484530b44f",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"article",
+								"refuse-article"
+							],
+							"query": [
+								{
+									"key": "articleId",
+									"value": "02003c9b-3f20-4768-838d-d1484530b44f"
 								}
-							}
-						},
-						"url": "http://localhost:8080/api/v1/article/refuse-article"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Feedback API",
-			"item": [
-				{
-					"name": "Find Feedback List",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxdXlAZ21haWwuY29tIiwiaWF0IjoxNzE1NjgwNzA3LCJleHAiOjE3MTU2OTUxNDd9.xgnn1qJxn8o0KDqyS4nxZN8sloZ-bL16HJvINsqNTlQ"
-							}
-						},
-						"method": "GET",
-						"header": [],
-						"url": "http://localhost:8080/api/v1/feedback/find-feedback"
+							]
+						}
 					},
 					"response": []
 				}
