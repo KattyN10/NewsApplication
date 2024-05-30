@@ -103,9 +103,9 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.findByCatId(categoryId));
     }
 
-    @GetMapping("anonymous/find-by-tag")
+    @GetMapping("/anonymous/find-by-tag")
     public ResponseEntity<List<ArticleDTO>> findByTag(
-            @RequestParam("tagId") String tagId){
+            @RequestParam("tagId") String tagId) {
         return ResponseEntity.ok(articleService.findByTagId(tagId));
     }
 
@@ -133,5 +133,10 @@ public class ArticleController {
     public ResponseEntity<List<ArticleDTO>> getPublicArticle() {
         return ResponseEntity.ok(articleService.writerGetListPublicArt());
     }
+
+//    @GetMapping("/anonymous/test")
+//    public ResponseEntity<String> test() {
+//        return ResponseEntity.ok(articleService.uploadCloud());
+//    }
 
 }

@@ -22,6 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -411,6 +414,27 @@ public class ArticleServiceImpl implements ArticleService {
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
     }
+
+//    @Override
+//    public String uploadCloud() {
+//        List<Article> articleList = articleRepo.findAll();
+//        for (Article article : articleList) {
+//            if (article.getAvatar() != null) {
+//                try {
+//                    if (!article.getAvatar().startsWith("https://res.cloudinary.com/")
+//                            && imageUploadService.sizeChecker(article.getAvatar())) {
+//                        String url = imageUploadService.saveImageViaUrl(article.getAvatar());
+//                        article.setAvatar(url);
+//                        articleRepo.save(article);
+//                    }
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e.getMessage());
+//                }
+//            }
+//
+//        }
+//        return "Success.";
+//    }
 
     @Override
     public Float readingTime(String content) {

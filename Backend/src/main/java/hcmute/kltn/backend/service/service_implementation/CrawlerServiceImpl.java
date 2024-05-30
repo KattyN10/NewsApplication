@@ -12,6 +12,7 @@ import hcmute.kltn.backend.repository.TagArticleRepo;
 import hcmute.kltn.backend.repository.TagRepo;
 import hcmute.kltn.backend.service.ArticleService;
 import hcmute.kltn.backend.service.CrawlerService;
+import hcmute.kltn.backend.service.ImageUploadService;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,6 +35,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     private final TagArticleRepo tagArticleRepo;
     private final TagRepo tagRepo;
     private final ArticleRepo articleRepo;
+    private final ImageUploadService imageUploadService;
 
     @Override
     public void crawlVnExpress() {
@@ -207,7 +209,13 @@ public class CrawlerServiceImpl implements CrawlerService {
             Element imgElement = document.selectFirst("img[itemprop=contentUrl]");
             if (imgElement != null) {
                 String src = imgElement.attr("data-src");
-                article.setAvatar(src);
+                if (imageUploadService.sizeChecker(src)){
+                    String newUrl = imageUploadService.saveImageViaUrl(src);
+                    article.setAvatar(newUrl);
+                } else{
+                    article.setAvatar(src);
+                }
+
             }
 
             // get content
@@ -300,7 +308,12 @@ public class CrawlerServiceImpl implements CrawlerService {
             Element imgElement = document.selectFirst("img[data-content-name=article-content-image]");
             if (imgElement != null) {
                 String src = imgElement.attr("data-original");
-                article.setAvatar(src);
+                if (imageUploadService.sizeChecker(src)) {
+                    String newUrl = imageUploadService.saveImageViaUrl(src);
+                    article.setAvatar(newUrl);
+                } else {
+                    article.setAvatar(src);
+                }
             }
 
             // get content

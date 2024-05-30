@@ -51,4 +51,6 @@ public interface ArticleService {
     List<ArticleDTO> writerGetListNonPublicArt();
 
     List<ArticleDTO> writerGetListPublicArt();
+
+//    String uploadCloud();
 }

@@ -22,7 +22,7 @@ public class FollowCategoryController {
     }
 
     @DeleteMapping("/un-follow")
-    public ResponseEntity<String> followCategory(
+    public ResponseEntity<String> unFollowCategory(
             @RequestParam String categoryId){
         return ResponseEntity.ok(followCategoryService.removeFollow(categoryId));
     }
