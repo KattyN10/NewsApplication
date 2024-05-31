@@ -63,20 +63,13 @@ public class UserServiceImpl implements UserService {
     public UserDTO updateUserInfor(String id, UserDTO userDTO) {
         User user = userRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        if(!userDTO.getFirstname().isEmpty()) {
+        if (!userDTO.getFirstname().isEmpty()) {
             user.setFirstname(userDTO.getFirstname());
         }
-        if(!userDTO.getLastname().isEmpty()) {
+        if (!userDTO.getLastname().isEmpty()) {
             user.setLastname(userDTO.getLastname());
         }
-        if(!userDTO.getEmail().isEmpty()) {
-            if (userRepo.existsByEmail(userDTO.getEmail())){
-                throw new RuntimeException("Existed email.");
-            } else {
-                user.setEmail(userDTO.getEmail());
-            }
-        }
-        if(userDTO.getDob() != null) {
+        if (userDTO.getDob() != null) {
             user.setDob(userDTO.getDob());
         }
 
@@ -122,11 +115,11 @@ public class UserServiceImpl implements UserService {
         boolean newPassMatchOldPass = passwordEncoder.matches(updatePassRequest.getNewPassword(), user.getPassword());
         String newPassHash = passwordEncoder.encode(updatePassRequest.getNewPassword());
 
-        if (!oldPassMatchOldPass){
+        if (!oldPassMatchOldPass) {
             throw new RuntimeException("Old password entered incorrectly.");
-        } else if (!updatePassRequest.getNewPassword().equals(updatePassRequest.getReEnterPassword())){
+        } else if (!updatePassRequest.getNewPassword().equals(updatePassRequest.getReEnterPassword())) {
             throw new RuntimeException("The re-entered password does not match.");
-        } else if (newPassMatchOldPass){
+        } else if (newPassMatchOldPass) {
             throw new RuntimeException("The new password must not be the same as the old password");
         } else {
             user.setPassword(newPassHash);
