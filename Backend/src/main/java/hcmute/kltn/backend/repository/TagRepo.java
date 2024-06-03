@@ -15,4 +15,5 @@ public interface TagRepo extends JpaRepository<Tag, String> {
 
     @Query(value = "SELECT tag.* FROM tag JOIN tag_article ON tag.id = tag_article.tags_id  WHERE article_id = ?1", nativeQuery = true)
     List<Tag> findByArticleId(String id);
+
 }

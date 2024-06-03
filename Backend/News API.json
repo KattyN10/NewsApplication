@@ -617,7 +617,7 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxdXlAZ21haWwuY29tIiwiaWF0IjoxNzE1Njc2NjEwLCJleHAiOjE3MTU2OTEwNTB9.UIhal-DueMaGrwNxS8aGwBX74hXYv0VW2wcUWnJRwps"
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxdXlAZ21haWwuY29tIiwiaWF0IjoxNzE3NDI1NDY3LCJleHAiOjE3MTc0Mzk5MDd9.TeWMXtOTHhPI9bTlNQvj5LcK9rlc_6-6hY26zUYvXEE"
 							}
 						},
 						"method": "POST",
@@ -639,9 +639,9 @@
 								},
 								{
 									"key": "tag",
-									"value": "",
-									"type": "text",
-									"disabled": true
+									"value": "{\n  \"tagList\": [\n    {\n      \"id\": \"000dae9e-6b4b-4a32-9249-36f394896a05\"\n    },\n    {\n      \"id\": \"0022713d-09dd-4eba-9f46-bc995bce7cc3\"\n    }\n  ]\n}",
+									"contentType": "application/json",
+									"type": "text"
 								}
 							]
 						},
@@ -990,7 +990,27 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/api/v1/article/anonymous/search"
+						"url": {
+							"raw": "http://localhost:8080/api/v1/article/anonymous/search?keyList=xe hơi",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"article",
+								"anonymous",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyList",
+									"value": "xe hơi"
+								}
+							]
+						}
 					},
 					"response": []
 				},
@@ -1368,10 +1388,7 @@
 					"name": "Get Parent Cmt",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxMzg1Nzg4OCwiZXhwIjoxNzEzODcyMzI4fQ.3QoKJ-py-nnG55a-Fpx9D1I2sJan9G2JfBImMSQdeKo"
-							}
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
@@ -1403,10 +1420,7 @@
 					"name": "Get Child Cmt",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxMzg1Nzg4OCwiZXhwIjoxNzEzODcyMzI4fQ.3QoKJ-py-nnG55a-Fpx9D1I2sJan9G2JfBImMSQdeKo"
-							}
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
