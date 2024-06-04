@@ -108,5 +108,12 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             """, nativeQuery = true)
     List<Article> writerGetPublicArt(String writerId);
 
+    // lấy list order by average star DESC
+    @Query(value = """
+            SELECT article.* FROM article JOIN average_star ON article.id = average_star.article_id 
+                             ORDER BY average_star.average_star DESC
+                        """,nativeQuery = true)
+    List<Article> getArticleOrderByAverageStar();
+
 
 }

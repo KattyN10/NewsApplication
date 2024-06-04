@@ -4,5 +4,6 @@ import hcmute.kltn.backend.dto.VoteStarDTO;
 
 public interface VoteStarService {
     VoteStarDTO CUDVote(VoteStarDTO voteStarDTO);
-    Float getAverageStar(String articleId);
+    Float countAverageStar(String articleId);
+    void addAverageStar(String articleId);
 }

@@ -2,7 +2,6 @@ package hcmute.kltn.backend.service.service_implementation;
 
 import com.darkprograms.speech.translator.GoogleTranslate;
 import hcmute.kltn.backend.dto.ArticleDTO;
-import hcmute.kltn.backend.dto.AverageStar;
 import hcmute.kltn.backend.dto.request.ArticleRequest;
 import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.entity.*;
@@ -12,7 +11,6 @@ import hcmute.kltn.backend.entity.enum_entity.UploadPurpose;
 import hcmute.kltn.backend.repository.*;
 import hcmute.kltn.backend.service.ArticleService;
 import hcmute.kltn.backend.service.ImageUploadService;
-import hcmute.kltn.backend.service.VoteStarService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.lang.Nullable;
@@ -22,9 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +32,6 @@ public class ArticleServiceImpl implements ArticleService {
     private final ModelMapper modelMapper;
     private final UserRepo userRepo;
     private final CategoryRepo categoryRepo;
-    private final VoteStarService voteStarService;
     private final TagArticleRepo tagArticleRepo;
     private final TagRepo tagRepo;
 
@@ -199,20 +193,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleDTO> getTop3StarArticle() {
-        List<Article> publicArticles = articleRepo.findByStatus(Status.PUBLIC);
-        List<AverageStar> averageStarList = new ArrayList<>();
-        List<Article> result = new ArrayList<>();
-        for (Article publicArticle : publicArticles) {
-            float star = voteStarService.getAverageStar(publicArticle.getId());
-            AverageStar averageStar = new AverageStar(publicArticle.getId(), star);
-            averageStarList.add(averageStar);
-        }
-        for (AverageStar averageStar : averageStarList) {
-            Article newArticle = articleRepo.findById(averageStar.getId()).orElseThrow();
-            result.add(newArticle);
-        }
-
-        return result.subList(0, 3).stream()
+        List<Article> articleList = articleRepo.getArticleOrderByAverageStar();
+        return articleList.subList(0, 3).stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
     }
