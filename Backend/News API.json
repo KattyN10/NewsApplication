@@ -1258,23 +1258,35 @@
 					"response": []
 				},
 				{
-					"name": "Get Users  React",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "Get React Quantity",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"article\":{\r\n        \"id\":\"22cbd33d-13ea-4648-9e4a-c914fd4dc922\"\r\n    },\r\n    \"typeReact\":\"CLAP\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+						"url": {
+							"raw": "http://localhost:8080/api/v1/react-emotion/anonymous/get-react-quantity?articleId=ad75bbd8-e3b9-43bb-a9cd-77cb4ae6d020&typeReact=HEART",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"react-emotion",
+								"anonymous",
+								"get-react-quantity"
+							],
+							"query": [
+								{
+									"key": "articleId",
+									"value": "ad75bbd8-e3b9-43bb-a9cd-77cb4ae6d020"
+								},
+								{
+									"key": "typeReact",
+									"value": "HEART"
 								}
-							}
-						},
-						"url": "http://localhost:8080/api/v1/react-emotion/anonymous/get-users-react"
+							]
+						}
 					},
 					"response": []
 				}
