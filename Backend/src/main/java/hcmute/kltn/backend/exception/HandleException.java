@@ -22,10 +22,4 @@ public class HandleException {
         ex.printStackTrace();
         return ResponseEntity.badRequest().body("ERROR:  " + ex.getMessage());
     }
-
-//    @ExceptionHandler(ExpiredJwtException.class)
-//    public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException ex) {
-//        ex.printStackTrace();
-//        return ResponseEntity.badRequest().body("ERROR:  " + ex.getMessage());
-//    }
 }

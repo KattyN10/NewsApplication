@@ -1,6 +1,7 @@
 package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.ReactEmotionDTO;
+import hcmute.kltn.backend.entity.enum_entity.TypeReact;
 import hcmute.kltn.backend.service.ReactEmotionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,10 @@ public class ReactEmotionController {
         return ResponseEntity.ok(reactEmotionService.reactEmotion(reactEmotionDTO));
     }
 
-    @GetMapping("/anonymous/get-users-react")
-    public ResponseEntity<List<ReactEmotionDTO>> getUsers(
-            @RequestBody ReactEmotionDTO reactEmotionDTO){
-        return ResponseEntity.ok(reactEmotionService.getUsersReact(reactEmotionDTO));
+    @GetMapping("/anonymous/get-react-quantity")
+    public ResponseEntity<Integer> getUsers(
+            @RequestParam("articleId") String articleId,
+            @RequestParam("typeReact") TypeReact typeReact){
+        return ResponseEntity.ok(reactEmotionService.getReactQuantity(articleId, typeReact));
     }
 }

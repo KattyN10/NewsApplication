@@ -23,7 +23,7 @@ public class TagServiceImpl implements TagService {
     private final ModelMapper modelMapper;
     private final ArticleRepo articleRepo;
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'WRITER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @Override
     public TagDTO createTag(TagDTO tagDTO) {
         Tag tag = new Tag();

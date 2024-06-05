@@ -22,6 +22,6 @@ public class ArticleDTO {
     private ArtSource artSource;
     @ManyToOne
     private Category category;
-    @ManyToOne
-    private User user;
+//    @ManyToOne
+//    private User user;
 }

@@ -60,13 +60,11 @@ public class ReactEmotionServiceImpl implements ReactEmotionService {
     }
 
     @Override
-    public List<ReactEmotionDTO> getUsersReact(ReactEmotionDTO reactEmotionDTO) {
-        Article article = articleRepo.findById(reactEmotionDTO.getArticle().getId())
-                .orElseThrow(() -> new NullPointerException("No article with id: " + reactEmotionDTO.getArticle().getId()));
-
-        List<ReactEmotion> listUsersReact = reactEmotionRepo.findByTypeReactAndArticle_Id(reactEmotionDTO.getTypeReact(), article.getId());
-        return listUsersReact.stream()
-                .map(reactEmotion -> modelMapper.map(reactEmotion, ReactEmotionDTO.class))
-                .collect(Collectors.toList());
+    public int getReactQuantity(String articleId, TypeReact typeReact) {
+        Article article = articleRepo.findById(articleId)
+                .orElseThrow(() -> new NullPointerException("No article with id: " + articleId));
+        List<ReactEmotion> reactEmotionList = reactEmotionRepo.findByTypeReactAndArticle_Id(typeReact, article.getId());
+        return reactEmotionList.size();
     }
+
 }

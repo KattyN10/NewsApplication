@@ -13,7 +13,7 @@ public interface UserRepo extends JpaRepository<User, String> {
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
-    @Query(value = "SELECT * FROM `user` u WHERE u.role=\"EDITOR\"", nativeQuery = true)
-    List<User> findEditors();
+//    @Query(value = "SELECT * FROM `user` u WHERE u.role=\"EDITOR\"", nativeQuery = true)
+//    List<User> findEditors();
 
 }

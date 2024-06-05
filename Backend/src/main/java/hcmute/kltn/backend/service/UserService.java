@@ -16,7 +16,7 @@ public interface UserService {
     UserDTO updateUserAvatar(MultipartFile file);
     UserDTO getMyInfor();
     String updatePassword(UpdatePassRequest updatePassRequest);
-    List<UserDTO> findEditors();
+//    List<UserDTO> findEditors();
 
 
 
