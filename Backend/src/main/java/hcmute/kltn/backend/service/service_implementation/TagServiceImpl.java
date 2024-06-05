@@ -4,7 +4,9 @@ import hcmute.kltn.backend.dto.TagDTO;
 import hcmute.kltn.backend.dto.UserDTO;
 import hcmute.kltn.backend.entity.Article;
 import hcmute.kltn.backend.entity.Tag;
+import hcmute.kltn.backend.entity.TagArticle;
 import hcmute.kltn.backend.repository.ArticleRepo;
+import hcmute.kltn.backend.repository.TagArticleRepo;
 import hcmute.kltn.backend.repository.TagRepo;
 import hcmute.kltn.backend.service.TagService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class TagServiceImpl implements TagService {
     private final TagRepo tagRepo;
     private final ModelMapper modelMapper;
     private final ArticleRepo articleRepo;
+    private final TagArticleRepo tagArticleRepo;
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @Override
@@ -42,6 +45,11 @@ public class TagServiceImpl implements TagService {
     public String deleteTag(String id) {
         Tag tag = tagRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tag not found."));
+
+        List<TagArticle> tagArticleList =tagArticleRepo.findByTag(tag);
+        if (!tagArticleList.isEmpty()) {
+            tagArticleRepo.deleteAll(tagArticleList);
+        }
         tagRepo.delete(tag);
         return "Deleted successfully";
     }

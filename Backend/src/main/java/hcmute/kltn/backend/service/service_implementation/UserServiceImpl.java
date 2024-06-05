@@ -2,11 +2,12 @@ package hcmute.kltn.backend.service.service_implementation;
 
 import hcmute.kltn.backend.dto.UserDTO;
 import hcmute.kltn.backend.dto.request.UpdatePassRequest;
-import hcmute.kltn.backend.entity.User;
+import hcmute.kltn.backend.entity.*;
 import hcmute.kltn.backend.entity.enum_entity.UploadPurpose;
-import hcmute.kltn.backend.repository.UserRepo;
+import hcmute.kltn.backend.repository.*;
 import hcmute.kltn.backend.service.ImageUploadService;
 import hcmute.kltn.backend.service.UserService;
+import hcmute.kltn.backend.service.VoteStarService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,12 @@ public class UserServiceImpl implements UserService {
     private final ImageUploadService imageUploadService;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final VoteStarRepo voteStarRepo;
+    private final FollowCategoryRepo followCategoryRepo;
+    private final VoteStarService voteStarService;
+    private final SavedArticleRepo savedArticleRepo;
+    private final CommentRepo commentRepo;
+    private final ReactEmotionRepo reactEmotionRepo;
 
     @Override
     public UserDetailsService userDetailsService() {
@@ -55,6 +63,35 @@ public class UserServiceImpl implements UserService {
     public String deleteUser(String id) {
         User user = userRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<VoteStar> voteStarList = voteStarRepo.findByUser(user);
+        if (voteStarList != null) {
+            List<Article> articleList = new ArrayList<>();
+            for (VoteStar voteStar : voteStarList) {
+                articleList.add(voteStar.getArticle());
+            }
+            voteStarRepo.deleteAll(voteStarList);
+            for (Article article : articleList) {
+                voteStarService.addAverageStar(article.getId());
+            }
+        }
+        List<FollowCategory> followCategoryList = followCategoryRepo.findByUser(user);
+        if (followCategoryList != null) {
+            followCategoryRepo.deleteAll(followCategoryList);
+        }
+        List<SavedArticle> savedArticleList = savedArticleRepo.findByUserId(user.getId());
+        if (savedArticleList != null) {
+            savedArticleRepo.deleteAll(savedArticleList);
+        }
+        List<Comment> commentList = commentRepo.findByUser(user);
+        if (commentList != null) {
+            commentRepo.deleteAll(commentList);
+        }
+        List<ReactEmotion> reactEmotionList = reactEmotionRepo.findByUser(user);
+        if (reactEmotionList != null) {
+            reactEmotionRepo.deleteAll(reactEmotionList);
+        }
+
         userRepo.deleteById(user.getId());
         return "Deleted user with email:" + user.getEmail() + ".";
     }
