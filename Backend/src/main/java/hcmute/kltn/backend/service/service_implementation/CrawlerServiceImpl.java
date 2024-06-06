@@ -74,6 +74,10 @@ public class CrawlerServiceImpl implements CrawlerService {
 
                         // save article, get and save tag
                         if (articleVnExpress.getCategory() != null) {
+                            if (imageUploadService.sizeChecker(articleVnExpress.getAvatar())) {
+                                String newUrl = imageUploadService.saveImageViaUrl(articleVnExpress.getAvatar());
+                                article.setAvatar(newUrl);
+                            }
                             articleRepo.save(articleVnExpress);
 
                             String[] listTags = getTagsVnExpress(linkArticle);
@@ -132,6 +136,10 @@ public class CrawlerServiceImpl implements CrawlerService {
                         articleDT.setTitle(article.getTitle());
                         articleDT.setAbstracts(article.getAbstracts());
                         if (articleDT.getCategory() != null) {
+                            if (imageUploadService.sizeChecker(articleDT.getAvatar())) {
+                                String newUrl = imageUploadService.saveImageViaUrl(articleDT.getAvatar());
+                                article.setAvatar(newUrl);
+                            }
                             articleRepo.save(articleDT);
                             List<String> listTags = getTagsDanTri(linkArticle);
                             if (!listTags.isEmpty()) {
@@ -209,12 +217,13 @@ public class CrawlerServiceImpl implements CrawlerService {
             Element imgElement = document.selectFirst("img[itemprop=contentUrl]");
             if (imgElement != null) {
                 String src = imgElement.attr("data-src");
-                if (imageUploadService.sizeChecker(src)){
-                    String newUrl = imageUploadService.saveImageViaUrl(src);
-                    article.setAvatar(newUrl);
-                } else{
-                    article.setAvatar(src);
-                }
+                article.setAvatar(src);
+//                if (imageUploadService.sizeChecker(src)){
+//                    String newUrl = imageUploadService.saveImageViaUrl(src);
+//                    article.setAvatar(newUrl);
+//                } else{
+//                    article.setAvatar(src);
+//                }
 
             }
 
@@ -308,12 +317,13 @@ public class CrawlerServiceImpl implements CrawlerService {
             Element imgElement = document.selectFirst("img[data-content-name=article-content-image]");
             if (imgElement != null) {
                 String src = imgElement.attr("data-original");
-                if (imageUploadService.sizeChecker(src)) {
-                    String newUrl = imageUploadService.saveImageViaUrl(src);
-                    article.setAvatar(newUrl);
-                } else {
-                    article.setAvatar(src);
-                }
+                article.setAvatar(src);
+//                if (imageUploadService.sizeChecker(src)) {
+//                    String newUrl = imageUploadService.saveImageViaUrl(src);
+//                    article.setAvatar(newUrl);
+//                } else {
+//                    article.setAvatar(src);
+//                }
             }
 
             // get content
