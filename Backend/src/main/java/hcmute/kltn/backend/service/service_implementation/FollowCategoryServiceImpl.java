@@ -40,7 +40,7 @@ public class FollowCategoryServiceImpl implements FollowCategoryService {
         User user = userRepo.findByEmail(name).orElseThrow();
 
         boolean exists = followCategoryRepo.existsByUserAndCategory(user, category);
-        if (!exists){
+        if (!exists) {
             FollowCategory followCategory = new FollowCategory();
             followCategory.setCategory(category);
             followCategory.setUser(user);
@@ -50,7 +50,7 @@ public class FollowCategoryServiceImpl implements FollowCategoryService {
             if (!childCategory.isEmpty()) {
                 for (Category childCat : childCategory) {
                     boolean exists2 = followCategoryRepo.existsByUserAndCategory(user, childCat);
-                    if (!exists2){
+                    if (!exists2) {
                         FollowCategory tempFollow = new FollowCategory();
                         tempFollow.setUser(user);
                         tempFollow.setCategory(childCat);
@@ -87,14 +87,17 @@ public class FollowCategoryServiceImpl implements FollowCategoryService {
                     }
                 }
                 return "Successfully unfollowed parent category: " + category.getName() + " and children categories.";
-            } else { // là cate con: xóa cate con đó và cate cha
-                Category parentCat = categoryRepo.findParentCatByChild(category.getId());
-                FollowCategory followedParentCat = followCategoryRepo.findByUserAndCategory(user, parentCat);
-                if (followedParentCat != null) {
-                    followCategoryRepo.delete(followedParentCat);
-                }
-                return "Successfully unfollowed category: " + category.getName() + ".";
             }
+            return "Successfully unfollowed parent category: " + category.getName() ;
+
+//            else { // là cate con: xóa cate con đó và cate cha
+//                Category parentCat = categoryRepo.findParentCatByChild(category.getId());
+//                FollowCategory followedParentCat = followCategoryRepo.findByUserAndCategory(user, parentCat);
+//                if (followedParentCat != null) {
+//                    followCategoryRepo.delete(followedParentCat);
+//                }
+//                return "Successfully unfollowed category: " + category.getName() + ".";
+//            }
         }
     }
 
