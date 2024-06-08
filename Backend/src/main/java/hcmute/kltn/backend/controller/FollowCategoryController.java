@@ -1,6 +1,7 @@
 package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.ArticleDTO;
+import hcmute.kltn.backend.dto.CategoryDTO;
 import hcmute.kltn.backend.dto.FollowCategoryDTO;
 import hcmute.kltn.backend.service.FollowCategoryService;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,16 @@ public class FollowCategoryController {
     @GetMapping("/get-followed-articles")
     public ResponseEntity<List<ArticleDTO>> getFollowedArticles(){
         return ResponseEntity.ok(followCategoryService.getFollowedArticle());
+    }
+
+    @GetMapping("/get-followed-parent-cat")
+    public ResponseEntity<List<CategoryDTO>> getFollowedParentCat(){
+        return ResponseEntity.ok(followCategoryService.getFollowedParentCat());
+    }
+
+    @GetMapping("/get-followed-child-cat")
+    public ResponseEntity<List<CategoryDTO>> getFollowedChildCat(
+            @RequestParam("categoryId") String categoryId){
+        return ResponseEntity.ok(followCategoryService.getFollowedChildCat(categoryId));
     }
 }

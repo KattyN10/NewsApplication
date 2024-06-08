@@ -40,15 +40,21 @@ public class SavedArticleServiceImpl implements SavedArticleService {
     }
 
     @Override
-    public String removeFromList(String id) {
-        SavedArticle savedArticle = savedArticleRepo.findById(id)
-                .orElseThrow(() -> new NullPointerException("No result were found."));
-        try {
+    public String removeFromList(String articleId) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
+        Article article = articleRepo.findById(articleId)
+                .orElseThrow(() -> new NullPointerException("No article with id: " + articleId));
+
+        SavedArticle savedArticle = savedArticleRepo.findByArticleAndUser(article, user);
+        if (savedArticle != null) {
             savedArticleRepo.delete(savedArticle);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage());
+            return "Removed from the saved list";
+        } else {
+            return "No saved article";
         }
-        return "Removed from the saved list";
+
     }
 
     @Override
@@ -63,9 +69,13 @@ public class SavedArticleServiceImpl implements SavedArticleService {
     }
 
     @Override
-    public SavedArticleDTO findById(String id) {
-        SavedArticle savedArticle = savedArticleRepo.findById(id)
-                .orElseThrow(() -> new NullPointerException("No result were found"));
+    public SavedArticleDTO findOne(String articleId) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
+        Article article = articleRepo.findById(articleId)
+                .orElseThrow(() -> new NullPointerException("No article with id: " + articleId));
+        SavedArticle savedArticle = savedArticleRepo.findByArticleAndUser(article, user);
         return modelMapper.map(savedArticle, SavedArticleDTO.class);
     }
 }

@@ -13,6 +13,10 @@ import java.util.List;
 
 @Repository
 public interface ArticleRepo extends JpaRepository<Article, String> {
+
+    @Query("select (count(a) > 0) from Article a where a.avatar = ?1")
+    boolean existsByAvatar(String avtar);
+
     // tìm cat theo catId
     @Query(value = """
             SELECT a.* FROM article a JOIN category c ON a.category_id=c.id\s
@@ -76,12 +80,12 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             """, nativeQuery = true)
     List<Article> searchArticle(String keyword);
 
-    // editor lấy những bài draft có chuyên mục được editor quản lý
-    @Query(value = """  
-            SELECT a.* FROM article a JOIN editor_manage_cat e ON a.category_id=e.category_id\s
-            WHERE a.`status`="DRAFT" AND e.editor_id=:editorId\s
-            ORDER BY a.create_date DESC""", nativeQuery = true)
-    List<Article> findDraftArticle(String editorId);
+//    // editor lấy những bài draft có chuyên mục được editor quản lý
+//    @Query(value = """
+//            SELECT a.* FROM article a JOIN editor_manage_cat e ON a.category_id=e.category_id\s
+//            WHERE a.`status`="DRAFT" AND e.editor_id=:editorId\s
+//            ORDER BY a.create_date DESC""", nativeQuery = true)
+//    List<Article> findDraftArticle(String editorId);
 
     // lấy article list theo tag
     @Query(value = """
@@ -91,22 +95,22 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             """, nativeQuery = true)
     List<Article> findByTag(String tagId);
 
-    // writer lấy list non-public cá nhân
-    @Query(value = """
-            SELECT a.*, u.firstname FROM article a JOIN user u ON a.writer_id=u.id 
-            WHERE (a.status='DRAFT' OR a.status='REFUSED') 
-            AND u.id=:writerId 
-            ORDER BY a.create_date DESC
-                        """, nativeQuery = true)
-    List<Article> writerGetNonPublicArt(String writerId);
+//    // writer lấy list non-public cá nhân
+//    @Query(value = """
+//            SELECT a.*, u.firstname FROM article a JOIN user u ON a.writer_id=u.id
+//            WHERE (a.status='DRAFT' OR a.status='REFUSED')
+//            AND u.id=:writerId
+//            ORDER BY a.create_date DESC
+//                        """, nativeQuery = true)
+//    List<Article> writerGetNonPublicArt(String writerId);
 
-    // writer lấy list public cá nhân
-    @Query(value = """
-            SELECT a.*, u.firstname FROM article a JOIN user u ON a.writer_id=u.id
-            WHERE a.status='PUBLIC' AND u.id=:writerId
-            ORDER BY a.create_date DESC
-            """, nativeQuery = true)
-    List<Article> writerGetPublicArt(String writerId);
+//    // writer lấy list public cá nhân
+//    @Query(value = """
+//            SELECT a.*, u.firstname FROM article a JOIN user u ON a.writer_id=u.id
+//            WHERE a.status='PUBLIC' AND u.id=:writerId
+//            ORDER BY a.create_date DESC
+//            """, nativeQuery = true)
+//    List<Article> writerGetPublicArt(String writerId);
 
     // lấy list order by average star DESC
     @Query(value = """

@@ -317,13 +317,13 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxMTUyNDE5MCwiZXhwIjoxNzExNTM4NjMwfQ.yNy3roCzdyI9hqog7XH2OstTObn5HYR4Y4Mx8qG8N48"
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxNzU2ODY2MSwiZXhwIjoxNzE3NTgzMTAxfQ.pG6_HN9k0JMnqmfcl02YQlDP7yaYW1Az6B3CjTUU4NM"
 							}
 						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/tag/delete?tagId=3af8ceb0-727d-4b9e-a13f-604045365830",
+							"raw": "http://localhost:8080/api/v1/tag/delete?tagId=f272d07c-0c2a-4edc-8170-fa14f4d1ed03",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -338,7 +338,7 @@
 							"query": [
 								{
 									"key": "tagId",
-									"value": "3af8ceb0-727d-4b9e-a13f-604045365830"
+									"value": "f272d07c-0c2a-4edc-8170-fa14f4d1ed03"
 								}
 							]
 						}
@@ -1127,7 +1127,7 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ2FuQGdtYWlsLmNvbSIsImlhdCI6MTcxNDc5NTk4MywiZXhwIjoxNzE0ODEwNDIzfQ.zK1QTElTKlZWTedYV5U_X5235DKy5_QyUN2TpijQfdo"
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxNzg0OTgzMCwiZXhwIjoxNzE3OTM2MjMwfQ.4V17hErv0mwBRtZf8V2K-hzAw3MdDdhdGs5Gq1Pin2A"
 							}
 						},
 						"method": "POST",
@@ -1151,13 +1151,13 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxMzYwNDI4NSwiZXhwIjoxNzEzNjE4NzI1fQ.sk8tH4q9uS9q_aC_AGjSqmQAhTvp_4ZdulEDAeXen_s"
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxNzg0OTgzMCwiZXhwIjoxNzE3OTM2MjMwfQ.4V17hErv0mwBRtZf8V2K-hzAw3MdDdhdGs5Gq1Pin2A"
 							}
 						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/saved-articles/remove?id=760026e3-4996-4de4-8cee-ed7412d54b8",
+							"raw": "http://localhost:8080/api/v1/saved-articles/remove?articleId=1058bfd1-48d1-4840-b738-74f86bdd249d",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1171,8 +1171,8 @@
 							],
 							"query": [
 								{
-									"key": "id",
-									"value": "760026e3-4996-4de4-8cee-ed7412d54b8"
+									"key": "articleId",
+									"value": "1058bfd1-48d1-4840-b738-74f86bdd249d"
 								}
 							]
 						}
@@ -1200,13 +1200,13 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ2FuQGdtYWlsLmNvbSIsImlhdCI6MTcxNDc5NTk4MywiZXhwIjoxNzE0ODEwNDIzfQ.zK1QTElTKlZWTedYV5U_X5235DKy5_QyUN2TpijQfdo"
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxNzg0OTgzMCwiZXhwIjoxNzE3OTM2MjMwfQ.4V17hErv0mwBRtZf8V2K-hzAw3MdDdhdGs5Gq1Pin2A"
 							}
 						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/saved-articles/get-one?id=fa870dd0-3892-4329-a26d-40fc3de48b6d",
+							"raw": "http://localhost:8080/api/v1/saved-articles/get-one?articleId=1058bfd1-48d1-4840-b738-74f86bdd249d",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1220,8 +1220,8 @@
 							],
 							"query": [
 								{
-									"key": "id",
-									"value": "fa870dd0-3892-4329-a26d-40fc3de48b6d"
+									"key": "articleId",
+									"value": "1058bfd1-48d1-4840-b738-74f86bdd249d"
 								}
 							]
 						}
@@ -1535,6 +1535,55 @@
 						"method": "GET",
 						"header": [],
 						"url": "http://localhost:8080/api/v1/follow-category/get-followed-articles"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Followed Parent Cat",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxNzg0OTgzMCwiZXhwIjoxNzE3OTM2MjMwfQ.4V17hErv0mwBRtZf8V2K-hzAw3MdDdhdGs5Gq1Pin2A"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/v1/follow-category/get-followed-parent-cat"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Followed Child Cat",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxNzg0OTgzMCwiZXhwIjoxNzE3OTM2MjMwfQ.4V17hErv0mwBRtZf8V2K-hzAw3MdDdhdGs5Gq1Pin2A"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/follow-category/get-followed-child-cat?categoryId=02a94e20-3bcc-4bea-9ddc-149ea8fd94b8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"follow-category",
+								"get-followed-child-cat"
+							],
+							"query": [
+								{
+									"key": "categoryId",
+									"value": "02a94e20-3bcc-4bea-9ddc-149ea8fd94b8"
+								}
+							]
+						}
 					},
 					"response": []
 				}

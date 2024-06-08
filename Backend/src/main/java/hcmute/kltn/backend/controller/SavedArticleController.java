@@ -23,8 +23,8 @@ public class SavedArticleController {
     // xóa bài viết khỏi danh sách
     @DeleteMapping("/remove")
     public ResponseEntity<String> removeFromList(
-            @RequestParam("id") String id) {
-        return ResponseEntity.ok(savedArticleService.removeFromList(id));
+            @RequestParam("articleId") String articleId) {
+        return ResponseEntity.ok(savedArticleService.removeFromList(articleId));
     }
 
     // danh sách các bài viết đã lưu
@@ -36,7 +36,7 @@ public class SavedArticleController {
     // lấy thông tin một bài viết trong danh sách đã lưu
     @GetMapping("get-one")
     public ResponseEntity<SavedArticleDTO> getOne(
-            @RequestParam("id") String id){
-        return ResponseEntity.ok(savedArticleService.findById(id));
+            @RequestParam("articleId") String articleId){
+        return ResponseEntity.ok(savedArticleService.findOne(articleId));
     }
 }

@@ -45,4 +45,20 @@ public interface CategoryRepo extends JpaRepository<Category, String> {
             LIMIT 4) result\s""", nativeQuery = true)
     List<Category> find4ParentCatHaveMaxArticle();
 
+    @Query(value = "select parent.* from category child join category parent " +
+            "where child.id=:categoryId and child.parent_id=parent.id", nativeQuery = true)
+    Category findParentCatByChild(String categoryId);
+
+    @Query(value = """
+            select c.* from follow_category f join category c on f.category_id=c.id 
+                       where f.user_id=:userId and c.parent_id is null
+                        """, nativeQuery = true)
+    List<Category> findFollowedParentCat(String userId);
+
+    @Query(value = """
+            select c.* from follow_category f join category c on f.category_id=c.id 
+                       where f.user_id=:userId and parent_id=:parentId
+                        """, nativeQuery = true)
+    List<Category> findFollowedChildCat(String parentId, String userId);
+
 }
