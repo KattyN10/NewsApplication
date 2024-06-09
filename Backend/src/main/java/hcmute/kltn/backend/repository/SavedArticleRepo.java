@@ -18,4 +18,7 @@ public interface SavedArticleRepo extends JpaRepository<SavedArticle, String> {
 
     @Query("select s from SavedArticle s where s.article = ?1 and s.user = ?2")
     SavedArticle findByArticleAndUser(Article article, User user);
+
+    @Query("select (count(s) > 0) from SavedArticle s where s.article = ?1 and s.user = ?2")
+    boolean existsByArticleAndUser(Article article, User user);
 }

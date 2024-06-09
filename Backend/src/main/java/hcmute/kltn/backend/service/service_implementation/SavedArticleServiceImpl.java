@@ -32,11 +32,16 @@ public class SavedArticleServiceImpl implements SavedArticleService {
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name).orElseThrow();
 
-        SavedArticle savedArticle = new SavedArticle();
-        savedArticle.setArticle(article);
-        savedArticle.setUser(user);
-        savedArticleRepo.save(savedArticle);
-        return modelMapper.map(savedArticle, SavedArticleDTO.class);
+        boolean exists = savedArticleRepo.existsByArticleAndUser(article, user);
+        if (!exists) {
+            SavedArticle savedArticle = new SavedArticle();
+            savedArticle.setArticle(article);
+            savedArticle.setUser(user);
+            savedArticleRepo.save(savedArticle);
+            return modelMapper.map(savedArticle, SavedArticleDTO.class);
+        } else {
+            throw new RuntimeException("Data already exists.");
+        }
     }
 
     @Override
