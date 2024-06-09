@@ -46,6 +46,7 @@ public class FollowCategoryServiceImpl implements FollowCategoryService {
             followCategory.setUser(user);
             followCategoryRepo.save(followCategory);
 
+            Category parentCategory = categoryRepo.findParentCatByChild(category.getId());
             List<Category> childCategory = categoryRepo.findChildCategories(category.getId());
             if (!childCategory.isEmpty()) {
                 for (Category childCat : childCategory) {
@@ -56,6 +57,14 @@ public class FollowCategoryServiceImpl implements FollowCategoryService {
                         tempFollow.setCategory(childCat);
                         followCategoryRepo.save(tempFollow);
                     }
+                }
+            } else if (parentCategory != null) {
+                boolean exists3 = followCategoryRepo.existsByUserAndCategory(user, parentCategory);
+                if (!exists3) {
+                    FollowCategory tempFollow = new FollowCategory();
+                    tempFollow.setUser(user);
+                    tempFollow.setCategory(parentCategory);
+                    followCategoryRepo.save(tempFollow);
                 }
             }
             return modelMapper.map(followCategory, FollowCategoryDTO.class);
