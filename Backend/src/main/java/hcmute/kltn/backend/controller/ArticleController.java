@@ -1,15 +1,10 @@
 package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.ArticleDTO;
-import hcmute.kltn.backend.dto.AverageStarDTO;
-import hcmute.kltn.backend.dto.request.ArticleRequest;
-import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.service.ArticleService;
-import hcmute.kltn.backend.service.AverageStarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,7 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleController {
     private final ArticleService articleService;
-    private final AverageStarService averageStarService;
     
 //    @PostMapping("/create")
 //    public ResponseEntity<ArticleDTO> createArticle(
@@ -136,4 +130,6 @@ public class ArticleController {
 //    public ResponseEntity<List<ArticleDTO>> getPublicArticle() {
 //        return ResponseEntity.ok(articleService.writerGetListPublicArt());
 //    }
+
+
 }

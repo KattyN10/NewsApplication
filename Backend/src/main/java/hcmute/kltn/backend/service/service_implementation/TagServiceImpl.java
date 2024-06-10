@@ -32,7 +32,7 @@ public class TagServiceImpl implements TagService {
         Tag tag = new Tag();
         boolean existedTag = tagRepo.existsByValue(tagDTO.getValue());
         if (existedTag) {
-            throw new RuntimeException("Tag: " + tagDTO.getValue() + "existed.");
+            throw new RuntimeException("Đã tồn tại tag: " + tagDTO.getValue());
         } else {
             tag.setValue(tagDTO.getValue());
             tagRepo.save(tag);
@@ -44,20 +44,20 @@ public class TagServiceImpl implements TagService {
     @Override
     public String deleteTag(String id) {
         Tag tag = tagRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tag not found."));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại tag với id: " + id));
 
         List<TagArticle> tagArticleList =tagArticleRepo.findByTag(tag);
         if (!tagArticleList.isEmpty()) {
             tagArticleRepo.deleteAll(tagArticleList);
         }
         tagRepo.delete(tag);
-        return "Deleted successfully";
+        return "Xóa thành công.";
     }
 
     @Override
     public TagDTO findTagById(String id) {
         Tag tag = tagRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tag not found."));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại tag với id: " + id));
 
         return modelMapper.map(tag, TagDTO.class);
     }
@@ -74,10 +74,10 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDTO updateTag(TagDTO tagDTO, String id) {
         Tag tag = tagRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tag not found."));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại tag với id: " + id));
         boolean existedTag = tagRepo.existsByValue(tagDTO.getValue());
         if (existedTag) {
-            throw new RuntimeException("The updated tag value already exists");
+            throw new RuntimeException("Giá trị tag cập nhật đã tồn tại.");
         } else {
             tag.setValue(tagDTO.getValue());
             tagRepo.save(tag);
@@ -88,7 +88,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagDTO> getTagsOfArticle(String articleId) {
         Article article = articleRepo.findById(articleId)
-                .orElseThrow(() -> new NullPointerException("No article with id: " + articleId));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại bài viết với id: " + articleId));
         List<Tag> tagList = tagRepo.findByArticleId(article.getId());
         return tagList.stream()
                 .map(tag -> modelMapper.map(tag, TagDTO.class))

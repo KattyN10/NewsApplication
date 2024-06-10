@@ -16,7 +16,8 @@ public class SavedArticleController {
 
     // lưu bài viết vào danh sách
     @PostMapping("/add")
-    public ResponseEntity<SavedArticleDTO> addToList(@RequestBody SavedArticleDTO savedArticleDTO) {
+    public ResponseEntity<SavedArticleDTO> addToList(
+            @RequestBody SavedArticleDTO savedArticleDTO) {
         return ResponseEntity.ok(savedArticleService.addToList(savedArticleDTO));
     }
 

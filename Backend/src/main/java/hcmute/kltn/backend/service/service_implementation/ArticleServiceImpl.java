@@ -187,7 +187,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public ArticleDTO findById(String id) {
         Article article = articleRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Article not found."));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bài viết."));
         return modelMapper.map(article, ArticleDTO.class);
     }
 
@@ -286,7 +286,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<ArticleDTO> findByCatId(String categoryId) {
         Category category = categoryRepo.findById(categoryId)
-                .orElseThrow(() -> new NullPointerException("No category with i: " + categoryId));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại chuyên mục với id: " + categoryId));
         List<Category> categoryList = categoryRepo.findChildCategories(category.getId());
         List<Article> articleList;
         if (!categoryList.isEmpty()) {
@@ -304,7 +304,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<ArticleDTO> findByTagId(String tagId) {
         Tag tag = tagRepo.findById(tagId)
-                .orElseThrow(() -> new NullPointerException("No tag with id: " + tagId));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại tag với id: " + tagId));
         List<Article> articleList = articleRepo.findByTag(tag.getId());
         return articleList.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
@@ -328,7 +328,6 @@ public class ArticleServiceImpl implements ArticleService {
                     }
                 }
             }
-            System.out.println("Count search result: " + searchResult.size());
         }
         return searchResult.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))

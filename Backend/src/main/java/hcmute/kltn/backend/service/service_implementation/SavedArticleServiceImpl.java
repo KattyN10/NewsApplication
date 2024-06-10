@@ -27,7 +27,7 @@ public class SavedArticleServiceImpl implements SavedArticleService {
     @Override
     public SavedArticleDTO addToList(SavedArticleDTO savedArticleDTO) {
         Article article = articleRepo.findById(savedArticleDTO.getArticle().getId())
-                .orElseThrow(() -> new NullPointerException("No article with id: " + savedArticleDTO.getArticle().getId()));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại bài viết với id: " + savedArticleDTO.getArticle().getId()));
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name).orElseThrow();
@@ -40,7 +40,7 @@ public class SavedArticleServiceImpl implements SavedArticleService {
             savedArticleRepo.save(savedArticle);
             return modelMapper.map(savedArticle, SavedArticleDTO.class);
         } else {
-            throw new RuntimeException("Data already exists.");
+            throw new RuntimeException("Dữ liệu đã tồn tại.");
         }
     }
 
@@ -50,14 +50,14 @@ public class SavedArticleServiceImpl implements SavedArticleService {
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name).orElseThrow();
         Article article = articleRepo.findById(articleId)
-                .orElseThrow(() -> new NullPointerException("No article with id: " + articleId));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại bài viết với id: " + articleId));
 
         SavedArticle savedArticle = savedArticleRepo.findByArticleAndUser(article, user);
         if (savedArticle != null) {
             savedArticleRepo.delete(savedArticle);
-            return "Removed from the saved list";
+            return "Đã xóa khỏi danh sách lưu.";
         } else {
-            return "No saved article";
+            return "Không tìm thấy dữ liệu.";
         }
 
     }
@@ -79,7 +79,7 @@ public class SavedArticleServiceImpl implements SavedArticleService {
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name).orElseThrow();
         Article article = articleRepo.findById(articleId)
-                .orElseThrow(() -> new NullPointerException("No article with id: " + articleId));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại bài viết với id: " + articleId));
         SavedArticle savedArticle = savedArticleRepo.findByArticleAndUser(article, user);
         return modelMapper.map(savedArticle, SavedArticleDTO.class);
     }

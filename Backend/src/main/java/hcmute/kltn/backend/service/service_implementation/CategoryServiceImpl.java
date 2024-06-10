@@ -25,14 +25,14 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         boolean existedCategory = categoryRepo.existsByNameAndParent(categoryDTO.getName(), categoryDTO.getParent());
         if (existedCategory) {
-            throw new RuntimeException("Category with name: " + "'" + categoryDTO.getName() + "'" + " existed.");
+            throw new RuntimeException("Đã tồn tại chuyên mục: " + categoryDTO.getName());
         } else {
             Category category = new Category();
             category.setName(categoryDTO.getName());
             if (categoryDTO.getName() != null) {
                 if (categoryDTO.getParent() != null) {
                     Category parentCat = categoryRepo.findById(categoryDTO.getParent().getId())
-                            .orElseThrow(() -> new RuntimeException("Parent category not found."));
+                            .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyên mục cha."));
                     category.setParent(parentCat);
                 }
             }
@@ -47,15 +47,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public String deleteCategory(String id) {
         Category category = categoryRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyên mục với id: " + id));
         categoryRepo.delete(category);
-        return "Deleted Successfully";
+        return "Xóa thành công.";
     }
 
     @Override
     public CategoryDTO findCategoryById(String id) {
         Category category = categoryRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyên mục với id: " + id));
         return modelMapper.map(category, CategoryDTO.class);
     }
 
@@ -71,7 +71,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO updateCategory(CategoryDTO categoryDTO, String id) {
         Category category = categoryRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyên mục với id: " + id));
         boolean existedCategory = categoryRepo.existsByNameAndParent(categoryDTO.getName(), categoryDTO.getParent());
         if (existedCategory) {
             throw new RuntimeException("The updated category name already exists");
@@ -79,7 +79,7 @@ public class CategoryServiceImpl implements CategoryService {
             category.setName(categoryDTO.getName());
             if (categoryDTO.getParent() != null) {
                 Category parentCat = categoryRepo.findById(categoryDTO.getParent().getId())
-                        .orElseThrow(() -> new RuntimeException("Parent category not found."));
+                        .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyên mục cha."));
                 category.setParent(parentCat);
             }
             categoryRepo.save(category);
@@ -90,7 +90,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDTO> findChildCategories(String parentId) {
         Category parentCat = categoryRepo.findById(parentId)
-                .orElseThrow(() -> new RuntimeException("Parent category not found."));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyên mục cha."));
         List<Category> childrenCat = categoryRepo.findChildCategories(parentCat.getId());
         return childrenCat.stream()
                 .map(child -> modelMapper.map(child, CategoryDTO.class))

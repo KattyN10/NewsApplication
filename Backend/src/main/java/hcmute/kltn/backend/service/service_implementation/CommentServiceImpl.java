@@ -28,7 +28,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDTO createComment(CommentDTO commentDTO) {
         Article article = articleRepo.findById(commentDTO.getArticle().getId())
-                .orElseThrow(() -> new NullPointerException("No article with id: " + commentDTO.getArticle().getId()));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại bài viết với id: " + commentDTO.getArticle().getId()));
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name).orElseThrow();
@@ -40,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setCreate_date(LocalDateTime.now());
         if (commentDTO.getParent() != null) {
             Comment parentComment = commentRepo.findById(commentDTO.getParent().getId())
-                    .orElseThrow(() -> new NullPointerException("No parent comment with id: " + commentDTO.getParent().getId()));
+                    .orElseThrow(() -> new NullPointerException("Không tìm thấy bình luận cha với id: " + commentDTO.getParent().getId()));
             comment.setParent(parentComment);
         }
         commentRepo.save(comment);
@@ -50,33 +50,33 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public String deleteComment(String commentId) {
         Comment comment = commentRepo.findById(commentId)
-                .orElseThrow(() -> new NullPointerException("No comment with id: " + commentId));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại bình luận với id: " + commentId));
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name).orElseThrow();
 
         if (user != comment.getUser()) {
-            throw new RuntimeException("Comments from other users cannot be deleted");
+            throw new RuntimeException("Không được xóa bình luận của người dùng khác.");
         } else {
             commentRepo.delete(comment);
-            return "Deleted successfully";
+            return "Xóa thành công.";
         }
     }
 
     @Override
     public CommentDTO updateComment(CommentDTO commentDTO, String commentId) {
         Comment comment = commentRepo.findById(commentId)
-                .orElseThrow(() -> new NullPointerException("No comment with id: " + commentId));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại bình luận với id: " + commentId));
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name).orElseThrow();
 
         if (user != comment.getUser()) {
-            throw new RuntimeException("Comments from other users cannot be updated");
+            throw new RuntimeException("Không được cập nhật bình luận của người dùng khác.");
         } else {
             LocalDateTime expirationTime = comment.getCreate_date().plusMinutes(15);
             if (LocalDateTime.now().isAfter(expirationTime)) {
-                throw new RuntimeException("Comments cannot be updated after 15 minutes");
+                throw new RuntimeException("Không được phép cập nhật bình luận sau 15 phút.");
             } else {
                 comment.setComment(commentDTO.getComment());
                 commentRepo.save(comment);
@@ -88,7 +88,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentDTO> getParentComments(String articleId) {
         Article article = articleRepo.findById(articleId)
-                .orElseThrow(() -> new NullPointerException("No article with id: " + articleId));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại bài viết với id: " + articleId));
         List<Comment> listComments = commentRepo.findParentByArticleIdOrderNewest(article.getId());
         return listComments.stream()
                 .map(comment -> modelMapper.map(comment, CommentDTO.class))
@@ -98,7 +98,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentDTO> getChildComments(String commentId) {
         Comment comment = commentRepo.findById(commentId)
-                .orElseThrow(() -> new NullPointerException("No comment with id: " + commentId));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại bình luận với id: " + commentId));
         List<Comment> listComments = commentRepo.findChildByIdOrderNewest(comment.getId());
         return listComments.stream()
                 .map(cmt -> modelMapper.map(cmt, CommentDTO.class))

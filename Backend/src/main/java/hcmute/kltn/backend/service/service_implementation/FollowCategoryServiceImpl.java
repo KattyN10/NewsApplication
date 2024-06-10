@@ -33,7 +33,7 @@ public class FollowCategoryServiceImpl implements FollowCategoryService {
     @Override
     public FollowCategoryDTO createFollow(FollowCategoryDTO followCategoryDTO) {
         Category category = categoryRepo.findById(followCategoryDTO.getCategory().getId())
-                .orElseThrow(() -> new NullPointerException("No category with id: " +
+                .orElseThrow(() -> new NullPointerException("Không tồn tại chuyên mục với id: " +
                         followCategoryDTO.getCategory().getId()));
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
@@ -76,14 +76,14 @@ public class FollowCategoryServiceImpl implements FollowCategoryService {
     @Override
     public String removeFollow(String categoryId) {
         Category category = categoryRepo.findById(categoryId)
-                .orElseThrow(() -> new NullPointerException("No category with id: " + categoryId));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại chuyên mục với id: " + categoryId));
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name).orElseThrow();
 
         FollowCategory followCategory = followCategoryRepo.findByUserAndCategory(user, category);
         if (followCategory == null) {
-            throw new RuntimeException("Invalid user or category");
+            throw new RuntimeException("Người dùng hoặc chuyên mục không hợp lệ.");
         } else {
             followCategoryRepo.delete(followCategory);
 
@@ -95,9 +95,9 @@ public class FollowCategoryServiceImpl implements FollowCategoryService {
                         followCategoryRepo.delete(followChildCategory);
                     }
                 }
-                return "Successfully unfollowed parent category: " + category.getName() + " and children categories.";
+                return "Bỏ theo dõi thành công chuyên mục: " + category.getName() + " và các chuyên mục con.";
             }
-            return "Successfully unfollowed parent category: " + category.getName() ;
+            return "Bỏ theo dõi thành công chuyên mục: " + category.getName() ;
 
 //            else { // là cate con: xóa cate con đó và cate cha
 //                Category parentCat = categoryRepo.findParentCatByChild(category.getId());

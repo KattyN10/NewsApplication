@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetailsService userDetailsService() {
         return username -> userRepo.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại người dùng với email: " + username));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getUserById(String id) {
         User user = userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại người dùng với id: " + id));
         return modelMapper.map(user, UserDTO.class);
     }
 
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String deleteUser(String id) {
         User user = userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại người dùng với id: " + id));
 
         List<VoteStar> voteStarList = voteStarRepo.findByUser(user);
         if (voteStarList != null) {
@@ -93,13 +93,13 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepo.deleteById(user.getId());
-        return "Deleted user with email:" + user.getEmail() + ".";
+        return "Đã xóa người dùng với email: " + user.getEmail() + ".";
     }
 
     @Override
     public UserDTO updateUserInfor(String id, UserDTO userDTO) {
         User user = userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại người dùng với id: " + id));
         if (!userDTO.getFirstname().isEmpty()) {
             user.setFirstname(userDTO.getFirstname());
         }
@@ -119,13 +119,13 @@ public class UserServiceImpl implements UserService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại người dùng."));
 
         try {
             String imageUrl = imageUploadService.saveImage(file, UploadPurpose.USER_AVATAR);
             user.setAvatar(imageUrl);
         } catch (IOException e) {
-            throw new RuntimeException("An error occurred while uploading the image");
+            throw new RuntimeException("Xảy ra lỗi trong quá trình upload ảnh.");
         }
         userRepo.save(user);
         return modelMapper.map(user, UserDTO.class);
@@ -137,7 +137,7 @@ public class UserServiceImpl implements UserService {
         String name = context.getAuthentication().getName();
 
         User user = userRepo.findByEmail(name)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại user."));
         return modelMapper.map(user, UserDTO.class);
     }
 
@@ -147,21 +147,21 @@ public class UserServiceImpl implements UserService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại user."));
         boolean oldPassMatchOldPass = passwordEncoder.matches(updatePassRequest.getOldPassword(), user.getPassword());
         boolean newPassMatchOldPass = passwordEncoder.matches(updatePassRequest.getNewPassword(), user.getPassword());
         String newPassHash = passwordEncoder.encode(updatePassRequest.getNewPassword());
 
         if (!oldPassMatchOldPass) {
-            throw new RuntimeException("Old password entered incorrectly.");
+            throw new RuntimeException("Mật khẩu hiện tại không đúng.");
         } else if (!updatePassRequest.getNewPassword().equals(updatePassRequest.getReEnterPassword())) {
-            throw new RuntimeException("The re-entered password does not match.");
+            throw new RuntimeException("Mật khẩu nhập lại không khớp.");
         } else if (newPassMatchOldPass) {
-            throw new RuntimeException("The new password must not be the same as the old password");
+            throw new RuntimeException("Mật khẩu mới không được giống với mật khẩu cũ.");
         } else {
             user.setPassword(newPassHash);
             userRepo.save(user);
-            return "Update password successfully.";
+            return "Cập nhật mật khẩu thành công.";
         }
     }
 

@@ -20,7 +20,7 @@ public class AverageStarServiceImpl implements AverageStarService {
     @Override
     public Float getAverageStar(String articleId) {
         Article article = articleRepo.findById(articleId)
-                .orElseThrow(() -> new RuntimeException("No article with id: " + articleId));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại bài viết với id: " + articleId));
 
         Float result = (float) 0;
         AverageStar averageStar = averageStarRepo.findByArticle(article);

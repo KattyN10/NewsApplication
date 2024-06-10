@@ -32,7 +32,7 @@ public class ReactEmotionServiceImpl implements ReactEmotionService {
 
         if (!reactEmotionDTO.getTypeReact().name().equals("LIKE") && (!reactEmotionDTO.getTypeReact().name().equals("CLAP")) &&
                 (!reactEmotionDTO.getTypeReact().name().equals("STAR")) && (!reactEmotionDTO.getTypeReact().name().equals("HEART"))) {
-            throw new RuntimeException("Invalid type of emotion.");
+            throw new RuntimeException("Loại cảm xúc không hợp lệ.");
         }
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
@@ -62,7 +62,7 @@ public class ReactEmotionServiceImpl implements ReactEmotionService {
     @Override
     public int getReactQuantity(String articleId, TypeReact typeReact) {
         Article article = articleRepo.findById(articleId)
-                .orElseThrow(() -> new NullPointerException("No article with id: " + articleId));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại bài viết với id: " + articleId));
         List<ReactEmotion> reactEmotionList = reactEmotionRepo.findByTypeReactAndArticle_Id(typeReact, article.getId());
         return reactEmotionList.size();
     }

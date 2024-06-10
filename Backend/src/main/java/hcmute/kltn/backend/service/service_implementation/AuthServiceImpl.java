@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
 
         if (userRepo.existsByEmail(signUpRequest.getEmail())) {
-            throw new RuntimeException("Email existed.");
+            throw new RuntimeException("Email đã tồn tại trên hệ thống.");
         } else {
             user.setFirstname(signUpRequest.getFirstname());
             user.setLastname(signUpRequest.getLastname());
@@ -55,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
                 signInRequest.getPassword()));
 
         var user = userRepo.findByEmail(signInRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password."));
+                .orElseThrow(() -> new RuntimeException("Email hoặc mật khẩu không hợp lệ."));
 
 
         var jwtToken = jwtService.generateToken(user);
@@ -65,7 +65,6 @@ public class AuthServiceImpl implements AuthService {
         jwtAuthResponse.setUser(userDTO);
         jwtAuthResponse.setToken(jwtToken);
         return jwtAuthResponse;
-//        }
     }
 
 

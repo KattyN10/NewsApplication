@@ -30,13 +30,13 @@ public class VoteStarServiceImpl implements VoteStarService {
     @Override
     public VoteStarDTO CUDVote(VoteStarDTO voteStarDTO) {
         Article article = articleRepo.findById(voteStarDTO.getArticle().getId())
-                .orElseThrow(() -> new NullPointerException("No article with id: " + voteStarDTO.getArticle().getId()));
+                .orElseThrow(() -> new NullPointerException("Không tồn tại bài viết với id: " + voteStarDTO.getArticle().getId()));
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepo.findByEmail(name).orElseThrow();
 
         if (voteStarDTO.getStar() > 5 || voteStarDTO.getStar() < 1)
-            throw new RuntimeException("Stars must be between 1 and 5");
+            throw new RuntimeException("Sao đánh giá không hợp lệ.");
 
         VoteStar foundVoteArticle = voteStarRepo.findExistedVote(article.getId(), user.getId());
         VoteStar voteStar = new VoteStar();
@@ -78,7 +78,7 @@ public class VoteStarServiceImpl implements VoteStarService {
     @Override
     public void addAverageStar(String articleId) {
         Article article = articleRepo.findById(articleId)
-                .orElseThrow(() -> new RuntimeException("No article with id: " + articleId));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại bài viết với id: " + articleId));
 
         float star = countAverageStar(articleId);
         AverageStar foundAverageStar = averageStarRepo.findByArticle(article);

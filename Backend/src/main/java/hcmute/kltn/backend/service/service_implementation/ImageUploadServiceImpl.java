@@ -12,13 +12,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class ImageUploadServiceImpl implements ImageUploadService {
+
     @Value("${cloudinary.cloud-name}")
     private String cloudName;
 
@@ -74,11 +74,13 @@ public class ImageUploadServiceImpl implements ImageUploadService {
 
     @Override
     public boolean sizeChecker(String imageUrl) throws IOException {
+
         URL url = new URL(imageUrl);
         URLConnection connection = url.openConnection();
         long sizeInBytes = connection.getContentLengthLong();
         long tenMB = 10 * 1024 * 1024;
         return sizeInBytes < tenMB;
+
     }
 
     // crop size -> w: 680 x h: 450
@@ -94,4 +96,6 @@ public class ImageUploadServiceImpl implements ImageUploadService {
         }
         return newUrl;
     }
+
+
 }

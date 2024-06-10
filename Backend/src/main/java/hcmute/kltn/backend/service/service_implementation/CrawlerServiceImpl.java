@@ -74,9 +74,11 @@ public class CrawlerServiceImpl implements CrawlerService {
 
                         // save article, get and save tag
                         if (articleVnExpress.getCategory() != null) {
-                            if (imageUploadService.sizeChecker(articleVnExpress.getAvatar())) {
-                                String newUrl = imageUploadService.saveImageViaUrl(articleVnExpress.getAvatar());
-                                article.setAvatar(newUrl);
+                            if (articleVnExpress.getAvatar() != null){
+                                if (imageUploadService.sizeChecker(articleVnExpress.getAvatar())) {
+                                    String newUrl = imageUploadService.saveImageViaUrl(articleVnExpress.getAvatar());
+                                    articleVnExpress.setAvatar(newUrl);
+                                }
                             }
                             articleRepo.save(articleVnExpress);
 
@@ -136,9 +138,11 @@ public class CrawlerServiceImpl implements CrawlerService {
                         articleDT.setTitle(article.getTitle());
                         articleDT.setAbstracts(article.getAbstracts());
                         if (articleDT.getCategory() != null) {
-                            if (imageUploadService.sizeChecker(articleDT.getAvatar())) {
-                                String newUrl = imageUploadService.saveImageViaUrl(articleDT.getAvatar());
-                                article.setAvatar(newUrl);
+                            if (articleDT.getAvatar() != null){
+                                if (imageUploadService.sizeChecker(articleDT.getAvatar())) {
+                                    String newUrl = imageUploadService.saveImageViaUrl(articleDT.getAvatar());
+                                    articleDT.setAvatar(newUrl);
+                                }
                             }
                             articleRepo.save(articleDT);
                             List<String> listTags = getTagsDanTri(linkArticle);
