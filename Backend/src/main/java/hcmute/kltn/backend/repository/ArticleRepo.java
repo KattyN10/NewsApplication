@@ -49,6 +49,11 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     @Query("select a from Article a where a.status = ?1 order by a.create_date DESC")
     List<Article> findByStatusOrderByCreate_dateDesc(Status status);
 
+    @Query(value = """
+            SELECT * FROM article ORDER BY create_date DESC LIMIT 5
+                        """, nativeQuery = true)
+    List<Article> findTop5Newest();
+
     // tìm latest article mỗi parent category
     @Query(value = """
             SELECT a.* FROM article a JOIN category c ON a.category_id=c.id WHERE c.parent_id = :categoryId 
@@ -68,8 +73,17 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             nativeQuery = true)
     List<Article> findMostReactArticle();
 
-    @Query("select a from Article a where a.artSource = ?1 and a.status = ?2 order by a.create_date DESC")
-    List<Article> findByArtSourceAndStatusOrderByCreate_dateDesc(ArtSource artSource, Status status);
+
+    @Query(value = """
+            SELECT * FROM article a where a.art_source='VN_EXPRESS' ORDER BY a.create_date DESC LIMIT 6
+            """, nativeQuery = true)
+    List<Article> findByVnExpress();
+
+    @Query(value = """
+            SELECT * FROM article a where a.art_source='DAN_TRI' ORDER BY a.create_date DESC LIMIT 6
+            """, nativeQuery = true)
+    List<Article> findByDanTri();
+
 
 //    @Query(value = "SELECT * FROM article WHERE MATCH(title, abstracts, content) AGAINST(?1) AND `status`=\"PUBLIC\"", nativeQuery = true)
 //    List<Article> searchArticle(String keyword);

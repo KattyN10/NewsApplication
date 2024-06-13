@@ -2,25 +2,16 @@ package hcmute.kltn.backend.service.service_implementation;
 
 import com.darkprograms.speech.translator.GoogleTranslate;
 import hcmute.kltn.backend.dto.ArticleDTO;
-import hcmute.kltn.backend.dto.request.ArticleRequest;
-import hcmute.kltn.backend.dto.request.TagArticleRequest;
 import hcmute.kltn.backend.entity.*;
 import hcmute.kltn.backend.entity.enum_entity.ArtSource;
 import hcmute.kltn.backend.entity.enum_entity.Status;
-import hcmute.kltn.backend.entity.enum_entity.UploadPurpose;
 import hcmute.kltn.backend.repository.*;
 import hcmute.kltn.backend.service.ArticleService;
 import hcmute.kltn.backend.service.ImageUploadService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.lang.Nullable;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,11 +19,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepo articleRepo;
-    private final ImageUploadService imageUploadService;
+//    private final ImageUploadService imageUploadService;
     private final ModelMapper modelMapper;
-    private final UserRepo userRepo;
+//    private final UserRepo userRepo;
     private final CategoryRepo categoryRepo;
-    private final TagArticleRepo tagArticleRepo;
+//    private final TagArticleRepo tagArticleRepo;
     private final TagRepo tagRepo;
 
 //    @PreAuthorize("hasAuthority('WRITER')")
@@ -201,8 +192,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleDTO> getTop5NewestArticle() {
-        List<Article> publicArticles = articleRepo.findByStatusOrderByCreate_dateDesc(Status.PUBLIC);
-        List<Article> result = publicArticles.subList(0, 5);
+        List<Article> result = articleRepo.findTop5Newest();
         return result.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
@@ -245,16 +235,16 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleDTO> getLatestByVnExpress(int count) {
-        List<Article> articleList = articleRepo.findByArtSourceAndStatusOrderByCreate_dateDesc(ArtSource.VN_EXPRESS, Status.PUBLIC);
-        return articleList.subList(0, count).stream()
+        List<Article> articleList = articleRepo.findByVnExpress();
+        return articleList.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ArticleDTO> getLatestByDanTri(int count) {
-        List<Article> articleList = articleRepo.findByArtSourceAndStatusOrderByCreate_dateDesc(ArtSource.DAN_TRI, Status.PUBLIC);
-        return articleList.subList(0, count).stream()
+        List<Article> articleList = articleRepo.findByDanTri();
+        return articleList.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());
     }
@@ -442,6 +432,8 @@ public class ArticleServiceImpl implements ArticleService {
             String language = GoogleTranslate.detectLanguage(word);
             if (Objects.equals(language, "en")) {
                 result = GoogleTranslate.translate("vi", word);
+                if (result.equals("con mèo"))
+                    result = "mèo";
             }
             return result;
         } catch (IOException e) {
