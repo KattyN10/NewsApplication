@@ -59,13 +59,4 @@ public class Article {
     )
     private Category category;
 
-//    @ManyToOne
-//    @JoinColumn(
-//            name = "writer_id",
-//            nullable = true,
-//            referencedColumnName = "id",
-//            foreignKey = @ForeignKey(name = "article_fk_2")
-//    )
-//    private User user;
-
 }

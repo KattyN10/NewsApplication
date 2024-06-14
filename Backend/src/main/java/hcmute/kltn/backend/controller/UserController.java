@@ -55,10 +55,4 @@ public class UserController {
         return ResponseEntity.ok(userService.updatePassword(updatePassRequest));
     }
 
-//    @GetMapping("/find-editors")
-//    public ResponseEntity<List<UserDTO>> getEditorList() {
-//        return ResponseEntity.ok(userService.findEditors());
-//    }
-
-
 }

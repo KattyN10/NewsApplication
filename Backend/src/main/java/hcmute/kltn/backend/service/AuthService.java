@@ -1,6 +1,5 @@
 package hcmute.kltn.backend.service;
 
-import hcmute.kltn.backend.dto.request.UpdatePassRequest;
 import hcmute.kltn.backend.dto.response.JwtAuthResponse;
 import hcmute.kltn.backend.dto.request.SignInRequest;
 import hcmute.kltn.backend.dto.request.SignUpRequest;

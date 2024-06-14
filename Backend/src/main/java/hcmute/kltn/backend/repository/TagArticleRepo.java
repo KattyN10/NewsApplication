@@ -10,6 +10,5 @@ import java.util.List;
 
 @Repository
 public interface TagArticleRepo extends JpaRepository<TagArticle, String> {
-    List<TagArticle> findByArticle(Article article);
     List<TagArticle> findByTag(Tag tag);
 }

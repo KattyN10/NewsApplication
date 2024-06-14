@@ -9,12 +9,7 @@ import java.util.List;
 
 public interface ArticleService {
     Float readingTime(String content);
-
-//    ArticleDTO createArticle(MultipartFile file, ArticleRequest articleRequest, TagArticleRequest tagArticleRequest);
-
-//    String deleteArticle(String id);
-
-//    ArticleDTO updateArticle(String id, MultipartFile file, ArticleRequest articleRequest, TagArticleRequest tagArticleRequest);
+    List<ArticleDTO> getSavedArtByCat(String categoryId);
 
     ArticleDTO findById(String id);
 
@@ -32,8 +27,6 @@ public interface ArticleService {
 
     List<ArticleDTO> getLatestByDanTri(int count);
 
-//    List<ArticleDTO> getLatestByPqExpress(int count);
-
     List<ArticleDTO> getRandomArtSameCat(String catId);
 
     List<ArticleDTO> findByCatId(String categoryId);
@@ -42,15 +35,4 @@ public interface ArticleService {
 
     List<ArticleDTO> searchArticle(List<String> keyList);
 
-//    List<ArticleDTO> findDraftArticles();
-//
-//    ArticleDTO publicArticle(String articleId);
-//
-//    ArticleDTO refuseArticle(String articleId);
-//
-//    List<ArticleDTO> writerGetListNonPublicArt();
-//
-//    List<ArticleDTO> writerGetListPublicArt();
-
-//    String uploadCloud();
 }

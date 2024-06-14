@@ -28,7 +28,7 @@ public class Category {
     @Column(nullable = false)
     private LocalDateTime create_date;
 
-    @ManyToOne(/*cascade = CascadeType.REMOVE*/)
+    @ManyToOne
     @JoinColumn(
             name = "parent_id",
             nullable = true,

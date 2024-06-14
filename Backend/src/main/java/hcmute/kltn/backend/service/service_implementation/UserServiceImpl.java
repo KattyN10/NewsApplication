@@ -165,14 +165,5 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-//    @PreAuthorize("hasAuthority('ADMIN')")
-//    @Override
-//    public List<UserDTO> findEditors() {
-//        List<User> editorList = userRepo.findEditors();
-//        return editorList.stream()
-//                .map(user -> modelMapper.map(user, UserDTO.class))
-//                .collect(Collectors.toList());
-//    }
-
 }
 

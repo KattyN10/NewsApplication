@@ -73,6 +73,7 @@ public class SavedArticleServiceImpl implements SavedArticleService {
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public SavedArticleDTO findOne(String articleId) {
         var context = SecurityContextHolder.getContext();

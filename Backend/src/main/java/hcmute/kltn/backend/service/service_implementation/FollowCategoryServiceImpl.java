@@ -98,15 +98,6 @@ public class FollowCategoryServiceImpl implements FollowCategoryService {
                 return "Bỏ theo dõi thành công chuyên mục: " + category.getName() + " và các chuyên mục con.";
             }
             return "Bỏ theo dõi thành công chuyên mục: " + category.getName() ;
-
-//            else { // là cate con: xóa cate con đó và cate cha
-//                Category parentCat = categoryRepo.findParentCatByChild(category.getId());
-//                FollowCategory followedParentCat = followCategoryRepo.findByUserAndCategory(user, parentCat);
-//                if (followedParentCat != null) {
-//                    followCategoryRepo.delete(followedParentCat);
-//                }
-//                return "Successfully unfollowed category: " + category.getName() + ".";
-//            }
         }
     }
 

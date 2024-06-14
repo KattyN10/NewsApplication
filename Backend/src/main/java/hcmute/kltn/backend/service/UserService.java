@@ -9,16 +9,19 @@ import java.util.List;
 
 public interface UserService {
     UserDetailsService userDetailsService();
+
     List<UserDTO> getAllUsers();
+
     UserDTO getUserById(String id);
+
     String deleteUser(String id);
+
     UserDTO updateUserInfor(String id, UserDTO userDTO);
+
     UserDTO updateUserAvatar(MultipartFile file);
+
     UserDTO getMyInfor();
+
     String updatePassword(UpdatePassRequest updatePassRequest);
-//    List<UserDTO> findEditors();
-
-
-
 
 }

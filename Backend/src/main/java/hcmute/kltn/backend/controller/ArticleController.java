@@ -13,29 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleController {
     private final ArticleService articleService;
-    
-//    @PostMapping("/create")
-//    public ResponseEntity<ArticleDTO> createArticle(
-//            @RequestPart(value = "image", required = false) MultipartFile file,
-//            @RequestPart("body") ArticleRequest articleRequest,
-//            @RequestPart(value = "tag", required = false) TagArticleRequest tagArticleRequest) {
-//        return ResponseEntity.ok(articleService.createArticle(file, articleRequest, tagArticleRequest));
-//    }
-//
-//    @PostMapping("/update")
-//    public ResponseEntity<ArticleDTO> updateArticle(
-//            @RequestPart("articleId") String articleId,
-//            @RequestPart(value = "image", required = false) MultipartFile file,
-//            @RequestPart("body") ArticleRequest articleRequest,
-//            @RequestPart(value = "tag", required = false) TagArticleRequest tagArticleRequest) {
-//        return ResponseEntity.ok(articleService.updateArticle(articleId, file, articleRequest, tagArticleRequest));
-//    }
-//
-//    @DeleteMapping("/delete")
-//    public ResponseEntity<String> deleteArticle(
-//            @RequestParam("articleId") String articleId) {
-//        return ResponseEntity.ok(articleService.deleteArticle(articleId));
-//    }
 
     @GetMapping("/anonymous/get-detail-art")
     public ResponseEntity<ArticleDTO> getDetail(@RequestParam("articleId") String articleId) {
@@ -77,11 +54,6 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.getLatestByDanTri(count));
     }
 
-//    @GetMapping("/anonymous/get-latest-pqexpress")
-//    public ResponseEntity<List<ArticleDTO>> getLatestPqExpress(@RequestParam("count") int count) {
-//        return ResponseEntity.ok(articleService.getLatestByPqExpress(count));
-//    }
-
     @GetMapping("/anonymous/get-random-same-category")
     public ResponseEntity<List<ArticleDTO>> getRandomArtSameCat(
             @RequestParam("categoryId") String categoryId) {
@@ -106,30 +78,10 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.findByTagId(tagId));
     }
 
-//    @GetMapping("/find-draft")
-//    public ResponseEntity<List<ArticleDTO>> findDraft() {
-//        return ResponseEntity.ok(articleService.findDraftArticles());
-//    }
-//
-//    @PostMapping("/public-article")
-//    public ResponseEntity<ArticleDTO> publicArt(@RequestParam("articleId") String id) {
-//        return ResponseEntity.ok(articleService.publicArticle(id));
-//    }
-//
-//    @PostMapping("/refuse-article")
-//    public ResponseEntity<ArticleDTO> refuseArt(@RequestParam("articleId") String id) {
-//        return ResponseEntity.ok(articleService.refuseArticle(id));
-//    }
-//
-//    @GetMapping("/writer-get-non-public-art")
-//    public ResponseEntity<List<ArticleDTO>> getNonPublicArticle() {
-//        return ResponseEntity.ok(articleService.writerGetListNonPublicArt());
-//    }
-//
-//    @GetMapping("/writer-get-public-art")
-//    public ResponseEntity<List<ArticleDTO>> getPublicArticle() {
-//        return ResponseEntity.ok(articleService.writerGetListPublicArt());
-//    }
-
+    @GetMapping("/anonymous/get-saved-by-cat")
+    public ResponseEntity<List<ArticleDTO>> getSavedByCat(
+            @RequestParam("categoryId") String categoryId) {
+        return ResponseEntity.ok(articleService.getSavedArtByCat(categoryId));
+    }
 
 }

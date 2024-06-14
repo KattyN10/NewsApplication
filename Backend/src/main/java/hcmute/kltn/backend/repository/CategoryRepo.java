@@ -61,4 +61,7 @@ public interface CategoryRepo extends JpaRepository<Category, String> {
                         """, nativeQuery = true)
     List<Category> findFollowedChildCat(String parentId, String userId);
 
+    @Query("select (count(c) > 0) from Category c where c.id = ?1 and c.parent.id is null")
+    boolean existsByIdAndParentIdIsNull(String categoryId);
+
 }

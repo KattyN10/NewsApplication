@@ -1,5 +1,6 @@
 package hcmute.kltn.backend.repository;
 
+import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.entity.Article;
 import hcmute.kltn.backend.entity.Category;
 import hcmute.kltn.backend.entity.enum_entity.ArtSource;
@@ -13,9 +14,6 @@ import java.util.List;
 
 @Repository
 public interface ArticleRepo extends JpaRepository<Article, String> {
-
-    @Query("select (count(a) > 0) from Article a where a.avatar = ?1")
-    boolean existsByAvatar(String avtar);
 
     // tìm cat theo catId
     @Query(value = """
@@ -32,6 +30,20 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             """, nativeQuery = true)
     List<Article> findByChildCat(String categoryId);
 
+    // lấy bài viết đã lưu theo cat cha
+    @Query(value = """
+            SELECT a.* FROM article a JOIN saved_article s ON a.id=s.article_id JOIN category c 
+                ON a.category_id=c.id WHERE c.parent_id=:categoryId
+            """, nativeQuery = true)
+    List<Article> getSavedByParentCat(String categoryId);
+
+    // lấy bài viết đã lưu theo cat con
+    @Query(value = """
+            SELECT a.* FROM article a JOIN saved_article s ON a.id=s.article_id 
+                       WHERE a.category_id=:categoryId
+            """, nativeQuery = true)
+    List<Article> getSavedByChildCat(String categoryId);
+
     // check exists article by title and abstracts
     boolean existsByTitleOrAbstracts(String title, String abstracts);
 
@@ -41,13 +53,6 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     // tìm article by category and status
     @Query("select a from Article a where a.category = ?1 and a.status = ?2")
     List<Article> findByCategoryAndStatus(Category category, Status status);
-
-    // tìm article by status
-    List<Article> findByStatus(Status status);
-
-    // tìm article by status order by create_date DESC
-    @Query("select a from Article a where a.status = ?1 order by a.create_date DESC")
-    List<Article> findByStatusOrderByCreate_dateDesc(Status status);
 
     @Query(value = """
             SELECT * FROM article ORDER BY create_date DESC LIMIT 5
@@ -73,7 +78,6 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             nativeQuery = true)
     List<Article> findMostReactArticle();
 
-
     @Query(value = """
             SELECT * FROM article a where a.art_source='VN_EXPRESS' ORDER BY a.create_date DESC LIMIT 6
             """, nativeQuery = true)
@@ -84,22 +88,11 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             """, nativeQuery = true)
     List<Article> findByDanTri();
 
-
-//    @Query(value = "SELECT * FROM article WHERE MATCH(title, abstracts, content) AGAINST(?1) AND `status`=\"PUBLIC\"", nativeQuery = true)
-//    List<Article> searchArticle(String keyword);
-
     @Query(value = """
             SELECT * FROM article WHERE (title LIKE CONCAT('% ', :keyword, ' %') 
             OR abstracts LIKE CONCAT('% ', :keyword, ' %'))AND status='PUBLIC'
             """, nativeQuery = true)
     List<Article> searchArticle(String keyword);
-
-//    // editor lấy những bài draft có chuyên mục được editor quản lý
-//    @Query(value = """
-//            SELECT a.* FROM article a JOIN editor_manage_cat e ON a.category_id=e.category_id\s
-//            WHERE a.`status`="DRAFT" AND e.editor_id=:editorId\s
-//            ORDER BY a.create_date DESC""", nativeQuery = true)
-//    List<Article> findDraftArticle(String editorId);
 
     // lấy article list theo tag
     @Query(value = """
@@ -109,28 +102,11 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
             """, nativeQuery = true)
     List<Article> findByTag(String tagId);
 
-//    // writer lấy list non-public cá nhân
-//    @Query(value = """
-//            SELECT a.*, u.firstname FROM article a JOIN user u ON a.writer_id=u.id
-//            WHERE (a.status='DRAFT' OR a.status='REFUSED')
-//            AND u.id=:writerId
-//            ORDER BY a.create_date DESC
-//                        """, nativeQuery = true)
-//    List<Article> writerGetNonPublicArt(String writerId);
-
-//    // writer lấy list public cá nhân
-//    @Query(value = """
-//            SELECT a.*, u.firstname FROM article a JOIN user u ON a.writer_id=u.id
-//            WHERE a.status='PUBLIC' AND u.id=:writerId
-//            ORDER BY a.create_date DESC
-//            """, nativeQuery = true)
-//    List<Article> writerGetPublicArt(String writerId);
-
     // lấy list order by average star DESC
     @Query(value = """
             SELECT article.* FROM article JOIN average_star ON article.id = average_star.article_id 
                              ORDER BY average_star.average_star DESC
-                        """,nativeQuery = true)
+                        """, nativeQuery = true)
     List<Article> getArticleOrderByAverageStar();
 
 
