@@ -78,7 +78,7 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.findByTagId(tagId));
     }
 
-    @GetMapping("/anonymous/get-saved-by-cat")
+    @GetMapping("/get-saved-by-cat")
     public ResponseEntity<List<ArticleDTO>> getSavedByCat(
             @RequestParam("categoryId") String categoryId) {
         return ResponseEntity.ok(articleService.getSavedArtByCat(categoryId));

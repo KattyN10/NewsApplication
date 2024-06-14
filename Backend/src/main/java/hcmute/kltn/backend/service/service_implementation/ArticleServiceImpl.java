@@ -7,6 +7,7 @@ import hcmute.kltn.backend.repository.*;
 import hcmute.kltn.backend.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final CategoryRepo categoryRepo;
 
     private final TagRepo tagRepo;
+    private final UserRepo userRepo;
 
     @Override
     public ArticleDTO findById(String id) {
@@ -177,13 +179,16 @@ public class ArticleServiceImpl implements ArticleService {
     public List<ArticleDTO> getSavedArtByCat(String categoryId) {
         Category category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new NullPointerException("Không tồn tại chuyên mục với id: " + categoryId));
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepo.findByEmail(name).orElseThrow();
         boolean isParent = categoryRepo.existsByIdAndParentIdIsNull(category.getId());
         List<Article> articleList;
         if (isParent) {
-            articleList = articleRepo.getSavedByParentCat(categoryId);
+            articleList = articleRepo.getSavedByParentCat(categoryId, user.getId());
 
         } else {
-            articleList = articleRepo.getSavedByChildCat(categoryId);
+            articleList = articleRepo.getSavedByChildCat(categoryId, user.getId());
         }
         return articleList.stream()
                 .map((element) -> modelMapper.map(element, ArticleDTO.class))

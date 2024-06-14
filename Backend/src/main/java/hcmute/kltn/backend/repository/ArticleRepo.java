@@ -33,16 +33,16 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     // lấy bài viết đã lưu theo cat cha
     @Query(value = """
             SELECT a.* FROM article a JOIN saved_article s ON a.id=s.article_id JOIN category c 
-                ON a.category_id=c.id WHERE c.parent_id=:categoryId
+                ON a.category_id=c.id WHERE c.parent_id=:categoryId AND s.user_id=:userId
             """, nativeQuery = true)
-    List<Article> getSavedByParentCat(String categoryId);
+    List<Article> getSavedByParentCat(String categoryId, String userId);
 
     // lấy bài viết đã lưu theo cat con
     @Query(value = """
             SELECT a.* FROM article a JOIN saved_article s ON a.id=s.article_id 
-                       WHERE a.category_id=:categoryId
+                       WHERE a.category_id=:categoryId AND s.user_id=:userId
             """, nativeQuery = true)
-    List<Article> getSavedByChildCat(String categoryId);
+    List<Article> getSavedByChildCat(String categoryId, String userId);
 
     // check exists article by title and abstracts
     boolean existsByTitleOrAbstracts(String title, String abstracts);
