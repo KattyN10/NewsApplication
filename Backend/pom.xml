@@ -14,7 +14,7 @@
     <name>Backend</name>
     <description>Backend</description>
     <properties>
-        <java.version>17</java.version>
+        <java.version>19</java.version>
     </properties>
     <repositories>
         <repository>
@@ -94,6 +94,19 @@
             <artifactId>java-google-speech-api</artifactId>
             <version>V2.0</version>
         </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>4.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>4.4.0</version>
+            <classifier>models</classifier>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

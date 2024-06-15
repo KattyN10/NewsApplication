@@ -45,6 +45,7 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     List<Article> getSavedByChildCat(String categoryId, String userId);
 
     // check exists article by title and abstracts
+    @Query("select (count(a) > 0) from Article a where a.title = ?1 or a.abstracts = ?2")
     boolean existsByTitleOrAbstracts(String title, String abstracts);
 
     @Query("select (count(a) > 0) from Article a where a.artSource = ?1 and a.avatar = ?2 and a.create_date = ?3")
@@ -108,6 +109,16 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
                              ORDER BY average_star.average_star DESC
                         """, nativeQuery = true)
     List<Article> getArticleOrderByAverageStar();
+
+    @Query(value = """
+            SELECT * FROM article WHERE art_source='VN_EXPRESS' AND DATE(create_date) = CURDATE()
+            """, nativeQuery = true)
+    List<Article> getVnExpressToday();
+
+    @Query(value = """
+            SELECT * FROM article WHERE art_source='DAN_TRI' AND DATE(create_date) = CURDATE()
+            """, nativeQuery = true)
+    List<Article> getDanTriToday();
 
 
 }

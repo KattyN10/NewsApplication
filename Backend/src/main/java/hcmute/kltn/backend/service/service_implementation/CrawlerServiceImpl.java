@@ -13,6 +13,7 @@ import hcmute.kltn.backend.repository.TagRepo;
 import hcmute.kltn.backend.service.ArticleService;
 import hcmute.kltn.backend.service.CrawlerService;
 import hcmute.kltn.backend.service.ImageUploadService;
+import hcmute.kltn.backend.service.NlpService;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -36,6 +37,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     private final TagRepo tagRepo;
     private final ArticleRepo articleRepo;
     private final ImageUploadService imageUploadService;
+    private final NlpService nlpService;
 
     @Override
     public void crawlVnExpress() {
@@ -65,6 +67,7 @@ public class CrawlerServiceImpl implements CrawlerService {
 
                 boolean existedArt = articleRepo.existsByTitleOrAbstracts(article.getTitle(), article.getAbstracts());
                 if (!existedArt) {
+
                     Article articleVnExpress = mainContentVnExpress(linkArticle);
                     boolean existedArt2 = articleRepo.existsByArtSourceAndAvatarAndCreate_date(
                             ArtSource.VN_EXPRESS, articleVnExpress.getAvatar(), articleVnExpress.getCreate_date());
@@ -74,29 +77,48 @@ public class CrawlerServiceImpl implements CrawlerService {
 
                         // save article, get and save tag
                         if (articleVnExpress.getCategory() != null) {
-                            if (articleVnExpress.getAvatar() != null){
-                                if (imageUploadService.sizeChecker(articleVnExpress.getAvatar())) {
-                                    String newUrl = imageUploadService.saveImageViaUrl(articleVnExpress.getAvatar());
-                                    articleVnExpress.setAvatar(newUrl);
+                            List<Article> articleDanTriToday = articleRepo.getDanTriToday();
+                            Document newArtDoc = Jsoup.parse(articleVnExpress.getContent());
+                            String newArtText = newArtDoc.text();
+                            boolean checkFlag = false; // check bài có trùng với bài nào cùng ngày bên Dân Trí?
+                            for (Article articleDT : articleDanTriToday) {
+                                Document documentDT = Jsoup.parse(articleDT.getContent());
+                                String textDT = documentDT.text();
+                                String nerKeyNewArt = nlpService.nerKeyword(nlpService.translateViToEn(newArtText));
+                                String nerKeyArtDT = nlpService.nerKeyword(nlpService.translateViToEn(textDT));
+                                if (!nerKeyNewArt.isEmpty() && !nerKeyArtDT.isEmpty()) {
+                                    Float pointSimilarity = nlpService.calculateSimilarity(nerKeyNewArt, nerKeyArtDT);
+                                    if (pointSimilarity >= 0.8) {
+                                        checkFlag = true; // có trùng, thoát khỏi vòng for
+                                        break;
+                                    }
                                 }
                             }
-                            articleRepo.save(articleVnExpress);
-
-                            String[] listTags = getTagsVnExpress(linkArticle);
-                            assert listTags != null;
-                            for (String tagValue : listTags) {
-                                TagArticle tagArticle = new TagArticle();
-                                tagArticle.setArticle(articleVnExpress);
-                                Tag tag = tagRepo.findByValue(tagValue);
-                                if (tag == null) {
-                                    Tag newTag = new Tag();
-                                    newTag.setValue(tagValue);
-                                    tagRepo.save(newTag);
-                                    tagArticle.setTag(newTag);
-                                } else {
-                                    tagArticle.setTag(tag);
+                            if (!checkFlag) {
+                                if (articleVnExpress.getAvatar() != null) {
+                                    if (imageUploadService.sizeChecker(articleVnExpress.getAvatar())) {
+                                        String newUrl = imageUploadService.saveImageViaUrl(articleVnExpress.getAvatar());
+                                        articleVnExpress.setAvatar(newUrl);
+                                    }
                                 }
-                                tagArticleRepo.save(tagArticle);
+                                articleRepo.save(articleVnExpress);
+
+                                String[] listTags = getTagsVnExpress(linkArticle);
+                                assert listTags != null;
+                                for (String tagValue : listTags) {
+                                    TagArticle tagArticle = new TagArticle();
+                                    tagArticle.setArticle(articleVnExpress);
+                                    Tag tag = tagRepo.findByValue(tagValue);
+                                    if (tag == null) {
+                                        Tag newTag = new Tag();
+                                        newTag.setValue(tagValue);
+                                        tagRepo.save(newTag);
+                                        tagArticle.setTag(newTag);
+                                    } else {
+                                        tagArticle.setTag(tag);
+                                    }
+                                    tagArticleRepo.save(tagArticle);
+                                }
                             }
                         }
                     }
@@ -138,30 +160,51 @@ public class CrawlerServiceImpl implements CrawlerService {
                         articleDT.setTitle(article.getTitle());
                         articleDT.setAbstracts(article.getAbstracts());
                         if (articleDT.getCategory() != null) {
-                            if (articleDT.getAvatar() != null){
-                                if (imageUploadService.sizeChecker(articleDT.getAvatar())) {
-                                    String newUrl = imageUploadService.saveImageViaUrl(articleDT.getAvatar());
-                                    articleDT.setAvatar(newUrl);
-                                }
-                            }
-                            articleRepo.save(articleDT);
-                            List<String> listTags = getTagsDanTri(linkArticle);
-                            if (!listTags.isEmpty()) {
-                                for (String listTag : listTags) {
-                                    TagArticle tagArticle = new TagArticle();
-                                    tagArticle.setArticle(articleDT);
-                                    Tag tag = tagRepo.findByValue(listTag);
-                                    if (tag == null) {
-                                        Tag newTag = new Tag();
-                                        newTag.setValue(listTag);
-                                        tagRepo.save(newTag);
-                                        tagArticle.setTag(newTag);
-                                    } else {
-                                        tagArticle.setTag(tag);
+                            List<Article> articleVnExpressToday = articleRepo.getVnExpressToday();
+                            Document newArtDoc = Jsoup.parse(articleDT.getContent());
+                            String newArtText = newArtDoc.text();
+                            boolean checkFlag = false; // check bài có trùng với bài nào cùng ngày bên Dân Trí?
+                            for (Article articleVE : articleVnExpressToday) {
+                                Document documentVE = Jsoup.parse(articleVE.getContent());
+                                String textVE = documentVE.text();
+                                String nerKeyNewArt = nlpService.nerKeyword(nlpService.translateViToEn(newArtText));
+                                String nerKeyArtVE = nlpService.nerKeyword(nlpService.translateViToEn(textVE));
+                                if (!nerKeyNewArt.isEmpty() && !nerKeyArtVE.isEmpty()) {
+                                    Float pointSimilarity = nlpService.calculateSimilarity(nerKeyNewArt, nerKeyArtVE);
+                                    if (pointSimilarity >= 0.8) {
+                                        checkFlag = true; // có trùng, thoát khỏi vòng for
+                                        break;
                                     }
-                                    tagArticleRepo.save(tagArticle);
                                 }
                             }
+                            if (!checkFlag) {
+                                if (articleDT.getAvatar() != null) {
+                                    if (imageUploadService.sizeChecker(articleDT.getAvatar())) {
+                                        String newUrl = imageUploadService.saveImageViaUrl(articleDT.getAvatar());
+                                        articleDT.setAvatar(newUrl);
+                                    }
+                                }
+                                articleRepo.save(articleDT);
+
+                                List<String> listTags = getTagsDanTri(linkArticle);
+                                if (!listTags.isEmpty()) {
+                                    for (String listTag : listTags) {
+                                        TagArticle tagArticle = new TagArticle();
+                                        tagArticle.setArticle(articleDT);
+                                        Tag tag = tagRepo.findByValue(listTag);
+                                        if (tag == null) {
+                                            Tag newTag = new Tag();
+                                            newTag.setValue(listTag);
+                                            tagRepo.save(newTag);
+                                            tagArticle.setTag(newTag);
+                                        } else {
+                                            tagArticle.setTag(tag);
+                                        }
+                                        tagArticleRepo.save(tagArticle);
+                                    }
+                                }
+                            }
+
                         }
                     }
                 }
@@ -222,17 +265,11 @@ public class CrawlerServiceImpl implements CrawlerService {
             if (imgElement != null) {
                 String src = imgElement.attr("data-src");
                 article.setAvatar(src);
-//                if (imageUploadService.sizeChecker(src)){
-//                    String newUrl = imageUploadService.saveImageViaUrl(src);
-//                    article.setAvatar(newUrl);
-//                } else{
-//                    article.setAvatar(src);
-//                }
-
             }
 
             // get content
             Element contentElement = document.selectFirst(".fck_detail");
+
             if (contentElement != null) {
                 String content = contentElement.outerHtml();
                 content = content.replace("amp;", "");

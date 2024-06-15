@@ -11,7 +11,7 @@ public class HandleException {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
         ex.printStackTrace();
-        return ResponseEntity.badRequest().body("ERROR:  " + ex.getMessage());
+        return ResponseEntity.badRequest().body("Lỗi:  " + ex.getMessage());
     }
 
     @ExceptionHandler(MissingServletRequestPartException.class)
