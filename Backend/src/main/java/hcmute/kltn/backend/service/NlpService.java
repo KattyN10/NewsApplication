@@ -6,4 +6,5 @@ public interface NlpService {
     Float calculateSimilarity(String str1, String str2);
 
     String translateViToEn(String text);
+    String separateSentenceAndTranslate(String text);
 }

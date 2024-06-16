@@ -4,9 +4,10 @@ import com.darkprograms.speech.translator.GoogleTranslate;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
+import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import hcmute.kltn.backend.service.NlpService;
 import hcmute.kltn.backend.nlp.Pipeline;
+import hcmute.kltn.backend.service.NlpService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -34,6 +35,20 @@ public class NlpServiceImpl implements NlpService {
     }
 
     @Override
+    public String separateSentenceAndTranslate(String text) {
+        String result = "";
+        StanfordCoreNLP stanfordCoreNLP = Pipeline.getPipeline();
+        CoreDocument coreDocument = new CoreDocument(text);
+        stanfordCoreNLP.annotate(coreDocument);
+        List<CoreSentence> sentences = coreDocument.sentences();
+        for (CoreSentence sentence : sentences) {
+            String sentenceEnglish = translateViToEn(sentence.toString());
+            result = result + " " + sentenceEnglish;
+        }
+        return result;
+    }
+
+    @Override
     public Float calculateSimilarity(String str1, String str2) {
         int commonChars1 = 0;
         int commonChars2 = 0;
@@ -55,16 +70,22 @@ public class NlpServiceImpl implements NlpService {
 
     @Override
     public String translateViToEn(String text) {
-        String result = text;
-        try {
-            String language = GoogleTranslate.detectLanguage(text);
-            if (Objects.equals(language, "vi")) {
-                result = GoogleTranslate.translate("en", text);
+        if (text.length() < 5000) {
+            String result = text;
+            try {
+                String language = GoogleTranslate.detectLanguage(text);
+                if (Objects.equals(language, "vi")) {
+                    result = GoogleTranslate.translate("en", text);
+                }
+                return result;
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage());
             }
-            return result;
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+        } else {
+            return separateSentenceAndTranslate(text);
         }
+
     }
+
 
 }

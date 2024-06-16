@@ -80,12 +80,15 @@ public class CrawlerServiceImpl implements CrawlerService {
                             List<Article> articleDanTriToday = articleRepo.getDanTriToday();
                             Document newArtDoc = Jsoup.parse(articleVnExpress.getContent());
                             String newArtText = newArtDoc.text();
+                            String newArtTextEng = nlpService.translateViToEn(newArtText);
+                            String nerKeyNewArt = nlpService.nerKeyword(newArtTextEng);
+
                             boolean checkFlag = false; // check bài có trùng với bài nào cùng ngày bên Dân Trí?
                             for (Article articleDT : articleDanTriToday) {
                                 Document documentDT = Jsoup.parse(articleDT.getContent());
                                 String textDT = documentDT.text();
-                                String nerKeyNewArt = nlpService.nerKeyword(nlpService.translateViToEn(newArtText));
-                                String nerKeyArtDT = nlpService.nerKeyword(nlpService.translateViToEn(textDT));
+                                String textDTEng = nlpService.translateViToEn(textDT);
+                                String nerKeyArtDT = nlpService.nerKeyword(textDTEng);
                                 if (!nerKeyNewArt.isEmpty() && !nerKeyArtDT.isEmpty()) {
                                     Float pointSimilarity = nlpService.calculateSimilarity(nerKeyNewArt, nerKeyArtDT);
                                     if (pointSimilarity >= 0.8) {
@@ -124,6 +127,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                     }
                 }
             }
+            System.out.println(LocalDateTime.now() + ": " + "End Crawl VnExpress");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -163,12 +167,15 @@ public class CrawlerServiceImpl implements CrawlerService {
                             List<Article> articleVnExpressToday = articleRepo.getVnExpressToday();
                             Document newArtDoc = Jsoup.parse(articleDT.getContent());
                             String newArtText = newArtDoc.text();
+                            String newArtTextEnglish = nlpService.translateViToEn(newArtText);
+                            String nerKeyNewArt = nlpService.nerKeyword(newArtTextEnglish);
+
                             boolean checkFlag = false; // check bài có trùng với bài nào cùng ngày bên Dân Trí?
                             for (Article articleVE : articleVnExpressToday) {
                                 Document documentVE = Jsoup.parse(articleVE.getContent());
                                 String textVE = documentVE.text();
-                                String nerKeyNewArt = nlpService.nerKeyword(nlpService.translateViToEn(newArtText));
-                                String nerKeyArtVE = nlpService.nerKeyword(nlpService.translateViToEn(textVE));
+                                String textVEEnglish = nlpService.translateViToEn(textVE);
+                                String nerKeyArtVE = nlpService.nerKeyword(textVEEnglish);
                                 if (!nerKeyNewArt.isEmpty() && !nerKeyArtVE.isEmpty()) {
                                     Float pointSimilarity = nlpService.calculateSimilarity(nerKeyNewArt, nerKeyArtVE);
                                     if (pointSimilarity >= 0.8) {
@@ -209,6 +216,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                     }
                 }
             }
+            System.out.println(LocalDateTime.now() + ": " + "End Crawl DanTri");
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
