@@ -25,7 +25,8 @@ public class NlpServiceImpl implements NlpService {
         List<CoreLabel> coreLabelList = coreDocument.tokens();
         for (CoreLabel coreLabel : coreLabelList) {
             String ner = coreLabel.get(CoreAnnotations.NamedEntityTagAnnotation.class);
-            if (ner.equals("DATE") || ner.equals("ORGANIZATION") || ner.equals("LOCATION") || ner.equals("PERSON")) {
+            if (ner.equals("DATE") || ner.equals("ORGANIZATION") || ner.equals("LOCATION")
+                    || ner.equals("PERSON")) {
                 if (!result.contains(coreLabel.originalText())) {
                     result = result + " " + coreLabel.originalText();
                 }
@@ -52,7 +53,6 @@ public class NlpServiceImpl implements NlpService {
     public Float calculateSimilarity(String str1, String str2) {
         int commonChars1 = 0;
         int commonChars2 = 0;
-
         for (char c1 : str1.toCharArray()) {
             if (str2.indexOf(c1) != -1) {
                 commonChars1++;
@@ -63,7 +63,6 @@ public class NlpServiceImpl implements NlpService {
                 commonChars2++;
             }
         }
-
         int totalChars = str1.length() + str2.length();
         return (float) (commonChars1 + commonChars2) / totalChars;
     }

@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -51,8 +52,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public JwtAuthResponse signIn(SignInRequest signInRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequest.getEmail(),
-                signInRequest.getPassword()));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequest.getEmail(),
+                    signInRequest.getPassword()));
+        } catch (AuthenticationException e) {
+            throw new RuntimeException("Email hoặc mật khẩu không hợp lệ.");
+        }
 
         var user = userRepo.findByEmail(signInRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("Email hoặc mật khẩu không hợp lệ."));
