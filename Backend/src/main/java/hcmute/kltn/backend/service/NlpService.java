@@ -7,4 +7,6 @@ public interface NlpService {
 
     String translateViToEn(String text);
     String separateSentenceAndTranslate(String text);
+
+//    String nerKeywordTest(String articleId);
 }

@@ -1,15 +1,9 @@
 package hcmute.kltn.backend.service.service_implementation;
 
-import hcmute.kltn.backend.entity.Article;
-import hcmute.kltn.backend.entity.Category;
-import hcmute.kltn.backend.entity.Tag;
-import hcmute.kltn.backend.entity.TagArticle;
+import hcmute.kltn.backend.entity.*;
 import hcmute.kltn.backend.entity.enum_entity.ArtSource;
 import hcmute.kltn.backend.entity.enum_entity.Status;
-import hcmute.kltn.backend.repository.ArticleRepo;
-import hcmute.kltn.backend.repository.CategoryRepo;
-import hcmute.kltn.backend.repository.TagArticleRepo;
-import hcmute.kltn.backend.repository.TagRepo;
+import hcmute.kltn.backend.repository.*;
 import hcmute.kltn.backend.service.ArticleService;
 import hcmute.kltn.backend.service.CrawlerService;
 import hcmute.kltn.backend.service.ImageUploadService;
@@ -25,6 +19,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -38,6 +33,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     private final ArticleRepo articleRepo;
     private final ImageUploadService imageUploadService;
     private final NlpService nlpService;
+    private final NerKeywordRepo nerKeywordRepo;
+    private final PendingInformationRepo pendingInformationRepo;
 
     @Override
     public void crawlVnExpress() {
@@ -77,52 +74,64 @@ public class CrawlerServiceImpl implements CrawlerService {
 
                         // save article, get and save tag
                         if (articleVnExpress.getCategory() != null) {
-                            List<Article> articleDanTriToday = articleRepo.getDanTriToday();
+                            List<NerKeyword> listNerKeyArtDanTri = nerKeywordRepo.getDanTriWithin2DaysFromNow();
                             Document newArtDoc = Jsoup.parse(articleVnExpress.getContent());
                             String newArtText = newArtDoc.text();
-                            String newArtTextEng = nlpService.translateViToEn(newArtText);
+                            String newArtTextEng = nlpService.separateSentenceAndTranslate(newArtText);
                             String nerKeyNewArt = nlpService.nerKeyword(newArtTextEng);
-
+                            Article duplicatedArt = new Article();
+                            Float pointSimilarity = 0f;
                             boolean checkFlag = false; // check bài có trùng với bài nào cùng ngày bên Dân Trí?
-                            for (Article articleDT : articleDanTriToday) {
-                                Document documentDT = Jsoup.parse(articleDT.getContent());
-                                String textDT = documentDT.text();
-                                String textDTEng = nlpService.translateViToEn(textDT);
-                                String nerKeyArtDT = nlpService.nerKeyword(textDTEng);
-                                if (!nerKeyNewArt.isEmpty() && !nerKeyArtDT.isEmpty()) {
-                                    Float pointSimilarity = nlpService.calculateSimilarity(nerKeyNewArt, nerKeyArtDT);
-                                    if (pointSimilarity >= 0.8) {
+                            for (NerKeyword nerKeyArtDanTri : listNerKeyArtDanTri) {
+                                if (!nerKeyArtDanTri.getNerKeyword().isEmpty()) { // none list ner keyword
+                                    pointSimilarity = nlpService.calculateSimilarity(nerKeyNewArt, nerKeyArtDanTri.getNerKeyword());
+                                    if (pointSimilarity >= 0.7) {
                                         checkFlag = true; // có trùng, thoát khỏi vòng for
+                                        duplicatedArt = nerKeyArtDanTri.getArticle();
                                         break;
                                     }
                                 }
                             }
-                            if (!checkFlag) {
-                                if (articleVnExpress.getAvatar() != null) {
-                                    if (imageUploadService.sizeChecker(articleVnExpress.getAvatar())) {
-                                        String newUrl = imageUploadService.saveImageViaUrl(articleVnExpress.getAvatar());
-                                        articleVnExpress.setAvatar(newUrl);
-                                    }
-                                }
-                                articleRepo.save(articleVnExpress);
-
-                                String[] listTags = getTagsVnExpress(linkArticle);
-                                assert listTags != null;
-                                for (String tagValue : listTags) {
-                                    TagArticle tagArticle = new TagArticle();
-                                    tagArticle.setArticle(articleVnExpress);
-                                    Tag tag = tagRepo.findByValue(tagValue);
-                                    if (tag == null) {
-                                        Tag newTag = new Tag();
-                                        newTag.setValue(tagValue);
-                                        tagRepo.save(newTag);
-                                        tagArticle.setTag(newTag);
-                                    } else {
-                                        tagArticle.setTag(tag);
-                                    }
-                                    tagArticleRepo.save(tagArticle);
+                            if (articleVnExpress.getAvatar() != null) {
+                                if (imageUploadService.sizeChecker(articleVnExpress.getAvatar())) {
+                                    String newUrl = imageUploadService.saveImageViaUrl(articleVnExpress.getAvatar());
+                                    articleVnExpress.setAvatar(newUrl);
                                 }
                             }
+                            if (checkFlag) {
+                                articleVnExpress.setStatus(Status.PENDING);
+                                articleRepo.save(articleVnExpress);
+                                // save list ner keyword
+                                savedNerKeyArt(articleVnExpress, nerKeyNewArt);
+                                // save pending information
+                                PendingInformation pendingInformation = new PendingInformation();
+                                pendingInformation.setSimilarity(pointSimilarity);
+                                pendingInformation.setPendingArt(articleVnExpress);
+                                pendingInformation.setDuplicatedArt(duplicatedArt);
+                                pendingInformation.setHidden(false);
+                                pendingInformationRepo.save(pendingInformation);
+                            } else {
+                                articleRepo.save(articleVnExpress);
+                                // save list ner keyword
+                                savedNerKeyArt(articleVnExpress, nerKeyNewArt);
+                            }
+                            List<String> listTags = getTagsVnExpress(linkArticle);
+                            assert listTags != null;
+                            saveTagArticle(listTags, articleVnExpress);
+//                            for (String tagValue : listTags) {
+//                                TagArticle tagArticle = new TagArticle();
+//                                tagArticle.setArticle(articleVnExpress);
+//                                Tag tag = tagRepo.findByValue(tagValue);
+//                                if (tag == null) {
+//                                    Tag newTag = new Tag();
+//                                    newTag.setValue(tagValue);
+//                                    tagRepo.save(newTag);
+//                                    tagArticle.setTag(newTag);
+//                                } else {
+//                                    tagArticle.setTag(tag);
+//                                }
+//                                tagArticleRepo.save(tagArticle);
+//                            }
                         }
                     }
                 }
@@ -164,54 +173,67 @@ public class CrawlerServiceImpl implements CrawlerService {
                         articleDT.setTitle(article.getTitle());
                         articleDT.setAbstracts(article.getAbstracts());
                         if (articleDT.getCategory() != null) {
-                            List<Article> articleVnExpressToday = articleRepo.getVnExpressToday();
+                            List<NerKeyword> listNerKeyArtVnExpress = nerKeywordRepo.getVnExpressWithin2DaysFromNow();
                             Document newArtDoc = Jsoup.parse(articleDT.getContent());
                             String newArtText = newArtDoc.text();
-                            String newArtTextEnglish = nlpService.translateViToEn(newArtText);
-                            String nerKeyNewArt = nlpService.nerKeyword(newArtTextEnglish);
-
+                            String newArtTextEng = nlpService.separateSentenceAndTranslate(newArtText);
+                            String nerKeyNewArt = nlpService.nerKeyword(newArtTextEng);
+                            Article duplicatedArt = new Article();
+                            Float pointSimilarity = 0f;
                             boolean checkFlag = false; // check bài có trùng với bài nào cùng ngày bên Dân Trí?
-                            for (Article articleVE : articleVnExpressToday) {
-                                Document documentVE = Jsoup.parse(articleVE.getContent());
-                                String textVE = documentVE.text();
-                                String textVEEnglish = nlpService.translateViToEn(textVE);
-                                String nerKeyArtVE = nlpService.nerKeyword(textVEEnglish);
-                                if (!nerKeyNewArt.isEmpty() && !nerKeyArtVE.isEmpty()) {
-                                    Float pointSimilarity = nlpService.calculateSimilarity(nerKeyNewArt, nerKeyArtVE);
-                                    if (pointSimilarity >= 0.8) {
+                            for (NerKeyword nerKeyArtVnExpress : listNerKeyArtVnExpress) {
+                                if (!nerKeyArtVnExpress.getNerKeyword().isEmpty()) { // none list ner keyword
+                                    pointSimilarity = nlpService.calculateSimilarity(nerKeyNewArt, nerKeyArtVnExpress.getNerKeyword());
+                                    if (pointSimilarity >= 0.7) {
                                         checkFlag = true; // có trùng, thoát khỏi vòng for
+                                        duplicatedArt = nerKeyArtVnExpress.getArticle();
                                         break;
                                     }
                                 }
                             }
-                            if (!checkFlag) {
-                                if (articleDT.getAvatar() != null) {
-                                    if (imageUploadService.sizeChecker(articleDT.getAvatar())) {
-                                        String newUrl = imageUploadService.saveImageViaUrl(articleDT.getAvatar());
-                                        articleDT.setAvatar(newUrl);
-                                    }
-                                }
-                                articleRepo.save(articleDT);
-
-                                List<String> listTags = getTagsDanTri(linkArticle);
-                                if (!listTags.isEmpty()) {
-                                    for (String listTag : listTags) {
-                                        TagArticle tagArticle = new TagArticle();
-                                        tagArticle.setArticle(articleDT);
-                                        Tag tag = tagRepo.findByValue(listTag);
-                                        if (tag == null) {
-                                            Tag newTag = new Tag();
-                                            newTag.setValue(listTag);
-                                            tagRepo.save(newTag);
-                                            tagArticle.setTag(newTag);
-                                        } else {
-                                            tagArticle.setTag(tag);
-                                        }
-                                        tagArticleRepo.save(tagArticle);
-                                    }
+                            if (articleDT.getAvatar() != null) {
+                                if (imageUploadService.sizeChecker(articleDT.getAvatar())) {
+                                    String newUrl = imageUploadService.saveImageViaUrl(articleDT.getAvatar());
+                                    articleDT.setAvatar(newUrl);
                                 }
                             }
+                            if (checkFlag) {
+                                articleDT.setStatus(Status.PENDING);
+                                articleRepo.save(articleDT);
+                                // save list ner keyword
+                                savedNerKeyArt(articleDT, nerKeyNewArt);
+                                // save pending information
+                                PendingInformation pendingInformation = new PendingInformation();
+                                pendingInformation.setSimilarity(pointSimilarity);
+                                pendingInformation.setPendingArt(articleDT);
+                                pendingInformation.setDuplicatedArt(duplicatedArt);
+                                pendingInformation.setHidden(false);
+                                pendingInformationRepo.save(pendingInformation);
+                            } else {
+                                articleRepo.save(articleDT);
+                                // save list ner keyword
+                                savedNerKeyArt(articleDT, nerKeyNewArt);
+                            }
+                            List<String> listTags = getTagsDanTri(linkArticle);
+                            saveTagArticle(listTags, articleDT);
+//                            if (!listTags.isEmpty()) {
 
+//                                for (String listTag : listTags) {
+//                                    TagArticle tagArticle = new TagArticle();
+//                                    tagArticle.setArticle(articleDT);
+//                                    Tag tag = tagRepo.findByValue(listTag);
+//                                    if (tag == null) {
+//                                        Tag newTag = new Tag();
+//                                        newTag.setValue(listTag);
+//                                        tagRepo.save(newTag);
+//                                        tagArticle.setTag(newTag);
+//                                    } else {
+//                                        tagArticle.setTag(tag);
+//                                    }
+//                                    tagArticleRepo.save(tagArticle);
+//                                }
+//                            }
+//                            }
                         }
                     }
                 }
@@ -220,6 +242,14 @@ public class CrawlerServiceImpl implements CrawlerService {
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    private void savedNerKeyArt(Article article, String nerKeyArt) {
+        NerKeyword nerKeyword = new NerKeyword();
+        nerKeyword.setArticle(article);
+        nerKeyword.setNerKeyword(nerKeyArt);
+
+        nerKeywordRepo.save(nerKeyword);
     }
 
     private boolean checkValidVnExpress(Element elementArt) {
@@ -296,7 +326,24 @@ public class CrawlerServiceImpl implements CrawlerService {
         }
     }
 
-    private String[] getTagsVnExpress(String url) {
+    private void saveTagArticle(List<String> listTags, Article article) {
+        for (String tagValue : listTags) {
+            TagArticle tagArticle = new TagArticle();
+            tagArticle.setArticle(article);
+            Tag tag = tagRepo.findByValue(tagValue);
+            if (tag == null) {
+                Tag newTag = new Tag();
+                newTag.setValue(tagValue);
+                tagRepo.save(newTag);
+                tagArticle.setTag(newTag);
+            } else {
+                tagArticle.setTag(tag);
+            }
+            tagArticleRepo.save(tagArticle);
+        }
+    }
+
+    private List<String> getTagsVnExpress(String url) {
         try {
             String headContent = Jsoup.connect(url).get().head().html();
 
@@ -304,9 +351,8 @@ public class CrawlerServiceImpl implements CrawlerService {
             Element tagElement = documentTag.selectFirst("meta[name=keywords]");
             if (tagElement != null) {
                 String tagContent = tagElement.attr("content");
-                return tagContent.split(",");
+                return Arrays.asList(tagContent.split(","));
             }
-
             return null;
         } catch (IOException e) {
             throw new RuntimeException(e);

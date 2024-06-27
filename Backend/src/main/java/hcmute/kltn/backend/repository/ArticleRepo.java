@@ -56,7 +56,7 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     List<Article> findByCategoryAndStatus(Category category, Status status);
 
     @Query(value = """
-            SELECT * FROM article ORDER BY create_date DESC LIMIT 5
+            SELECT * FROM article WHERE status='PUBLIC' ORDER BY create_date DESC LIMIT 5
                         """, nativeQuery = true)
     List<Article> findTop5Newest();
 
@@ -80,12 +80,12 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
     List<Article> findMostReactArticle();
 
     @Query(value = """
-            SELECT * FROM article a where a.art_source='VN_EXPRESS' ORDER BY a.create_date DESC LIMIT 6
+            SELECT * FROM article a where a.art_source='VN_EXPRESS' AND status='PUBLIC' ORDER BY a.create_date DESC LIMIT 6
             """, nativeQuery = true)
     List<Article> findByVnExpress();
 
     @Query(value = """
-            SELECT * FROM article a where a.art_source='DAN_TRI' ORDER BY a.create_date DESC LIMIT 6
+            SELECT * FROM article a where a.art_source='DAN_TRI' AND status='PUBLIC' ORDER BY a.create_date DESC LIMIT 6
             """, nativeQuery = true)
     List<Article> findByDanTri();
 
@@ -109,16 +109,5 @@ public interface ArticleRepo extends JpaRepository<Article, String> {
                              ORDER BY average_star.average_star DESC
                         """, nativeQuery = true)
     List<Article> getArticleOrderByAverageStar();
-
-    @Query(value = """
-            SELECT * FROM article WHERE art_source='VN_EXPRESS' AND DATE(create_date) = CURDATE()
-            """, nativeQuery = true)
-    List<Article> getVnExpressToday();
-
-    @Query(value = """
-            SELECT * FROM article WHERE art_source='DAN_TRI' AND DATE(create_date) = CURDATE()
-            """, nativeQuery = true)
-    List<Article> getDanTriToday();
-
 
 }
