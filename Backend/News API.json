@@ -1062,10 +1062,16 @@
 				{
 					"name": "Get Saved Art By Cat",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxODM3NTI2OCwiZXhwIjoxNzE4NDYxNjY4fQ.FGUSarnknXDZ3Pig1G3bnYd7h2SDdODxcIP7nYhcjTk"
+							}
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/article/anonymous/get-saved-by-cat?categoryId=6bdb9900-9408-404a-9cf7-1b1df409cfe8",
+							"raw": "http://localhost:8080/api/v1/article/get-saved-by-cat?categoryId=6bdb9900-9408-404a-9cf7-1b1df409cfe8",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1075,7 +1081,6 @@
 								"api",
 								"v1",
 								"article",
-								"anonymous",
 								"get-saved-by-cat"
 							],
 							"query": [
@@ -1807,6 +1812,71 @@
 								}
 							]
 						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pending Art API",
+			"item": [
+				{
+					"name": "Get All Pending Art",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxOTQ3MTAxOSwiZXhwIjoxNzE5NTU3NDE5fQ.Zkb5ZQXSdtkFEcpedOaIQVKu_sZ1JVX-zKxMYgLRnV8"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/v1/pending/get-all-pending"
+					},
+					"response": []
+				},
+				{
+					"name": "Public Article",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaHVjQGdtYWlsLmNvbSIsImlhdCI6MTcxOTQ3MTAxOSwiZXhwIjoxNzE5NTU3NDE5fQ.Zkb5ZQXSdtkFEcpedOaIQVKu_sZ1JVX-zKxMYgLRnV8"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":\"0b9e1a09-343c-11ef-ba5c-9a51627d105b\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/pending/public-article"
+					},
+					"response": []
+				},
+				{
+					"name": "Refuse Article",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/v1/pending/refuse-article"
 					},
 					"response": []
 				}
