@@ -17,12 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleController {
     private final ArticleService articleService;
-//    private final NlpService nlpService;
-
-//    @GetMapping("/anonymous/test")
-//    public ResponseEntity<String> anonymous(@RequestParam("articleId") String articleId) {
-//        return ResponseEntity.ok(nlpService.nerKeywordTest(articleId));
-//    }
 
     @GetMapping("/anonymous/get-detail-art")
     public ResponseEntity<ArticleDTO> getDetail(@RequestParam("articleId") String articleId) {

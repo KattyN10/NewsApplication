@@ -58,15 +58,15 @@ public class NlpServiceImpl implements NlpService {
         return result;
     }
 
-//    @Override
-//    public String nerKeywordTest(String articleId) {
-//        Article article = articleRepo.findById(articleId).orElseThrow();
-//        Document document = Jsoup.parse(article.getContent());
-//        String contentText = document.text();
-//        String englishText = separateSentenceAndTranslate(contentText);
-//        String ner = nerKeyword(englishText);
-//        return ner;
-//    }
+    @Override
+    public String nerKeyFromArt(String articleId) {
+        Article article = articleRepo.findById(articleId)
+                .orElseThrow();
+        Document document = Jsoup.parse(article.getContent());
+        String textContent = document.text();
+        String textEnglish = separateSentenceAndTranslate(textContent);
+        return nerKeyword(textEnglish);
+    }
 
     @Override
     public Float calculateSimilarity(String str1, String str2) {
@@ -83,7 +83,8 @@ public class NlpServiceImpl implements NlpService {
                 }
             }
         }
-        return (float) matchingWords / Math.max(words1.length, words2.length);
+        float result = (float) matchingWords / Math.max(words1.length, words2.length);
+        return Math.round(result * 100) / 100f;
     }
 
     @Override

@@ -85,7 +85,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                             for (NerKeyword nerKeyArtDanTri : listNerKeyArtDanTri) {
                                 if (!nerKeyArtDanTri.getNerKeyword().isEmpty()) { // none list ner keyword
                                     pointSimilarity = nlpService.calculateSimilarity(nerKeyNewArt, nerKeyArtDanTri.getNerKeyword());
-                                    if (pointSimilarity >= 0.7) {
+                                    if (pointSimilarity > 0.5) {
                                         checkFlag = true; // có trùng, thoát khỏi vòng for
                                         duplicatedArt = nerKeyArtDanTri.getArticle();
                                         break;
@@ -118,20 +118,6 @@ public class CrawlerServiceImpl implements CrawlerService {
                             List<String> listTags = getTagsVnExpress(linkArticle);
                             assert listTags != null;
                             saveTagArticle(listTags, articleVnExpress);
-//                            for (String tagValue : listTags) {
-//                                TagArticle tagArticle = new TagArticle();
-//                                tagArticle.setArticle(articleVnExpress);
-//                                Tag tag = tagRepo.findByValue(tagValue);
-//                                if (tag == null) {
-//                                    Tag newTag = new Tag();
-//                                    newTag.setValue(tagValue);
-//                                    tagRepo.save(newTag);
-//                                    tagArticle.setTag(newTag);
-//                                } else {
-//                                    tagArticle.setTag(tag);
-//                                }
-//                                tagArticleRepo.save(tagArticle);
-//                            }
                         }
                     }
                 }
@@ -184,7 +170,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                             for (NerKeyword nerKeyArtVnExpress : listNerKeyArtVnExpress) {
                                 if (!nerKeyArtVnExpress.getNerKeyword().isEmpty()) { // none list ner keyword
                                     pointSimilarity = nlpService.calculateSimilarity(nerKeyNewArt, nerKeyArtVnExpress.getNerKeyword());
-                                    if (pointSimilarity >= 0.7) {
+                                    if (pointSimilarity > 0.5) {
                                         checkFlag = true; // có trùng, thoát khỏi vòng for
                                         duplicatedArt = nerKeyArtVnExpress.getArticle();
                                         break;
@@ -413,12 +399,6 @@ public class CrawlerServiceImpl implements CrawlerService {
             if (imgElement != null) {
                 String src = imgElement.attr("data-original");
                 article.setAvatar(src);
-//                if (imageUploadService.sizeChecker(src)) {
-//                    String newUrl = imageUploadService.saveImageViaUrl(src);
-//                    article.setAvatar(newUrl);
-//                } else {
-//                    article.setAvatar(src);
-//                }
             }
 
             // get content
