@@ -1,7 +1,6 @@
 package hcmute.kltn.backend.service.service_implementation;
 
 import hcmute.kltn.backend.dto.TagDTO;
-import hcmute.kltn.backend.dto.UserDTO;
 import hcmute.kltn.backend.entity.Article;
 import hcmute.kltn.backend.entity.Tag;
 import hcmute.kltn.backend.entity.TagArticle;
@@ -14,7 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 

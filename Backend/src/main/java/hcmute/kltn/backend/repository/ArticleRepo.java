@@ -1,6 +1,5 @@
 package hcmute.kltn.backend.repository;
 
-import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.entity.Article;
 import hcmute.kltn.backend.entity.Category;
 import hcmute.kltn.backend.entity.enum_entity.ArtSource;

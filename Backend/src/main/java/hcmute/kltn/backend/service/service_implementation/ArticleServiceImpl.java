@@ -70,7 +70,6 @@ public class ArticleServiceImpl implements ArticleService {
             Article article = articleRepo.findLatestArtOfCat(category.getId());
             result.add(article);
         }
-        System.out.println("SL: " + result.size());
         return result.stream()
                 .map(article -> modelMapper.map(article, ArticleDTO.class))
                 .collect(Collectors.toList());

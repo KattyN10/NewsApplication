@@ -1,14 +1,11 @@
 package hcmute.kltn.backend.service.service_implementation;
 
-import hcmute.kltn.backend.dto.AverageStarDTO;
 import hcmute.kltn.backend.entity.Article;
 import hcmute.kltn.backend.entity.AverageStar;
 import hcmute.kltn.backend.repository.ArticleRepo;
 import hcmute.kltn.backend.repository.AverageStarRepo;
 import hcmute.kltn.backend.service.AverageStarService;
-import hcmute.kltn.backend.service.VoteStarService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service

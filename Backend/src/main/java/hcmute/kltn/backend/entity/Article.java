@@ -3,16 +3,12 @@ package hcmute.kltn.backend.entity;
 import hcmute.kltn.backend.entity.enum_entity.ArtSource;
 import hcmute.kltn.backend.entity.enum_entity.Status;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

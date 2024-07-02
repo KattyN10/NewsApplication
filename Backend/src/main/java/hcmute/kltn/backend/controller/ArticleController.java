@@ -2,7 +2,6 @@ package hcmute.kltn.backend.controller;
 
 import hcmute.kltn.backend.dto.ArticleDTO;
 import hcmute.kltn.backend.service.ArticleService;
-import hcmute.kltn.backend.service.NlpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,9 +1,6 @@
 package hcmute.kltn.backend.service;
 
 import hcmute.kltn.backend.dto.ArticleDTO;
-import hcmute.kltn.backend.dto.request.ArticleRequest;
-import hcmute.kltn.backend.dto.request.TagArticleRequest;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

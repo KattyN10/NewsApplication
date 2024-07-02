@@ -1,14 +1,16 @@
 package hcmute.kltn.backend.controller;
 
-import hcmute.kltn.backend.dto.request.UpdatePassRequest;
-import hcmute.kltn.backend.dto.response.JwtAuthResponse;
 import hcmute.kltn.backend.dto.request.SignInRequest;
 import hcmute.kltn.backend.dto.request.SignUpRequest;
+import hcmute.kltn.backend.dto.response.JwtAuthResponse;
 import hcmute.kltn.backend.entity.User;
 import hcmute.kltn.backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
